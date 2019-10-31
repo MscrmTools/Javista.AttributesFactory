@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Query;
 
 namespace Javista.AttributesFactory.AppCode
 {
-    internal class SolutionInfo
+    public class SolutionInfo
     {
         private readonly string friendlyName;
 
@@ -19,12 +19,17 @@ namespace Javista.AttributesFactory.AppCode
             this.friendlyName = friendlyName;
         }
 
+        public SolutionInfo(string name, string friendlyName, string prefix, int optionSetPrefix, Guid id,
+            string version) : this(name, friendlyName, prefix, optionSetPrefix, id)
+        {
+            Version = version;
+        }
+
         public Guid Id { get; }
-        public string UniqueName { get; }
-
-        public string Prefix { get; }
-
         public int OptionSetPrefix { get; }
+        public string Prefix { get; }
+        public string UniqueName { get; }
+        public string Version { get; }
 
         public override string ToString()
         {
@@ -38,7 +43,7 @@ namespace Javista.AttributesFactory.AppCode
         {
             return service.RetrieveMultiple(new QueryExpression("solution")
             {
-                ColumnSet = new ColumnSet("uniquename", "friendlyname"),
+                ColumnSet = new ColumnSet("uniquename", "friendlyname", "ismanaged", "version"),
                 Criteria = new FilterExpression
                 {
                     Conditions =

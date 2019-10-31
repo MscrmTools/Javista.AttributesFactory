@@ -1,18 +1,20 @@
 ﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
-using Microsoft.Xrm.Sdk.Metadata.Query;
 using OfficeOpenXml;
 using OfficeOpenXml.DataValidation;
 using OfficeOpenXml.DataValidation.Contracts;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using StringFormat = Microsoft.Xrm.Sdk.Metadata.StringFormat;
 
 namespace Javista.AttributesFactory.AppCode
 {
@@ -29,10 +31,8 @@ namespace Javista.AttributesFactory.AppCode
 
         public IOrganizationService Service { get; set; }
 
-        public void GenerateDocumentation(List<EntityMetadata> emds, out string filePath, BackgroundWorker worker)
+        public void GenerateDocumentation(List<EntityMetadata> emds, string filePath, bool loadAllAttributes, BackgroundWorker worker)
         {
-            filePath = "";
-
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = "Javista.AttributesFactory.Template.Attributes_Template.xlsx";
 
@@ -51,7 +51,6 @@ namespace Javista.AttributesFactory.AppCode
                     ExcelWorksheet sheet = package.Workbook.Worksheets.First();
 
                     int line = 3;
-                    int startCell = 2;
 
                     foreach (var emd in emds)
                     {
@@ -61,14 +60,14 @@ namespace Javista.AttributesFactory.AppCode
                             LogicalName = emd.LogicalName
                         })).EntityMetadata;
 
-                        foreach (var amd in fullEmd.Attributes)
+                        foreach (var amd in fullEmd.Attributes.OrderBy(a => a.LogicalName))
                         {
-                            if (!(amd.IsCustomAttribute ?? false))
+                            if (!loadAllAttributes && !(amd.IsCustomAttribute ?? false))
                             {
                                 continue;
                             }
 
-                            if (amd.AttributeType.Value == AttributeTypeCode.Virtual
+                            if (!amd.AttributeType.HasValue || amd.AttributeType.Value == AttributeTypeCode.Virtual
                                 || amd.AttributeOf != null)
                             {
                                 continue;
@@ -76,6 +75,7 @@ namespace Javista.AttributesFactory.AppCode
 
                             sheet.InsertRow(line, 1);
                             sheet.Cells[line + 1, 1, line + 1, 56].Copy(sheet.Cells[line, 1]);
+                            sheet.Cells[line + 1, 1, line + 1, 56].Style.Border.BorderAround(ExcelBorderStyle.None);
 
                             for (int i = 1; i <= 56; i++)
                             {
@@ -107,38 +107,143 @@ namespace Javista.AttributesFactory.AppCode
                             sheet.Cells[line, 11].Value = GetSourceTypeString(amd.SourceType ?? 0);
 
                             ProcessDetails(amd, fullEmd, sheet, line);
-                        }
 
-                        line++;
+                            line++;
+                        }
                     }
 
-                    filePath = "c:\\temp\\md.xlsx";
+                    sheet.DeleteRow(line, line + 2);
+
+                    ApplyDataValidation(sheet, line - 1);
+                    ApplyConditionalFormatting(sheet, line - 1);
 
                     package.SaveAs(new FileInfo(filePath));
                 }
             }
         }
 
-        public List<EntityMetadata> GetEntities()
+        private void AddConditionalFormattingExpression(ExcelWorksheet sheet, string reference, int cellNumber, int endLineNumber, params string[] values)
         {
-            EntityQueryExpression entityQueryExpression = new EntityQueryExpression()
+            var formatting = sheet.Cells[3, cellNumber, endLineNumber, cellNumber].ConditionalFormatting.AddExpression();
+            formatting.Style.Fill.BackgroundColor.Color = Color.Gray;
+            formatting.Style.Font.Color.Color = Color.Gray;
+
+            if (values.Length == 1)
             {
-                Properties = new MetadataPropertiesExpression
-                {
-                    AllProperties = false,
-                    PropertyNames = { "LogicalName", "DisplayName", "SchemaName" }
-                }
-            };
-
-            RetrieveMetadataChangesRequest retrieveMetadataChangesRequest = new RetrieveMetadataChangesRequest
+                formatting.Formula = $"={reference}<>ValidationData!{values[0]}";
+            }
+            else
             {
-                Query = entityQueryExpression,
-                ClientVersionStamp = null
-            };
+                formatting.Formula = $"=AND({reference}<>ValidationData!{values[0]},{reference}<>ValidationData!{values[1]})";
+            }
+        }
 
-            var response = (RetrieveMetadataChangesResponse)Service.Execute(retrieveMetadataChangesRequest);
+        private void ApplyConditionalFormatting(ExcelWorksheet sheet, int line)
+        {
+            // Max Length
+            AddConditionalFormattingExpression(sheet, "D3", 12, line, "$A$2", "$A$10");
+            AddConditionalFormattingExpression(sheet, "D3", 13, line, "$A$2");
+            AddConditionalFormattingExpression(sheet, "D3", 14, line, "$A$2");
+            AddConditionalFormattingExpression(sheet, "D3", 16, line, "$A$3", "$A$14");
+            AddConditionalFormattingExpression(sheet, "D3", 17, line, "$A$3", "$A$14");
+            AddConditionalFormattingExpression(sheet, "D3", 18, line, "$A$3", "$A$14");
+            AddConditionalFormattingExpression(sheet, "D3", 20, line, "$A$4");
+            AddConditionalFormattingExpression(sheet, "D3", 21, line, "$A$4");
+            AddConditionalFormattingExpression(sheet, "D3", 23, line, "$A$6");
+            AddConditionalFormattingExpression(sheet, "D3", 24, line, "$A$6");
+            AddConditionalFormattingExpression(sheet, "D3", 25, line, "$A$6");
+            AddConditionalFormattingExpression(sheet, "D3", 27, line, "$A$7");
+            AddConditionalFormattingExpression(sheet, "D3", 28, line, "$A$7");
+            AddConditionalFormattingExpression(sheet, "D3", 29, line, "$A$7");
+            AddConditionalFormattingExpression(sheet, "D3", 31, line, "$A$8");
+            AddConditionalFormattingExpression(sheet, "D3", 32, line, "$A$8");
+            AddConditionalFormattingExpression(sheet, "D3", 33, line, "$A$8");
+            AddConditionalFormattingExpression(sheet, "D3", 35, line, "$A$9");
+            AddConditionalFormattingExpression(sheet, "D3", 36, line, "$A$9");
+            AddConditionalFormattingExpression(sheet, "D3", 37, line, "$A$9");
+            AddConditionalFormattingExpression(sheet, "D3", 39, line, "$A$11");
+            AddConditionalFormattingExpression(sheet, "D3", 40, line, "$A$11");
 
-            return response.EntityMetadata.ToList();
+            for (var i = 42; i <= 55; i++)
+            {
+                AddConditionalFormattingExpression(sheet, "D3", i, line, "$A$12", "$A$13");
+            }
+
+            AddConditionalFormattingExpression(sheet, "AS3", 46, line, "$I$3");
+
+            for (var i = 50; i <= 55; i++)
+            {
+                AddConditionalFormattingExpression(sheet, "AW3", i, line, "$K$5");
+            }
+        }
+
+        private void ApplyDataValidation(ExcelWorksheet sheet, int line)
+        {
+            var actionValidation = sheet.Cells[3, 1, line, 1].DataValidation.AddListDataValidation();
+            actionValidation.Formula.ExcelFormula = "=ValidationData!$O$2:$O$3";
+            var typeValidation = sheet.Cells[3, 4, line, 4].DataValidation.AddListDataValidation();
+            typeValidation.Formula.ExcelFormula = "=ValidationData!$A$2:$A$14";
+            var levelValidation = sheet.Cells[3, 7, line, 7].DataValidation.AddListDataValidation();
+            levelValidation.Formula.ExcelFormula = "=ValidationData!$E$2:$E$4";
+            var boolValidation = sheet.Cells[3, 8, line, 8].DataValidation.AddListDataValidation();
+            boolValidation.Formula.ExcelFormula = "=ValidationData!$D$2:$D$3";
+            var boolValidation2 = sheet.Cells[3, 9, line, 9].DataValidation.AddListDataValidation();
+            boolValidation2.Formula.ExcelFormula = "=ValidationData!$D$2:$D$3";
+            var boolValidation3 = sheet.Cells[3, 10, line, 10].DataValidation.AddListDataValidation();
+            boolValidation3.Formula.ExcelFormula = "=ValidationData!$D$2:$D$3";
+            var sourceTypeValidation = sheet.Cells[3, 11, line, 11].DataValidation.AddListDataValidation();
+            sourceTypeValidation.Formula.ExcelFormula = "=ValidationData!$C$2:$C$4";
+
+            var textFormatValidation = sheet.Cells[3, 13, line, 13].DataValidation.AddListDataValidation();
+            textFormatValidation.Formula.ExcelFormula = "=ValidationData!$B$2:$B$9";
+            var intFormatValidation = sheet.Cells[3, 23, line, 23].DataValidation.AddListDataValidation();
+            intFormatValidation.Formula.ExcelFormula = "=ValidationData!$F$2:$F$6";
+
+            var datetimeBehaviorValidation = sheet.Cells[3, 39, line, 39].DataValidation.AddListDataValidation();
+            datetimeBehaviorValidation.Formula.ExcelFormula = "=ValidationData!$H$2:$H$4";
+            var datetimeFormatValidation = sheet.Cells[3, 40, line, 40].DataValidation.AddListDataValidation();
+            datetimeFormatValidation.Formula.ExcelFormula = "=ValidationData!$G$2:$G$3";
+
+            var relValidForAfValidation = sheet.Cells[3, 43, line, 43].DataValidation.AddListDataValidation();
+            relValidForAfValidation.Formula.ExcelFormula = "=ValidationData!$D$2:$D$34";
+            var relIsHierarchicalValidation = sheet.Cells[3, 44, line, 44].DataValidation.AddListDataValidation();
+            relIsHierarchicalValidation.Formula.ExcelFormula = "=ValidationData!$D$2:$D$3";
+            var relDisplayBehaviorValidation = sheet.Cells[3, 45, line, 45].DataValidation.AddListDataValidation();
+            relDisplayBehaviorValidation.Formula.ExcelFormula = "=ValidationData!$I$2:$I$4";
+            var relDisplayZoneValidation = sheet.Cells[3, 47, line, 47].DataValidation.AddListDataValidation();
+            relDisplayZoneValidation.Formula.ExcelFormula = "=ValidationData!$J$2:$J$5";
+            var relBehaviorValidation = sheet.Cells[3, 49, line, 49].DataValidation.AddListDataValidation();
+            relBehaviorValidation.Formula.ExcelFormula = "=ValidationData!$K$2:$K$5";
+            var relCascadeValidation1 = sheet.Cells[3, 50, line, 53].DataValidation.AddListDataValidation();
+            relCascadeValidation1.Formula.ExcelFormula = "=ValidationData!$L$2:$L$5";
+            var relCascadeDelValidation = sheet.Cells[3, 54, line, 54].DataValidation.AddListDataValidation();
+            relCascadeDelValidation.Formula.ExcelFormula = "=ValidationData!$M$2:$M$4";
+            var relCascadeValidation2 = sheet.Cells[3, 55, line, 55].DataValidation.AddListDataValidation();
+            relCascadeValidation2.Formula.ExcelFormula = "=ValidationData!$L$2:$L$5";
+        }
+
+        private string GetCascadeText(CascadeType type, bool isDeleteBehavior = false)
+        {
+            switch (type)
+            {
+                case CascadeType.Active:
+                    return "Active";
+
+                case CascadeType.NoCascade:
+                    return "None";
+
+                case CascadeType.UserOwned:
+                    return "Owner";
+
+                case CascadeType.RemoveLink:
+                    return "Remove link";
+
+                case CascadeType.Restrict:
+                    return "Restrict";
+
+                default:
+                    return isDeleteBehavior ? "All" : "Cascade";
+            }
         }
 
         private string GetOptionSets(OptionSetMetadata optionSet)
@@ -347,13 +452,46 @@ namespace Javista.AttributesFactory.AppCode
                 sheet.Cells[line, 46].Value = rel.AssociatedMenuConfiguration.Label?.UserLocalizedLabel?.Label;
                 sheet.Cells[line, 47].Value = rel.AssociatedMenuConfiguration.Group ?? AssociatedMenuGroup.Details;
                 sheet.Cells[line, 48].Value = rel.AssociatedMenuConfiguration.Order ?? -1;
-                //sheet.Cells[line, 49].Value = rel.CascadeConfiguration.;
-                //sheet.Cells[line, 50].Value = lamd.DateTimeBehavior.Value;
-                //sheet.Cells[line, 51].Value = lamd.DateTimeBehavior.Value;
-                //sheet.Cells[line, 52].Value = lamd.DateTimeBehavior.Value;
-                //sheet.Cells[line, 53].Value = lamd.DateTimeBehavior.Value;
-                //sheet.Cells[line, 54].Value = lamd.DateTimeBehavior.Value;
-                //sheet.Cells[line, 55].Value = lamd.DateTimeBehavior.Value;
+
+                sheet.Cells[line, 50].Value = GetCascadeText(rel.CascadeConfiguration.Assign ?? CascadeType.Cascade);
+                sheet.Cells[line, 51].Value = GetCascadeText(rel.CascadeConfiguration.Share ?? CascadeType.Cascade);
+                sheet.Cells[line, 52].Value = GetCascadeText(rel.CascadeConfiguration.Unshare ?? CascadeType.Cascade);
+                sheet.Cells[line, 53].Value = GetCascadeText(rel.CascadeConfiguration.Reparent ?? CascadeType.Cascade);
+                sheet.Cells[line, 54].Value = GetCascadeText(rel.CascadeConfiguration.Delete ?? CascadeType.Cascade, true);
+                sheet.Cells[line, 55].Value = GetCascadeText(rel.CascadeConfiguration.Merge ?? CascadeType.Cascade);
+
+                if ((rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.Cascade
+                    && (rel.CascadeConfiguration.Share ?? CascadeType.Cascade) == CascadeType.Cascade
+                    && (rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.Cascade
+                    && (rel.CascadeConfiguration.Unshare ?? CascadeType.Cascade) == CascadeType.Cascade
+                    && (rel.CascadeConfiguration.Reparent ?? CascadeType.Cascade) == CascadeType.Cascade
+                    && (rel.CascadeConfiguration.Delete ?? CascadeType.Cascade) == CascadeType.Cascade
+                    && (rel.CascadeConfiguration.Merge ?? CascadeType.Cascade) == CascadeType.Cascade)
+                {
+                    sheet.Cells[line, 49].Value = "Parental";
+                }
+                else if ((rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.NoCascade
+                   && (rel.CascadeConfiguration.Share ?? CascadeType.Cascade) == CascadeType.NoCascade
+                   && (rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.NoCascade
+                   && (rel.CascadeConfiguration.Unshare ?? CascadeType.Cascade) == CascadeType.NoCascade
+                   && (rel.CascadeConfiguration.Reparent ?? CascadeType.Cascade) == CascadeType.NoCascade
+                   && (rel.CascadeConfiguration.Delete ?? CascadeType.Cascade) == CascadeType.RemoveLink
+                   && (rel.CascadeConfiguration.Merge ?? CascadeType.Cascade) == CascadeType.Cascade)
+                {
+                    sheet.Cells[line, 49].Value = "Referential";
+                }
+                else if ((rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.NoCascade
+                    && (rel.CascadeConfiguration.Share ?? CascadeType.Cascade) == CascadeType.NoCascade
+                    && (rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.NoCascade
+                    && (rel.CascadeConfiguration.Unshare ?? CascadeType.Cascade) == CascadeType.NoCascade
+                    && (rel.CascadeConfiguration.Reparent ?? CascadeType.Cascade) == CascadeType.NoCascade
+                    && (rel.CascadeConfiguration.Delete ?? CascadeType.Cascade) == CascadeType.Restrict
+                    && (rel.CascadeConfiguration.Merge ?? CascadeType.Cascade) == CascadeType.Cascade)
+                {
+                    sheet.Cells[line, 49].Value = "Referential, restrict delete";
+                }
+                else
+                    sheet.Cells[line, 49].Value = "Custom";
             }
         }
     }

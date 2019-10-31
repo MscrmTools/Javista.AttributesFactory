@@ -59,5 +59,15 @@ namespace Javista.AttributesFactory.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ico_16_9507_Excel {
+            get {
+                object obj = ResourceManager.GetObject("ico_16_9507_Excel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

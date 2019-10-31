@@ -1,7 +1,7 @@
 ﻿using Javista.AttributesFactory.AppCode;
+using Javista.AttributesFactory.Forms;
 using McTools.Xrm.Connection;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,6 +18,7 @@ namespace Javista.AttributesFactory
 {
     public partial class PluginControl : PluginControlBase, IStatusBarMessenger
     {
+        private List<SolutionInfo> _solutions;
         private bool isRequestFromSolutionsList;
         private int languageCode;
 
@@ -225,8 +226,8 @@ namespace Javista.AttributesFactory
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Loading solutions...",
-                Work = (w, e) => { e.Result = SolutionManager.GetSolutions(Service); },
-                PostWorkCallBack = e => { cbbSolutions.Items.AddRange(((List<SolutionInfo>)e.Result).ToArray<object>()); }
+                Work = (w, e) => { _solutions = SolutionManager.GetSolutions(Service); },
+                PostWorkCallBack = e => { cbbSolutions.Items.AddRange(_solutions.OrderBy(s => s.ToString()).ToArray<object>()); }
             });
         }
 
@@ -251,14 +252,6 @@ namespace Javista.AttributesFactory
             tsbCancel.Enabled = true;
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            var mdg = new MetadataDocManager(Service, this);
-            mdg.GenerateDocumentation(new List<EntityMetadata> { new EntityMetadata { LogicalName = "mctools_donation" } }, out string filePath, null);
-
-            Process.Start(filePath);
-        }
-
         private void tsbCancel_Click(object sender, EventArgs e)
         {
             tsbCancel.Text = @"Cancelling...";
@@ -272,11 +265,34 @@ namespace Javista.AttributesFactory
             CloseTool();
         }
 
+        private void tsbExportEntities_Click(object sender, EventArgs e)
+        {
+            var dialog = new EntitySelectionDialog(Service, _solutions);
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+            {
+                var sfd = new SaveFileDialog
+                {
+                    Filter = @"Excel workbook|*.xlsx"
+                };
+                if (sfd.ShowDialog(this) == DialogResult.OK)
+                {
+                    var mdg = new MetadataDocManager(Service, this);
+                    mdg.GenerateDocumentation(dialog.Entities, sfd.FileName, dialog.LoadAllAttributes, null);
+
+                    if (MessageBox.Show(this, @"Do you want to open the document now?", @"Question",
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        Process.Start(sfd.FileName);
+                    }
+                }
+            }
+        }
+
         private void tsbGetTemplate_Click(object sender, EventArgs e)
         {
             var sfd = new SaveFileDialog
             {
-                Filter = @"Excel spreadsheet|*.xlsx",
+                Filter = @"Excel workbook|*.xlsx",
                 FileName = "Attributes_Template.xlsx"
             };
 

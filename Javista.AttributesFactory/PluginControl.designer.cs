@@ -41,7 +41,7 @@
             this.tsddbLogs = new System.Windows.Forms.ToolStripDropDownButton();
             this.exportLogsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearLogsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.tsbExportEntities = new System.Windows.Forms.ToolStripButton();
             this.pnlOptions = new System.Windows.Forms.Panel();
             this.btnOpenFile = new System.Windows.Forms.Button();
             this.txtFilePath = new System.Windows.Forms.TextBox();
@@ -62,6 +62,7 @@
             this.chEntity = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chInfo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenu.SuspendLayout();
             this.pnlOptions.SuspendLayout();
             this.gbOptions.SuspendLayout();
@@ -79,11 +80,12 @@
             this.tsbGetTemplate,
             this.toolStripSeparator2,
             this.tsddbLogs,
-            this.toolStripButton1});
+            this.toolStripSeparator3,
+            this.tsbExportEntities});
             this.toolStripMenu.Location = new System.Drawing.Point(0, 0);
             this.toolStripMenu.Name = "toolStripMenu";
             this.toolStripMenu.Padding = new System.Windows.Forms.Padding(0, 0, 2, 0);
-            this.toolStripMenu.Size = new System.Drawing.Size(1137, 37);
+            this.toolStripMenu.Size = new System.Drawing.Size(1240, 39);
             this.toolStripMenu.TabIndex = 4;
             this.toolStripMenu.Text = "tsMain";
             // 
@@ -92,20 +94,20 @@
             this.tsbClose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.tsbClose.Image = ((System.Drawing.Image)(resources.GetObject("tsbClose.Image")));
             this.tsbClose.Name = "tsbClose";
-            this.tsbClose.Size = new System.Drawing.Size(32, 34);
+            this.tsbClose.Size = new System.Drawing.Size(36, 36);
             this.tsbClose.Text = "Close this tool";
             this.tsbClose.Click += new System.EventHandler(this.tsbClose_Click);
             // 
             // tssSeparator1
             // 
             this.tssSeparator1.Name = "tssSeparator1";
-            this.tssSeparator1.Size = new System.Drawing.Size(6, 37);
+            this.tssSeparator1.Size = new System.Drawing.Size(6, 39);
             // 
             // tsbProcess
             // 
             this.tsbProcess.Image = ((System.Drawing.Image)(resources.GetObject("tsbProcess.Image")));
             this.tsbProcess.Name = "tsbProcess";
-            this.tsbProcess.Size = new System.Drawing.Size(209, 34);
+            this.tsbProcess.Size = new System.Drawing.Size(238, 36);
             this.tsbProcess.Text = "Process attributes";
             this.tsbProcess.Click += new System.EventHandler(this.tsbProcess_Click);
             // 
@@ -114,7 +116,7 @@
             this.tsbCancel.Image = ((System.Drawing.Image)(resources.GetObject("tsbCancel.Image")));
             this.tsbCancel.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbCancel.Name = "tsbCancel";
-            this.tsbCancel.Size = new System.Drawing.Size(107, 34);
+            this.tsbCancel.Size = new System.Drawing.Size(122, 36);
             this.tsbCancel.Text = "Cancel";
             this.tsbCancel.Visible = false;
             this.tsbCancel.Click += new System.EventHandler(this.tsbCancel_Click);
@@ -122,14 +124,14 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 37);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 39);
             // 
             // tsbGetTemplate
             // 
             this.tsbGetTemplate.Image = ((System.Drawing.Image)(resources.GetObject("tsbGetTemplate.Image")));
             this.tsbGetTemplate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbGetTemplate.Name = "tsbGetTemplate";
-            this.tsbGetTemplate.Size = new System.Drawing.Size(165, 34);
+            this.tsbGetTemplate.Size = new System.Drawing.Size(190, 36);
             this.tsbGetTemplate.Text = "Get template";
             this.tsbGetTemplate.ToolTipText = "Get the Excel template file to list attributes to create";
             this.tsbGetTemplate.Click += new System.EventHandler(this.tsbGetTemplate_Click);
@@ -137,7 +139,7 @@
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 37);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 39);
             // 
             // tsddbLogs
             // 
@@ -147,32 +149,31 @@
             this.tsddbLogs.Image = ((System.Drawing.Image)(resources.GetObject("tsddbLogs.Image")));
             this.tsddbLogs.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsddbLogs.Name = "tsddbLogs";
-            this.tsddbLogs.Size = new System.Drawing.Size(105, 34);
+            this.tsddbLogs.Size = new System.Drawing.Size(118, 36);
             this.tsddbLogs.Text = "Logs";
             // 
             // exportLogsToolStripMenuItem
             // 
             this.exportLogsToolStripMenuItem.Name = "exportLogsToolStripMenuItem";
-            this.exportLogsToolStripMenuItem.Size = new System.Drawing.Size(207, 34);
+            this.exportLogsToolStripMenuItem.Size = new System.Drawing.Size(232, 38);
             this.exportLogsToolStripMenuItem.Text = "Export logs";
             this.exportLogsToolStripMenuItem.Click += new System.EventHandler(this.exportLogsToolStripMenuItem_Click);
             // 
             // clearLogsToolStripMenuItem
             // 
             this.clearLogsToolStripMenuItem.Name = "clearLogsToolStripMenuItem";
-            this.clearLogsToolStripMenuItem.Size = new System.Drawing.Size(207, 34);
+            this.clearLogsToolStripMenuItem.Size = new System.Drawing.Size(232, 38);
             this.clearLogsToolStripMenuItem.Text = "Clear logs";
             this.clearLogsToolStripMenuItem.Click += new System.EventHandler(this.clearLogsToolStripMenuItem_Click);
             // 
-            // toolStripButton1
+            // tsbExportEntities
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(32, 34);
-            this.toolStripButton1.Text = "toolStripButton1";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.tsbExportEntities.Image = global::Javista.AttributesFactory.Properties.Resources.ico_16_9507_Excel;
+            this.tsbExportEntities.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbExportEntities.Name = "tsbExportEntities";
+            this.tsbExportEntities.Size = new System.Drawing.Size(203, 36);
+            this.tsbExportEntities.Text = "Export entities";
+            this.tsbExportEntities.Click += new System.EventHandler(this.tsbExportEntities_Click);
             // 
             // pnlOptions
             // 
@@ -183,19 +184,19 @@
             this.pnlOptions.Controls.Add(this.lblFilePath);
             this.pnlOptions.Controls.Add(this.lblSolutionSelection);
             this.pnlOptions.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlOptions.Location = new System.Drawing.Point(0, 37);
+            this.pnlOptions.Location = new System.Drawing.Point(0, 39);
             this.pnlOptions.Margin = new System.Windows.Forms.Padding(4);
             this.pnlOptions.Name = "pnlOptions";
-            this.pnlOptions.Size = new System.Drawing.Size(1137, 94);
+            this.pnlOptions.Size = new System.Drawing.Size(1240, 98);
             this.pnlOptions.TabIndex = 5;
             // 
             // btnOpenFile
             // 
             this.btnOpenFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpenFile.Location = new System.Drawing.Point(1076, 44);
+            this.btnOpenFile.Location = new System.Drawing.Point(1174, 46);
             this.btnOpenFile.Margin = new System.Windows.Forms.Padding(0);
             this.btnOpenFile.Name = "btnOpenFile";
-            this.btnOpenFile.Size = new System.Drawing.Size(61, 38);
+            this.btnOpenFile.Size = new System.Drawing.Size(67, 40);
             this.btnOpenFile.TabIndex = 4;
             this.btnOpenFile.Text = "...";
             this.btnOpenFile.UseVisualStyleBackColor = true;
@@ -205,10 +206,10 @@
             // 
             this.txtFilePath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFilePath.Location = new System.Drawing.Point(367, 48);
+            this.txtFilePath.Location = new System.Drawing.Point(400, 50);
             this.txtFilePath.Margin = new System.Windows.Forms.Padding(4);
             this.txtFilePath.Name = "txtFilePath";
-            this.txtFilePath.Size = new System.Drawing.Size(706, 29);
+            this.txtFilePath.Size = new System.Drawing.Size(770, 31);
             this.txtFilePath.TabIndex = 3;
             // 
             // cbbSolutions
@@ -218,10 +219,10 @@
             this.cbbSolutions.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cbbSolutions.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbbSolutions.FormattingEnabled = true;
-            this.cbbSolutions.Location = new System.Drawing.Point(367, 0);
+            this.cbbSolutions.Location = new System.Drawing.Point(400, 0);
             this.cbbSolutions.Margin = new System.Windows.Forms.Padding(4);
             this.cbbSolutions.Name = "cbbSolutions";
-            this.cbbSolutions.Size = new System.Drawing.Size(706, 30);
+            this.cbbSolutions.Size = new System.Drawing.Size(770, 32);
             this.cbbSolutions.TabIndex = 1;
             this.cbbSolutions.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.combobox_DrawItem);
             this.cbbSolutions.Click += new System.EventHandler(this.cbbSolutions_Click);
@@ -230,20 +231,20 @@
             // 
             this.btnRefreshSolutions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshSolutions.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshSolutions.Image")));
-            this.btnRefreshSolutions.Location = new System.Drawing.Point(1076, 0);
+            this.btnRefreshSolutions.Location = new System.Drawing.Point(1174, 0);
             this.btnRefreshSolutions.Margin = new System.Windows.Forms.Padding(0);
             this.btnRefreshSolutions.Name = "btnRefreshSolutions";
-            this.btnRefreshSolutions.Size = new System.Drawing.Size(61, 38);
+            this.btnRefreshSolutions.Size = new System.Drawing.Size(67, 40);
             this.btnRefreshSolutions.TabIndex = 2;
             this.btnRefreshSolutions.UseVisualStyleBackColor = true;
             this.btnRefreshSolutions.Click += new System.EventHandler(this.btnRefreshSolutions_Click);
             // 
             // lblFilePath
             // 
-            this.lblFilePath.Location = new System.Drawing.Point(4, 46);
+            this.lblFilePath.Location = new System.Drawing.Point(4, 48);
             this.lblFilePath.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblFilePath.Name = "lblFilePath";
-            this.lblFilePath.Size = new System.Drawing.Size(367, 34);
+            this.lblFilePath.Size = new System.Drawing.Size(400, 35);
             this.lblFilePath.TabIndex = 5;
             this.lblFilePath.Text = "Excel file with attributes list";
             this.lblFilePath.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -253,7 +254,7 @@
             this.lblSolutionSelection.Location = new System.Drawing.Point(4, 7);
             this.lblSolutionSelection.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSolutionSelection.Name = "lblSolutionSelection";
-            this.lblSolutionSelection.Size = new System.Drawing.Size(367, 24);
+            this.lblSolutionSelection.Size = new System.Drawing.Size(400, 25);
             this.lblSolutionSelection.TabIndex = 1;
             this.lblSolutionSelection.Text = "Solution where to create attributes";
             // 
@@ -270,11 +271,11 @@
             this.gbOptions.Controls.Add(this.chkAddOptionSetSuffix);
             this.gbOptions.Controls.Add(this.chkAddLookupSuffix);
             this.gbOptions.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbOptions.Location = new System.Drawing.Point(0, 131);
+            this.gbOptions.Location = new System.Drawing.Point(0, 137);
             this.gbOptions.Margin = new System.Windows.Forms.Padding(4);
             this.gbOptions.Name = "gbOptions";
             this.gbOptions.Padding = new System.Windows.Forms.Padding(4);
-            this.gbOptions.Size = new System.Drawing.Size(1137, 78);
+            this.gbOptions.Size = new System.Drawing.Size(1240, 81);
             this.gbOptions.TabIndex = 14;
             this.gbOptions.TabStop = false;
             this.gbOptions.Text = "Options";
@@ -285,10 +286,10 @@
             this.chkAddOptionSetSuffix.Checked = true;
             this.chkAddOptionSetSuffix.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkAddOptionSetSuffix.Dock = System.Windows.Forms.DockStyle.Left;
-            this.chkAddOptionSetSuffix.Location = new System.Drawing.Point(382, 26);
+            this.chkAddOptionSetSuffix.Location = new System.Drawing.Point(421, 28);
             this.chkAddOptionSetSuffix.Margin = new System.Windows.Forms.Padding(4);
             this.chkAddOptionSetSuffix.Name = "chkAddOptionSetSuffix";
-            this.chkAddOptionSetSuffix.Size = new System.Drawing.Size(433, 48);
+            this.chkAddOptionSetSuffix.Size = new System.Drawing.Size(475, 49);
             this.chkAddOptionSetSuffix.TabIndex = 6;
             this.chkAddOptionSetSuffix.Text = "Add \"Code\" suffix to OptionSet schema name";
             this.chkAddOptionSetSuffix.UseVisualStyleBackColor = true;
@@ -299,10 +300,10 @@
             this.chkAddLookupSuffix.Checked = true;
             this.chkAddLookupSuffix.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkAddLookupSuffix.Dock = System.Windows.Forms.DockStyle.Left;
-            this.chkAddLookupSuffix.Location = new System.Drawing.Point(4, 26);
+            this.chkAddLookupSuffix.Location = new System.Drawing.Point(4, 28);
             this.chkAddLookupSuffix.Margin = new System.Windows.Forms.Padding(4);
             this.chkAddLookupSuffix.Name = "chkAddLookupSuffix";
-            this.chkAddLookupSuffix.Size = new System.Drawing.Size(378, 48);
+            this.chkAddLookupSuffix.Size = new System.Drawing.Size(417, 49);
             this.chkAddLookupSuffix.TabIndex = 5;
             this.chkAddLookupSuffix.Text = "Add \"Id\" suffix to Lookup schema name";
             this.chkAddLookupSuffix.UseVisualStyleBackColor = true;
@@ -311,11 +312,11 @@
             // 
             this.gbLogs.Controls.Add(this.lvLogs);
             this.gbLogs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbLogs.Location = new System.Drawing.Point(0, 209);
+            this.gbLogs.Location = new System.Drawing.Point(0, 218);
             this.gbLogs.Margin = new System.Windows.Forms.Padding(4);
             this.gbLogs.Name = "gbLogs";
             this.gbLogs.Padding = new System.Windows.Forms.Padding(4);
-            this.gbLogs.Size = new System.Drawing.Size(1137, 761);
+            this.gbLogs.Size = new System.Drawing.Size(1240, 792);
             this.gbLogs.TabIndex = 15;
             this.gbLogs.TabStop = false;
             this.gbLogs.Text = "Logs";
@@ -332,10 +333,11 @@
             this.chInfo});
             this.lvLogs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvLogs.FullRowSelect = true;
-            this.lvLogs.Location = new System.Drawing.Point(4, 26);
+            this.lvLogs.HideSelection = false;
+            this.lvLogs.Location = new System.Drawing.Point(4, 28);
             this.lvLogs.Margin = new System.Windows.Forms.Padding(4);
             this.lvLogs.Name = "lvLogs";
-            this.lvLogs.Size = new System.Drawing.Size(1129, 731);
+            this.lvLogs.Size = new System.Drawing.Size(1232, 760);
             this.lvLogs.SmallImageList = this.ilStatus;
             this.lvLogs.TabIndex = 0;
             this.lvLogs.UseCompatibleStateImageBehavior = false;
@@ -377,9 +379,14 @@
             this.chInfo.Text = "Additional info";
             this.chInfo.Width = 300;
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 39);
+            // 
             // PluginControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.gbLogs);
             this.Controls.Add(this.gbOptions);
@@ -387,7 +394,7 @@
             this.Controls.Add(this.toolStripMenu);
             this.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.Name = "PluginControl";
-            this.Size = new System.Drawing.Size(1137, 970);
+            this.Size = new System.Drawing.Size(1240, 1010);
             this.toolStripMenu.ResumeLayout(false);
             this.toolStripMenu.PerformLayout();
             this.pnlOptions.ResumeLayout(false);
@@ -432,6 +439,7 @@
         private System.Windows.Forms.ToolStripDropDownButton tsddbLogs;
         private System.Windows.Forms.ToolStripMenuItem exportLogsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearLogsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripButton tsbExportEntities;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }
