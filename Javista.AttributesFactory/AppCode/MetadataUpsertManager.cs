@@ -581,8 +581,8 @@ namespace Javista.AttributesFactory.AppCode
             var damd = new DecimalAttributeMetadata
             {
                 Precision = sheet.GetValue<int>(rowIndex, startCell),
-                MinValue = sheet.GetValue<int>(rowIndex, startCell + 1),
-                MaxValue = sheet.GetValue<int>(rowIndex, startCell + 2)
+                MinValue = sheet.GetValue<decimal>(rowIndex, startCell + 1),
+                MaxValue = sheet.GetValue<decimal>(rowIndex, startCell + 2)
             };
 
             return damd;
@@ -593,8 +593,8 @@ namespace Javista.AttributesFactory.AppCode
             var famd = new DoubleAttributeMetadata
             {
                 Precision = sheet.GetValue<int>(rowIndex, startCell),
-                MinValue = sheet.GetValue<int>(rowIndex, startCell + 1),
-                MaxValue = sheet.GetValue<int>(rowIndex, startCell + 2)
+                MinValue = sheet.GetValue<double>(rowIndex, startCell + 1),
+                MaxValue = sheet.GetValue<double>(rowIndex, startCell + 2)
             };
 
             return famd;
@@ -768,8 +768,8 @@ namespace Javista.AttributesFactory.AppCode
             var mamd = new MoneyAttributeMetadata
             {
                 Precision = sheet.GetValue<int>(rowIndex, startCell),
-                MinValue = sheet.GetValue<int>(rowIndex, startCell + 1),
-                MaxValue = sheet.GetValue<int>(rowIndex, startCell + 2)
+                MinValue = sheet.GetValue<double>(rowIndex, startCell + 1),
+                MaxValue = sheet.GetValue<double>(rowIndex, startCell + 2)
             };
 
             return mamd;
