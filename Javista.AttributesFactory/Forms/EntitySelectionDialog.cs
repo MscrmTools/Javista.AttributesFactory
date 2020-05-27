@@ -4,6 +4,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using SolutionInfo = Javista.AttributesFactory.AppCode.SolutionInfo;
 
 namespace Javista.AttributesFactory.Forms
 {

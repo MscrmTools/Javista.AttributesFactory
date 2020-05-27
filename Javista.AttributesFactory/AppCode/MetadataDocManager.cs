@@ -97,7 +97,7 @@ namespace Javista.AttributesFactory.AppCode
                             sheet.Cells[line, 1].Value = "Process";
                             sheet.Cells[line, 2].Value = amd.DisplayName?.UserLocalizedLabel?.Label ?? "N/A";
                             sheet.Cells[line, 3].Value = amd.SchemaName;
-                            sheet.Cells[line, 4].Value = amd.AttributeTypeName.Value;
+                            sheet.Cells[line, 4].Value = amd.AttributeTypeName?.Value ?? amd.AttributeType.ToString();
                             sheet.Cells[line, 5].Value = amd.EntityLogicalName;
                             sheet.Cells[line, 6].Value = amd.Description?.UserLocalizedLabel?.Label;
                             sheet.Cells[line, 7].Value = GetRequiredLevelString(amd.RequiredLevel.Value);
@@ -426,7 +426,11 @@ namespace Javista.AttributesFactory.AppCode
             }
             else if (amd is LookupAttributeMetadata lamd)
             {
-                var rel = emd.ManyToOneRelationships.First(r => r.ReferencingAttribute == amd.LogicalName);
+                var rel = emd.ManyToOneRelationships.FirstOrDefault(r => r.ReferencingAttribute == amd.LogicalName);
+                if (rel == null)
+                {
+                    return;
+                }
 
                 var behavior = string.Empty;
                 switch (rel.AssociatedMenuConfiguration.Behavior ?? AssociatedMenuBehavior.UseCollectionName)

@@ -2,6 +2,7 @@
 using Javista.AttributesFactory.Forms;
 using McTools.Xrm.Connection;
 using Microsoft.Xrm.Sdk;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,13 +19,15 @@ namespace Javista.AttributesFactory
 {
     public partial class PluginControl : PluginControlBase, IStatusBarMessenger
     {
-        private List<SolutionInfo> _solutions;
+        private List<AppCode.SolutionInfo> _solutions;
         private bool isRequestFromSolutionsList;
         private int languageCode;
 
         public PluginControl()
         {
             InitializeComponent();
+
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         }
 
         public event EventHandler<StatusBarMessageEventArgs> SendMessageToStatusBar;
@@ -51,7 +54,7 @@ namespace Javista.AttributesFactory
             {
                 FilePath = txtFilePath.Text,
                 LanguageCode = languageCode,
-                Solution = (SolutionInfo)cbbSolutions.SelectedItem,
+                Solution = (AppCode.SolutionInfo)cbbSolutions.SelectedItem,
                 AddLookupSuffix = chkAddLookupSuffix.Checked,
                 AddOptionSetSuffix = chkAddOptionSetSuffix.Checked
             };
@@ -175,7 +178,7 @@ namespace Javista.AttributesFactory
 
             if (e.Index == -1) return;
 
-            var solution = (SolutionInfo)((ComboBox)sender).Items[e.Index];
+            var solution = (AppCode.SolutionInfo)((ComboBox)sender).Items[e.Index];
 
             Rectangle r1 = e.Bounds;
             r1.Width /= 2;
