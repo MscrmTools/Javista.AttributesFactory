@@ -74,7 +74,7 @@ namespace Javista.AttributesFactory.AppCode
                     {
                         info.Attribute = $"{info.Attribute}Id";
                     }
-                    if (info.Type == "OptionSet" && settings.AddOptionSetSuffix && !info.Attribute.ToLower().EndsWith("Code"))
+                    if (info.Type == "OptionSet" && settings.AddOptionSetSuffix && !info.Attribute.ToLower().EndsWith("code"))
                     {
                         info.Attribute = $"{info.Attribute}Code";
                     }
@@ -470,7 +470,7 @@ namespace Javista.AttributesFactory.AppCode
                 lookup.Description = fakeAmd.Description;
             }
 
-            if (settings.AddLookupSuffix && !lookup.SchemaName.ToLower().EndsWith("Id"))
+            if (settings.AddLookupSuffix && !lookup.SchemaName.ToLower().EndsWith("id"))
             {
                 lookup.SchemaName = $"{lookup.SchemaName}Id";
                 lookup.LogicalName = lookup.SchemaName.ToLower();
@@ -707,7 +707,7 @@ namespace Javista.AttributesFactory.AppCode
                 Targets = new[] { sheet.GetValue<string>(rowIndex, startCell).ToLower() }
             };
 
-            if (settings.AddLookupSuffix && !lookup.SchemaName.ToLower().EndsWith("Id"))
+            if (settings.AddLookupSuffix && !lookup.SchemaName.ToLower().EndsWith("id"))
             {
                 lookup.SchemaName = $"{lookup.SchemaName}Id";
                 lookup.LogicalName = lookup.SchemaName.ToLower();
@@ -862,7 +862,7 @@ namespace Javista.AttributesFactory.AppCode
                     omd.Options.Add(om);
                 }
 
-                if (settings.AddOptionSetSuffix && !omd.Name.ToLower().EndsWith("Code"))
+                if (settings.AddOptionSetSuffix && !omd.Name.ToLower().EndsWith("code"))
                 {
                     omd.Name = $"{omd.Name}Code";
                 }
@@ -870,7 +870,7 @@ namespace Javista.AttributesFactory.AppCode
             else
             {
                 omd.IsGlobal = true;
-                omd.Name = omd.Name.ToLower();
+                omd.Name = optionsString.ToLower();
             }
 
             if (isGlobal)
