@@ -448,6 +448,7 @@ namespace Javista.AttributesFactory.AppCode
                 lookup = existingAttribute;
                 lookup.DisplayName = fakeAmd.DisplayName;
                 lookup.IsValidForAdvancedFind = fakeAmd.IsValidForAdvancedFind;
+                lookup.RequiredLevel = fakeAmd.RequiredLevel;
                 lookup.IsSecured = fakeAmd.IsSecured;
                 lookup.IsAuditEnabled = fakeAmd.IsAuditEnabled;
             }
@@ -460,6 +461,7 @@ namespace Javista.AttributesFactory.AppCode
                     LogicalName = fakeAmd.LogicalName,
                     IsValidForAdvancedFind = fakeAmd.IsValidForAdvancedFind,
                     IsSecured = fakeAmd.IsSecured,
+                    RequiredLevel = fakeAmd.RequiredLevel,
                     IsAuditEnabled = fakeAmd.IsAuditEnabled,
                     Targets = new[] { "account", "contact" }
                 };
@@ -702,6 +704,7 @@ namespace Javista.AttributesFactory.AppCode
                 SchemaName = fakeAmd.SchemaName,
                 LogicalName = fakeAmd.LogicalName,
                 IsValidForAdvancedFind = fakeAmd.IsValidForAdvancedFind,
+                RequiredLevel = fakeAmd.RequiredLevel,
                 IsSecured = fakeAmd.IsSecured,
                 IsAuditEnabled = fakeAmd.IsAuditEnabled,
                 Targets = new[] { sheet.GetValue<string>(rowIndex, startCell).ToLower() }
