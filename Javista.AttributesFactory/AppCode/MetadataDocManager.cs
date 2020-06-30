@@ -179,6 +179,8 @@ namespace Javista.AttributesFactory.AppCode
 
         private void ApplyDataValidation(ExcelWorksheet sheet, int line)
         {
+            sheet.DataValidations.RemoveAll(x => x != null);
+
             var actionValidation = sheet.Cells[3, 1, line, 1].DataValidation.AddListDataValidation();
             actionValidation.Formula.ExcelFormula = "=ValidationData!$O$2:$O$3";
             var typeValidation = sheet.Cells[3, 4, line, 4].DataValidation.AddListDataValidation();
@@ -191,6 +193,7 @@ namespace Javista.AttributesFactory.AppCode
             boolValidation2.Formula.ExcelFormula = "=ValidationData!$D$2:$D$3";
             var boolValidation3 = sheet.Cells[3, 10, line, 10].DataValidation.AddListDataValidation();
             boolValidation3.Formula.ExcelFormula = "=ValidationData!$D$2:$D$3";
+
             var sourceTypeValidation = sheet.Cells[3, 11, line, 11].DataValidation.AddListDataValidation();
             sourceTypeValidation.Formula.ExcelFormula = "=ValidationData!$C$2:$C$4";
 
@@ -405,7 +408,7 @@ namespace Javista.AttributesFactory.AppCode
             else if (amd is DateTimeAttributeMetadata dtAmd)
             {
                 string behavior = string.Empty;
-                switch (dtAmd.DateTimeBehavior.Value)
+                switch (dtAmd.DateTimeBehavior?.Value ?? "UserLocal")
                 {
                     case "DateOnly":
                         behavior = "Date only";
