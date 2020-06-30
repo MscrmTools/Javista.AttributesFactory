@@ -163,11 +163,11 @@ namespace Javista.AttributesFactory.AppCode
                                 break;
 
                             case "Lookup":
-                                amd = CreateLookupAttribute(workSheet, i, PropertiesFirstCellIndex + 30, fakeAmd, info.Entity, !fakeAmd.MetadataId.HasValue);
+                                amd = CreateLookupAttribute(workSheet, i, PropertiesFirstCellIndex + 30, fakeAmd, info, !fakeAmd.MetadataId.HasValue);
                                 break;
 
                             case "Customer":
-                                amd = CreateCustomerAttribute(workSheet, i, PropertiesFirstCellIndex + 31, fakeAmd, existingAttribute, info.Entity, !fakeAmd.MetadataId.HasValue);
+                                amd = CreateCustomerAttribute(workSheet, i, PropertiesFirstCellIndex + 31, fakeAmd, existingAttribute, info, !fakeAmd.MetadataId.HasValue);
                                 break;
                         }
 
@@ -345,7 +345,7 @@ namespace Javista.AttributesFactory.AppCode
             return amd;
         }
 
-        private AttributeMetadata CreateCustomerAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, AttributeMetadata fakeAmd, AttributeMetadata existingAttribute, string entity, bool isCreate)
+        private AttributeMetadata CreateCustomerAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, AttributeMetadata fakeAmd, AttributeMetadata existingAttribute, ProcessResult info, bool isCreate)
         {
             var amc = new AssociatedMenuConfiguration
             {
@@ -481,12 +481,12 @@ namespace Javista.AttributesFactory.AppCode
             var accountRelationship = new OneToManyRelationshipMetadata
             {
                 IsValidForAdvancedFind = sheet.GetValue<string>(rowIndex, startCell) == "Yes",
-                SchemaName = $"{settings.Solution.Prefix}{entity}_account_{lookup.SchemaName}",
+                SchemaName = $"{settings.Solution.Prefix}{info.Entity}_account_{lookup.SchemaName}",
                 AssociatedMenuConfiguration = amc,
                 CascadeConfiguration = cc,
                 IsHierarchical = false,
                 ReferencedEntity = "account",
-                ReferencingEntity = entity,
+                ReferencingEntity = info.Entity,
                 SecurityTypes = SecurityTypes.Append,
             };
 
@@ -500,12 +500,12 @@ namespace Javista.AttributesFactory.AppCode
             var contactRelationship = new OneToManyRelationshipMetadata
             {
                 IsValidForAdvancedFind = sheet.GetValue<string>(rowIndex, startCell) == "Yes",
-                SchemaName = $"{settings.Solution.Prefix}{entity}_contact_{lookup.SchemaName}",
+                SchemaName = $"{settings.Solution.Prefix}{info.Entity}_contact_{lookup.SchemaName}",
                 AssociatedMenuConfiguration = amc,
                 CascadeConfiguration = cc,
                 IsHierarchical = false,
                 ReferencedEntity = "contact",
-                ReferencingEntity = entity,
+                ReferencingEntity = info.Entity,
                 SecurityTypes = SecurityTypes.Append,
             };
 
@@ -524,6 +524,8 @@ namespace Javista.AttributesFactory.AppCode
                     Lookup = (LookupAttributeMetadata)lookup,
                     SolutionUniqueName = settings.Solution.UniqueName
                 });
+
+                info.IsCreate = true;
 
                 return null;
             }
@@ -602,7 +604,7 @@ namespace Javista.AttributesFactory.AppCode
             return famd;
         }
 
-        private AttributeMetadata CreateLookupAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, AttributeMetadata fakeAmd, string entity, bool isCreate)
+        private AttributeMetadata CreateLookupAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, AttributeMetadata fakeAmd, ProcessResult info, bool isCreate)
         {
             var amc = new AssociatedMenuConfiguration
             {
@@ -725,12 +727,12 @@ namespace Javista.AttributesFactory.AppCode
             {
                 IsValidForAdvancedFind = sheet.GetValue<string>(rowIndex, startCell + 1) == "Yes",
                 SchemaName =
-                    $"{settings.Solution.Prefix}{entity}_{sheet.GetValue<string>(rowIndex, startCell)}_{lookup.SchemaName}",
+                    $"{settings.Solution.Prefix}{info.Entity}_{sheet.GetValue<string>(rowIndex, startCell)}_{lookup.SchemaName}",
                 AssociatedMenuConfiguration = amc,
                 CascadeConfiguration = cc,
                 IsHierarchical = sheet.GetValue<string>(rowIndex, startCell + 2) == "Yes",
                 ReferencedEntity = sheet.GetValue<string>(rowIndex, startCell),
-                ReferencingEntity = entity,
+                ReferencingEntity = info.Entity,
                 SecurityTypes = SecurityTypes.Append,
             };
 
@@ -742,6 +744,8 @@ namespace Javista.AttributesFactory.AppCode
                     Lookup = lookup,
                     SolutionUniqueName = settings.Solution.UniqueName
                 });
+
+                info.IsCreate = true;
 
                 return null;
             }
