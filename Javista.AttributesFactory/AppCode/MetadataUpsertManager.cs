@@ -937,7 +937,7 @@ namespace Javista.AttributesFactory.AppCode
                     omd2.IsGlobal = true;
                     omd2.DisplayName = omd.DisplayName;
                     omd2.OptionSetType = omd.OptionSetType;
-                    omd2.Name = omd.Name;
+                    omd2.Name = omd.Name.ToLower();
                     omd2.Description = omd.Description;
                 }
                 else
@@ -953,13 +953,19 @@ namespace Javista.AttributesFactory.AppCode
                 if (!string.IsNullOrEmpty(sheet.GetValue<string>(rowIndex, startCell + 2)))
                 {
                     int defaultValue = sheet.GetValue<int>(rowIndex, startCell + 2);
-                    if (defaultValue > 0 && defaultValue < 1000)
-                    {
-                        defaultValue =
-                            int.Parse($"{settings.Solution.OptionSetPrefix}{defaultValue.ToString().PadLeft(4, '0')}");
-                    }
 
-                    amd.DefaultFormValue = defaultValue;
+                    if (omd.Options.Any(o => o.Value == defaultValue))
+                    {
+                        amd.DefaultFormValue = defaultValue;
+                    }
+                    else
+                    {
+                        defaultValue = int.Parse($"{settings.Solution.OptionSetPrefix}{defaultValue.ToString().PadLeft(4, '0')}");
+                        if (omd.Options.Any(o => o.Value == defaultValue))
+                        {
+                            amd.DefaultFormValue = defaultValue;
+                        }
+                    }
                 }
 
                 return amd;
