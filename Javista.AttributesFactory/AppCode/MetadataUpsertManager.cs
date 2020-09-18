@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.ServiceModel;
 
 namespace Javista.AttributesFactory.AppCode
 {
@@ -134,10 +135,6 @@ namespace Javista.AttributesFactory.AppCode
                                 amd = CreateBooleanAttribute(workSheet, i, PropertiesFirstCellIndex + 8);
                                 break;
 
-                            case "Image":
-                                amd = new ImageAttributeMetadata();
-                                break;
-
                             case "Whole number":
                                 amd = CreateNumberAttribute(workSheet, i, PropertiesFirstCellIndex + 11);
                                 break;
@@ -168,6 +165,14 @@ namespace Javista.AttributesFactory.AppCode
 
                             case "Customer":
                                 amd = CreateCustomerAttribute(workSheet, i, PropertiesFirstCellIndex + 31, fakeAmd, existingAttribute, info, !fakeAmd.MetadataId.HasValue);
+                                break;
+
+                            case "File":
+                                amd = CreateFileAttribute(workSheet, i, PropertiesFirstCellIndex + 45);
+                                break;
+
+                            case "Image":
+                                amd = CreateImageAttribute(workSheet, i, PropertiesFirstCellIndex + 47);
                                 break;
                         }
 
@@ -202,13 +207,6 @@ namespace Javista.AttributesFactory.AppCode
                             amd.Description = fakeAmd.Description;
                         }
 
-                        if (amd is ImageAttributeMetadata)
-                        {
-                            amd.SchemaName = "entityimage";
-                            amd.LogicalName = "entityimage";
-                            amd.IsValidForAdvancedFind = new BooleanManagedProperty(false);
-                        }
-
                         info.Attribute = amd.SchemaName;
 
                         OrganizationRequest request;
@@ -236,10 +234,34 @@ namespace Javista.AttributesFactory.AppCode
                             info.IsCreate = true;
                         }
 
-                        service.Execute(request);
-                        info.Success = true;
-                        info.Processing = false;
-                        worker.ReportProgress(percent, info);
+                        try
+                        {
+                            service.Execute(request);
+                            info.Success = true;
+                            info.Processing = false;
+                            worker.ReportProgress(percent, info);
+                        }
+                        catch (FaultException<OrganizationServiceFault> error)
+                        {
+                            // Special handle for file attribute as they are not returned by the query
+                            if (info.IsCreate && error.Detail.ErrorCode == -2147192813)
+                            {
+                                request = new UpdateAttributeRequest
+                                {
+                                    Attribute = amd,
+                                    EntityName = info.Entity,
+                                    SolutionUniqueName = settings.Solution.UniqueName,
+                                    MergeLabels = true
+                                };
+
+                                info.IsCreate = false;
+
+                                service.Execute(request);
+                                info.Success = true;
+                                info.Processing = false;
+                                worker.ReportProgress(percent, info);
+                            }
+                        }
                     }
                     catch (Exception e)
                     {
@@ -592,6 +614,16 @@ namespace Javista.AttributesFactory.AppCode
             return damd;
         }
 
+        private AttributeMetadata CreateFileAttribute(ExcelWorksheet sheet, int rowIndex, int startCell)
+        {
+            var famd = new FileAttributeMetadata
+            {
+                MaxSizeInKB = sheet.GetValue<int>(rowIndex, startCell),
+            };
+
+            return famd;
+        }
+
         private AttributeMetadata CreateFloatAttribute(ExcelWorksheet sheet, int rowIndex, int startCell)
         {
             var famd = new DoubleAttributeMetadata
@@ -602,6 +634,18 @@ namespace Javista.AttributesFactory.AppCode
             };
 
             return famd;
+        }
+
+        private AttributeMetadata CreateImageAttribute(ExcelWorksheet sheet, int rowIndex, int startCell)
+        {
+            var iamd = new ImageAttributeMetadata
+            {
+                MaxSizeInKB = sheet.GetValue<int>(rowIndex, startCell),
+                CanStoreFullImage = sheet.GetValue<string>(rowIndex, startCell + 1) == "True",
+                IsPrimaryImage = sheet.GetValue<string>(rowIndex, startCell + 2) == "True"
+            };
+
+            return iamd;
         }
 
         private AttributeMetadata CreateLookupAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, AttributeMetadata fakeAmd, ProcessResult info, bool isCreate)
@@ -958,16 +1002,19 @@ namespace Javista.AttributesFactory.AppCode
                 {
                     int defaultValue = sheet.GetValue<int>(rowIndex, startCell + 2);
 
-                    if (omd.Options.Any(o => o.Value == defaultValue))
+                    if (defaultValue != -1)
                     {
-                        amd.DefaultFormValue = defaultValue;
-                    }
-                    else
-                    {
-                        defaultValue = int.Parse($"{settings.Solution.OptionSetPrefix}{defaultValue.ToString().PadLeft(4, '0')}");
                         if (omd.Options.Any(o => o.Value == defaultValue))
                         {
                             amd.DefaultFormValue = defaultValue;
+                        }
+                        else
+                        {
+                            defaultValue = int.Parse($"{settings.Solution.OptionSetPrefix}{defaultValue.ToString().PadLeft(4, '0')}");
+                            if (omd.Options.Any(o => o.Value == defaultValue))
+                            {
+                                amd.DefaultFormValue = defaultValue;
+                            }
                         }
                     }
                 }

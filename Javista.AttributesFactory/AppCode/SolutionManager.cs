@@ -68,7 +68,8 @@ namespace Javista.AttributesFactory.AppCode
                 e.GetAttributeValue<string>("friendlyname"),
                 e.GetAttributeValue<AliasedValue>("publisher.customizationprefix").Value.ToString(),
                 (int)e.GetAttributeValue<AliasedValue>("publisher.customizationoptionvalueprefix").Value,
-                e.Id)).ToList();
+                e.Id,
+                e.GetAttributeValue<string>("version"))).ToList();
         }
     }
 }

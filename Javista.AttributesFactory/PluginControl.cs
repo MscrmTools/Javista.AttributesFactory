@@ -186,7 +186,7 @@ namespace Javista.AttributesFactory
             // First column
             using (SolidBrush sb = new SolidBrush(e.ForeColor))
             {
-                e.Graphics.DrawString(solution.ToString(), e.Font, sb, r1);
+                e.Graphics.DrawString($"{solution} {solution.Version}", e.Font, sb, r1);
             }
 
             // Second column
