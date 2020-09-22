@@ -261,6 +261,13 @@ namespace Javista.AttributesFactory.AppCode
                                 info.Processing = false;
                                 worker.ReportProgress(percent, info);
                             }
+                            else
+                            {
+                                info.Success = false;
+                                info.Processing = false;
+                                info.Message = error.Message;
+                                worker.ReportProgress(percent, info);
+                            }
                         }
                     }
                     catch (Exception e)
