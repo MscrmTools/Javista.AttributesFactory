@@ -18,7 +18,7 @@ namespace Javista.AttributesFactory.AppCode
         private const int DescriptionCellIndex = 6;
         private const int DisplayNameCellIndex = 2;
         private const int EntityCellIndex = 5;
-        private const int FieldTypeCellIndex = 10;
+        private const int FieldTypeCellIndex = 11;
         private const int PropertiesFirstCellIndex = 12;
         private const int RequiredLevelCellIndex = 7;
         private const int SchemaNameCellIndex = 3;
