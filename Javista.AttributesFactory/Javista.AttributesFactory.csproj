@@ -218,7 +218,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>IF NOT EXIST Plugins mkdir Plugins
-IF $(ConfigurationName) == Release "$(SolutionDir)packages\ILMerge.3.0.40\tools\net452\ILMerge.exe" /log:"$(TargetDir)ilmerge.log" /targetplatform:v4,"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.2" /lib:"C:\Windows\Microsoft.Net\Framework64\v4.0.30319" /out:"$(TargetDir)Plugins\$(TargetFileName)" "$(TargetFileName)"   "$(TargetDir)epplus.dll"
+IF $(ConfigurationName) == Release "$(SolutionDir)packages\ILMerge.3.0.41\tools\net452\ILMerge.exe" /log:"$(TargetDir)ilmerge.log" /targetplatform:v4,"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.2" /lib:"C:\Windows\Microsoft.Net\Framework64\v4.0.30319" /out:"$(TargetDir)Plugins\$(TargetFileName)" "$(TargetFileName)"   "$(TargetDir)epplus.dll"
 
 IF $(ConfigurationName) == Debug COPY /Y "$(TargetFileName)" "$(TargetDir)Plugins"
 
