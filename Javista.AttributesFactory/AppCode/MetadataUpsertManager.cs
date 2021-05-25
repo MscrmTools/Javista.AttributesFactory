@@ -787,6 +787,11 @@ namespace Javista.AttributesFactory.AppCode
                 SecurityTypes = SecurityTypes.Append,
             };
 
+            if (relationship.SchemaName.Length > 100)
+            {
+                relationship.SchemaName = relationship.SchemaName.Substring(0, 100);
+            }
+
             if (isCreate)
             {
                 service.Execute(new CreateOneToManyRequest

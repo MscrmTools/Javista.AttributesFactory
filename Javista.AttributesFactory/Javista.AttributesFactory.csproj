@@ -196,6 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Javista.AttributesFactory.nuspec" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Forms\EntitySelectionDialog.resx">
       <DependentUpon>EntitySelectionDialog.cs</DependentUpon>

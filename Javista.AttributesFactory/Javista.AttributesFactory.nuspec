@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Javista.AttributesFactory</id>
+    <version>1.2020.12.7</version>
+    <title>Attributes Factory</title>
+    <authors>Javista</authors>
+    <owners>Javista</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectUrl>https://github.com/MscrmTools/Javista.AttributesFactory</projectUrl>
+    <iconUrl>https://www.xrmtoolbox.com/plugins/Javista.XrmToolBox.ManageNN/javista.png</iconUrl>
+    <description>Create or Update attributes from an Excel template</description>
+    <summary>Create or Update attributes from an Excel template</summary>
+    <releaseNotes>Fixed creation of lookups when relationship name length exceeds 100 characters</releaseNotes>
+    <tags>XrmToolBox Attributes Factory Metadata</tags>
+    <dependencies>
+      <dependency id="XrmToolBox" version="1.2016.4.28" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Plugins\Javista.AttributesFactory.dll" target="lib\net452\Plugins" />
+  </files>
+</package>
