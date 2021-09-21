@@ -117,7 +117,7 @@ namespace Javista.AttributesFactory.AppCode
                                 break;
 
                             case "OptionSet":
-                                amd = CreateOptionsetAttribute(workSheet, i, PropertiesFirstCellIndex + 4, false, info.DisplayName, info.Attribute, info.Entity, fakeAmd.Description?.LocalizedLabels[0]?.Label, (existingAttribute as PicklistAttributeMetadata)?.OptionSet);
+                                amd = CreateOptionsetAttribute(workSheet, i, PropertiesFirstCellIndex + 4, false, info.DisplayName, info.Attribute, info.Entity, fakeAmd.Description?.LocalizedLabels[0]?.Label, (existingAttribute as PicklistAttributeMetadata)?.OptionSet, existingAttribute != null);
                                 break;
 
                             case "Multiselect OptionSet":
@@ -128,7 +128,7 @@ namespace Javista.AttributesFactory.AppCode
                                         "Multiselect OptionSet can only be created in a version 9 or above of Microsoft Dynamics 365");
                                 }
 
-                                amd = CreateOptionsetAttribute(workSheet, i, PropertiesFirstCellIndex + 4, true, info.DisplayName, info.Attribute, info.Entity, fakeAmd.Description?.LocalizedLabels[0]?.Label, (existingAttribute as PicklistAttributeMetadata)?.OptionSet);
+                                amd = CreateOptionsetAttribute(workSheet, i, PropertiesFirstCellIndex + 4, true, info.DisplayName, info.Attribute, info.Entity, fakeAmd.Description?.LocalizedLabels[0]?.Label, (existingAttribute as PicklistAttributeMetadata)?.OptionSet, existingAttribute != null);
                                 break;
 
                             case "Two options":
@@ -872,7 +872,7 @@ namespace Javista.AttributesFactory.AppCode
             return namd;
         }
 
-        private AttributeMetadata CreateOptionsetAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, bool isMultiSelect, string displayName, string schemaName, string entity, string description, OptionSetMetadata eomd)
+        private AttributeMetadata CreateOptionsetAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, bool isMultiSelect, string displayName, string schemaName, string entity, string description, OptionSetMetadata eomd, bool existingAttribute)
         {
             var isGlobal = sheet.GetValue<string>(rowIndex, startCell + 1) == "Yes";
             var omd = new OptionSetMetadata
@@ -938,6 +938,15 @@ namespace Javista.AttributesFactory.AppCode
 
             if (isGlobal)
             {
+                if (existingAttribute)
+                {
+                    omd.Name = eomd.Name;
+                }
+                else
+                {
+                    omd.Name = omd.Name.ToLower();
+                }
+
                 if (containsValue)
                 {
                     if (eomd == null)
