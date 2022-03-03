@@ -28,6 +28,10 @@ namespace Javista.AttributesFactory
             InitializeComponent();
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            var tt = new ToolTip() { IsBalloon = true, ToolTipIcon = ToolTipIcon.Info, ToolTipTitle = "Delay between operations" };
+            tt.SetToolTip(lblDelay, "Time to wait (in seconds) between each attribute operation. This is to ensure the backend server is not sollicited too much");
+            tt.SetToolTip(nudDelay, "Time to wait (in seconds) between each attribute operation. This is to ensure the backend server is not sollicited too much");
         }
 
         public event EventHandler<StatusBarMessageEventArgs> SendMessageToStatusBar;
@@ -56,7 +60,8 @@ namespace Javista.AttributesFactory
                 LanguageCode = languageCode,
                 Solution = (AppCode.SolutionInfo)cbbSolutions.SelectedItem,
                 AddLookupSuffix = chkAddLookupSuffix.Checked,
-                AddOptionSetSuffix = chkAddOptionSetSuffix.Checked
+                AddOptionSetSuffix = chkAddOptionSetSuffix.Checked,
+                ThrottleInSeconds = Convert.ToInt32(nudDelay.Value)
             };
 
             lvLogs.Items.Clear();

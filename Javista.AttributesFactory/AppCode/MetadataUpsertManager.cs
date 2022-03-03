@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading;
 
 namespace Javista.AttributesFactory.AppCode
 {
@@ -276,6 +277,13 @@ namespace Javista.AttributesFactory.AppCode
                         info.Processing = false;
                         info.Message = e.Message;
                         worker.ReportProgress(percent, info);
+                    }
+                    finally
+                    {
+                        if (settings.ThrottleInSeconds != 0)
+                        {
+                            Thread.Sleep(settings.ThrottleInSeconds * 1000);
+                        }
                     }
                 }
             }

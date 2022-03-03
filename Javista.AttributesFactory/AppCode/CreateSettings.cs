@@ -7,5 +7,6 @@
         public string FilePath { get; set; }
         public int LanguageCode { get; set; }
         public SolutionInfo Solution { get; set; }
+        public int ThrottleInSeconds { get; internal set; }
     }
 }

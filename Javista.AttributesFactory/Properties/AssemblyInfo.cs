@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Javista.AttributesFactory")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Javista")]
+[assembly: AssemblyCompany("Javista (Maintained by Tanguy Touzard)")]
 [assembly: AssemblyProduct("Javista.AttributesFactory")]
 [assembly: AssemblyCopyright("Copyright ©Javista 2017")]
 [assembly: AssemblyTrademark("")]
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2021.9.9")]
-[assembly: AssemblyFileVersion("1.2021.9.9")]
+[assembly: AssemblyVersion("1.2022.3.10")]
+[assembly: AssemblyFileVersion("1.2022.3.10")]
