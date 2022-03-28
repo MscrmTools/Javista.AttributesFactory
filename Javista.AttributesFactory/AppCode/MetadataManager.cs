@@ -60,5 +60,53 @@ namespace Javista.AttributesFactory.AppCode
 
             return new List<EntityMetadata>();
         }
+
+        public static Guid CreateEntity(string schemaName, IOrganizationService service)
+        {
+            CreateEntityRequest createrequest = new CreateEntityRequest
+            {
+
+                //Define the entity
+                Entity = new EntityMetadata
+                {
+                    SchemaName = schemaName,
+                    DisplayName = new Label(schemaName, 1033),
+                    DisplayCollectionName = new Label(schemaName, 1033),
+                    OwnershipType = OwnershipTypes.UserOwned,
+                    IsActivity = false,
+                },
+
+                // Define the primary attribute for the entity
+                PrimaryAttribute = new StringAttributeMetadata
+                {
+                    SchemaName = schemaName.Split(',')[0] + "_name",
+                    RequiredLevel = new AttributeRequiredLevelManagedProperty(AttributeRequiredLevel.None),
+                    MaxLength = 100,
+                    FormatName = StringFormatName.Text,
+                    DisplayName = new Label(schemaName, 1033)
+                }
+
+            };
+
+            var response = (CreateEntityResponse)service.Execute(createrequest);
+            return response.EntityId;
+        }
+
+        public static bool IsEntityExist(string schemaName, IOrganizationService service)
+        {
+            MetadataFilterExpression entityFilter = new MetadataFilterExpression();
+            entityFilter.Conditions.Add(new MetadataConditionExpression("SchemaName", MetadataConditionOperator.Equals, schemaName));
+
+            RetrieveMetadataChangesRequest req = new RetrieveMetadataChangesRequest()
+            {
+                Query = new EntityQueryExpression()
+                {
+                    Criteria = entityFilter
+                }
+            };
+
+            RetrieveMetadataChangesResponse resp = service.Execute(req) as RetrieveMetadataChangesResponse;
+            return resp.Results.Count == 1;
+        }
     }
 }

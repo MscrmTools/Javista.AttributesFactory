@@ -61,6 +61,7 @@ namespace Javista.AttributesFactory
                 Solution = (AppCode.SolutionInfo)cbbSolutions.SelectedItem,
                 AddLookupSuffix = chkAddLookupSuffix.Checked,
                 AddOptionSetSuffix = chkAddOptionSetSuffix.Checked,
+                AddCreateEntities = chkCreateEntities.Checked,
                 ThrottleInSeconds = Convert.ToInt32(nudDelay.Value)
             };
 

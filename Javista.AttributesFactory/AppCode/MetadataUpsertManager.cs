@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using Javista.AttributesFactory.AppCode;
 
 namespace Javista.AttributesFactory.AppCode
 {
@@ -91,8 +92,17 @@ namespace Javista.AttributesFactory.AppCode
 
                         // Check validity for an Update
                         var ei = eiCache.FirstOrDefault(e => e.Name == info.Entity);
+
                         if (ei == null)
                         {
+                            // Check if entity exists and create it if it does not
+                            if (settings.AddCreateEntities)
+                            {
+                                if (!MetadataManager.IsEntityExist(info.Entity, service))
+                                {
+                                    MetadataManager.CreateEntity(info.Entity, service);
+                                }
+                            }
                             ei = new EntityInfo(info.Entity, service);
                             eiCache.Add(ei);
                         }
@@ -1160,5 +1170,7 @@ namespace Javista.AttributesFactory.AppCode
             }
             return fakeAmd;
         }
+    
+    
     }
 }

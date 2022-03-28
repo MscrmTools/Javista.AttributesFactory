@@ -4,6 +4,7 @@
     {
         public bool AddLookupSuffix { get; internal set; }
         public bool AddOptionSetSuffix { get; internal set; }
+        public bool AddCreateEntities { get; internal set; }
         public string FilePath { get; set; }
         public int LanguageCode { get; set; }
         public SolutionInfo Solution { get; set; }

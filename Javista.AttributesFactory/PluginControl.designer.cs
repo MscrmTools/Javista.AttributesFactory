@@ -54,6 +54,7 @@
             this.gbOptions = new System.Windows.Forms.GroupBox();
             this.chkAddOptionSetSuffix = new System.Windows.Forms.CheckBox();
             this.chkAddLookupSuffix = new System.Windows.Forms.CheckBox();
+            this.chkCreateEntities = new System.Windows.Forms.CheckBox();
             this.gbLogs = new System.Windows.Forms.GroupBox();
             this.lvLogs = new System.Windows.Forms.ListView();
             this.chImage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -274,6 +275,7 @@
             this.gbOptions.Controls.Add(this.lblDelay);
             this.gbOptions.Controls.Add(this.chkAddOptionSetSuffix);
             this.gbOptions.Controls.Add(this.chkAddLookupSuffix);
+            this.gbOptions.Controls.Add(this.chkCreateEntities);
             this.gbOptions.Dock = System.Windows.Forms.DockStyle.Top;
             this.gbOptions.Location = new System.Drawing.Point(0, 112);
             this.gbOptions.Name = "gbOptions";
@@ -307,6 +309,19 @@
             this.chkAddLookupSuffix.TabIndex = 5;
             this.chkAddLookupSuffix.Text = "Add \"Id\" suffix to Lookup schema name";
             this.chkAddLookupSuffix.UseVisualStyleBackColor = true;
+            //
+            // chkCreateEntity
+            // 
+            this.chkCreateEntities.AutoSize = true;
+            this.chkCreateEntities.Checked = false;
+            this.chkCreateEntities.CheckState = System.Windows.Forms.CheckState.Unchecked;
+            this.chkCreateEntities.Dock = System.Windows.Forms.DockStyle.Right;
+            this.chkCreateEntities.Location = new System.Drawing.Point(3, 34);
+            this.chkCreateEntities.Name = "chkCreateEntities";
+            this.chkCreateEntities.Size = new System.Drawing.Size(300, 34);
+            this.chkCreateEntities.TabIndex = 7;
+            this.chkCreateEntities.Text = "Create entities";
+            this.chkCreateEntities.UseVisualStyleBackColor = true;
             // 
             // gbLogs
             // 
@@ -446,6 +461,7 @@
         private System.Windows.Forms.GroupBox gbOptions;
         private System.Windows.Forms.CheckBox chkAddOptionSetSuffix;
         private System.Windows.Forms.CheckBox chkAddLookupSuffix;
+        private System.Windows.Forms.CheckBox chkCreateEntities;
         private System.Windows.Forms.ComboBox cbbSolutions;
         private System.Windows.Forms.Button btnRefreshSolutions;
         private System.Windows.Forms.GroupBox gbLogs;
