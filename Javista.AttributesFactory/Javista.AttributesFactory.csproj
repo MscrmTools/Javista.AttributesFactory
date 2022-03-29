@@ -227,18 +227,29 @@
     <Compile Include="AppCode\ListViewToCsv.cs" />
     <Compile Include="AppCode\MetadataDocManager.cs" />
     <Compile Include="AppCode\MetadataManager.cs" />
+    <Compile Include="AppCode\NewEntityInfo.cs" />
     <Compile Include="AppCode\ProcessResult.cs" />
     <Compile Include="AppCode\CreateSettings.cs" />
     <Compile Include="AppCode\EntityInfo.cs" />
     <Compile Include="AppCode\MetadataUpsertManager.cs" />
     <Compile Include="AppCode\OrganizationManager.cs" />
     <Compile Include="AppCode\SolutionManager.cs" />
-    <Compile Include="Forms\EntitySelectionDialog.cs" />
+    <Compile Include="Forms\EntityCreationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EntityCreationDialog.Designer.cs">
+      <DependentUpon>EntityCreationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\EntitySelectionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\EntitySelectionDialog.Designer.cs">
       <DependentUpon>EntitySelectionDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Plugin.cs" />
-    <Compile Include="PluginControl.cs" />
+    <Compile Include="PluginControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="PluginControl.designer.cs">
       <DependentUpon>PluginControl.cs</DependentUpon>
     </Compile>
@@ -253,6 +264,9 @@
     <None Include="app.config" />
     <None Include="Javista.AttributesFactory.nuspec" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="Forms\EntityCreationDialog.resx">
+      <DependentUpon>EntityCreationDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\EntitySelectionDialog.resx">
       <DependentUpon>EntitySelectionDialog.cs</DependentUpon>
     </EmbeddedResource>

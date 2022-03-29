@@ -1,6 +1,6 @@
 ﻿namespace Javista.AttributesFactory.AppCode
 {
-    internal class CreateSettings
+    public class CreateSettings
     {
         public bool AddLookupSuffix { get; internal set; }
         public bool AddOptionSetSuffix { get; internal set; }

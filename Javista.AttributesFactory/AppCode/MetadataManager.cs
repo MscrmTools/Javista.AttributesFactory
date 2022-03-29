@@ -60,5 +60,34 @@ namespace Javista.AttributesFactory.AppCode
 
             return new List<EntityMetadata>();
         }
+
+        public static List<string> GetNotExistingEntities(List<string> entities, IOrganizationService service)
+        {
+            EntityQueryExpression entityQueryExpression = new EntityQueryExpression
+            {
+                Criteria = new MetadataFilterExpression(LogicalOperator.And)
+                {
+                    Conditions =
+                    {
+                        new MetadataConditionExpression("LogicalName", MetadataConditionOperator.In, entities.Select(e => e.ToLower()).ToArray())
+                    }
+                },
+                Properties = new MetadataPropertiesExpression
+                {
+                    AllProperties = false,
+                    PropertyNames = { "DisplayName", "LogicalName" }
+                }
+            };
+
+            RetrieveMetadataChangesRequest retrieveMetadataChangesRequest = new RetrieveMetadataChangesRequest
+            {
+                Query = entityQueryExpression,
+                ClientVersionStamp = null
+            };
+
+            var response = (RetrieveMetadataChangesResponse)service.Execute(retrieveMetadataChangesRequest);
+
+            return entities.Except(response.EntityMetadata.Select(e => e.LogicalName)).ToList();
+        }
     }
 }

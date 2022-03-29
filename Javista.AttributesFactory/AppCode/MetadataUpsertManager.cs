@@ -37,6 +37,35 @@ namespace Javista.AttributesFactory.AppCode
             this.majorVersion = majorVersion;
         }
 
+        public List<string> GetEntities()
+        {
+            var entities = new List<string>();
+
+            byte[] file = File.ReadAllBytes(settings.FilePath);
+            using (MemoryStream ms = new MemoryStream(file))
+            using (ExcelPackage package = new ExcelPackage(ms))
+            {
+                ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+
+                int index = 0;
+                for (int i = 3; i <= workSheet.Dimension.End.Row; i++)
+                {
+                    if (string.IsNullOrEmpty(workSheet.GetValue<string>(i, TypeCellIndex))
+                    || workSheet.GetValue<string>(i, 1) == "Ignore")
+                    {
+                        continue;
+                    }
+
+                    index++;
+
+                    var entity = workSheet.GetValue<string>(i, EntityCellIndex);
+                    if (!entities.Contains(entity)) entities.Add(entity);
+                }
+            }
+
+            return entities;
+        }
+
         public void Process(BackgroundWorker worker, ConnectionDetail detail)
         {
             var eiCache = new List<EntityInfo>();
@@ -68,7 +97,7 @@ namespace Javista.AttributesFactory.AppCode
                         DisplayName = workSheet.GetValue<string>(i, DisplayNameCellIndex),
                         Attribute = workSheet.GetValue<string>(i, SchemaNameCellIndex),
                         Type = workSheet.GetValue<string>(i, TypeCellIndex),
-                        Entity = workSheet.GetValue<string>(i, EntityCellIndex),
+                        Entity = workSheet.GetValue<string>(i, EntityCellIndex).ToLower(),
                         Processing = true,
                     };
 

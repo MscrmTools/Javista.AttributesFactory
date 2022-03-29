@@ -67,13 +67,20 @@ namespace Javista.AttributesFactory
             lvLogs.Items.Clear();
             SetWorkingState(true);
 
+            var manager = new MetadataUpsertManager(settings, Service, ConnectionDetail.OrganizationMajorVersion);
+            var entities = MetadataManager.GetNotExistingEntities(manager.GetEntities(), Service);
+            if (entities.Count > 0)
+            {
+                var ecd = new EntityCreationDialog(entities.Select(e => new NewEntityInfo { SchemaName = e }).ToArray(), settings, Service);
+                ecd.ShowDialog(this);
+            }
+
             WorkAsync(new WorkAsyncInfo
             {
                 Message = string.Empty,
                 AsyncArgument = settings,
                 Work = (w, e) =>
                 {
-                    var manager = new MetadataUpsertManager((CreateSettings)e.Argument, Service, ConnectionDetail.OrganizationMajorVersion);
                     manager.Process(w, ConnectionDetail);
                 },
                 ProgressChanged = e =>
