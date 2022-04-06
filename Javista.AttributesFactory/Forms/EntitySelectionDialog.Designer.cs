@@ -58,19 +58,21 @@
             this.pnlHeader.Controls.Add(this.lblHeaderTitle);
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlHeader.Location = new System.Drawing.Point(0, 0);
+            this.pnlHeader.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.pnlHeader.Name = "pnlHeader";
-            this.pnlHeader.Size = new System.Drawing.Size(868, 100);
+            this.pnlHeader.Size = new System.Drawing.Size(651, 80);
             this.pnlHeader.TabIndex = 0;
             // 
             // lblHeaderTitle
             // 
             this.lblHeaderTitle.AutoSize = true;
             this.lblHeaderTitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHeaderTitle.Location = new System.Drawing.Point(9, 9);
+            this.lblHeaderTitle.Location = new System.Drawing.Point(7, 7);
+            this.lblHeaderTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblHeaderTitle.Name = "lblHeaderTitle";
-            this.lblHeaderTitle.Size = new System.Drawing.Size(358, 45);
+            this.lblHeaderTitle.Size = new System.Drawing.Size(304, 38);
             this.lblHeaderTitle.TabIndex = 0;
-            this.lblHeaderTitle.Text = "Select entities to export";
+            this.lblHeaderTitle.Text = "Select tables to export";
             // 
             // pnlFooter
             // 
@@ -78,29 +80,31 @@
             this.pnlFooter.Controls.Add(this.btnOK);
             this.pnlFooter.Controls.Add(this.btnCancel);
             this.pnlFooter.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlFooter.Location = new System.Drawing.Point(0, 509);
+            this.pnlFooter.Location = new System.Drawing.Point(0, 407);
+            this.pnlFooter.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.pnlFooter.Name = "pnlFooter";
-            this.pnlFooter.Size = new System.Drawing.Size(868, 75);
+            this.pnlFooter.Size = new System.Drawing.Size(651, 60);
             this.pnlFooter.TabIndex = 1;
             // 
             // chkLoadAllAttributes
             // 
             this.chkLoadAllAttributes.AutoSize = true;
-            this.chkLoadAllAttributes.Location = new System.Drawing.Point(17, 25);
+            this.chkLoadAllAttributes.Location = new System.Drawing.Point(13, 20);
+            this.chkLoadAllAttributes.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.chkLoadAllAttributes.Name = "chkLoadAllAttributes";
-            this.chkLoadAllAttributes.Size = new System.Drawing.Size(307, 29);
+            this.chkLoadAllAttributes.Size = new System.Drawing.Size(265, 29);
             this.chkLoadAllAttributes.TabIndex = 29;
-            this.chkLoadAllAttributes.Text = "Load also system attributes";
+            this.chkLoadAllAttributes.Text = "Load also system columns";
             this.chkLoadAllAttributes.UseVisualStyleBackColor = true;
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOK.Location = new System.Drawing.Point(546, 16);
-            this.btnOK.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.btnOK.Location = new System.Drawing.Point(410, 13);
+            this.btnOK.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(149, 44);
+            this.btnOK.Size = new System.Drawing.Size(112, 35);
             this.btnOK.TabIndex = 28;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
@@ -110,10 +114,10 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(705, 16);
-            this.btnCancel.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.btnCancel.Location = new System.Drawing.Point(529, 13);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(149, 44);
+            this.btnCancel.Size = new System.Drawing.Size(112, 35);
             this.btnCancel.TabIndex = 27;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -124,9 +128,10 @@
             this.pnlMain.Controls.Add(this.panel1);
             this.pnlMain.Controls.Add(this.pnlSolution);
             this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMain.Location = new System.Drawing.Point(0, 100);
+            this.pnlMain.Location = new System.Drawing.Point(0, 80);
+            this.pnlMain.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.pnlMain.Name = "pnlMain";
-            this.pnlMain.Size = new System.Drawing.Size(868, 409);
+            this.pnlMain.Size = new System.Drawing.Size(651, 327);
             this.pnlMain.TabIndex = 2;
             // 
             // lvEntities
@@ -139,9 +144,10 @@
             this.lvEntities.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvEntities.HideSelection = false;
             this.lvEntities.HoverSelection = true;
-            this.lvEntities.Location = new System.Drawing.Point(0, 90);
+            this.lvEntities.Location = new System.Drawing.Point(0, 72);
+            this.lvEntities.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.lvEntities.Name = "lvEntities";
-            this.lvEntities.Size = new System.Drawing.Size(868, 319);
+            this.lvEntities.Size = new System.Drawing.Size(651, 255);
             this.lvEntities.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lvEntities.TabIndex = 3;
             this.lvEntities.UseCompatibleStateImageBehavior = false;
@@ -163,17 +169,19 @@
             this.panel1.Controls.Add(this.llClearAll);
             this.panel1.Controls.Add(this.llSelectAll);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(0, 40);
+            this.panel1.Location = new System.Drawing.Point(0, 32);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(868, 50);
+            this.panel1.Size = new System.Drawing.Size(651, 40);
             this.panel1.TabIndex = 2;
             // 
             // llInvertSelection
             // 
             this.llInvertSelection.Dock = System.Windows.Forms.DockStyle.Right;
-            this.llInvertSelection.Location = new System.Drawing.Point(488, 0);
+            this.llInvertSelection.Location = new System.Drawing.Point(366, 0);
+            this.llInvertSelection.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.llInvertSelection.Name = "llInvertSelection";
-            this.llInvertSelection.Size = new System.Drawing.Size(189, 50);
+            this.llInvertSelection.Size = new System.Drawing.Size(142, 40);
             this.llInvertSelection.TabIndex = 2;
             this.llInvertSelection.TabStop = true;
             this.llInvertSelection.Text = "Invert selection";
@@ -183,9 +191,10 @@
             // llClearAll
             // 
             this.llClearAll.Dock = System.Windows.Forms.DockStyle.Right;
-            this.llClearAll.Location = new System.Drawing.Point(677, 0);
+            this.llClearAll.Location = new System.Drawing.Point(508, 0);
+            this.llClearAll.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.llClearAll.Name = "llClearAll";
-            this.llClearAll.Size = new System.Drawing.Size(91, 50);
+            this.llClearAll.Size = new System.Drawing.Size(68, 40);
             this.llClearAll.TabIndex = 1;
             this.llClearAll.TabStop = true;
             this.llClearAll.Text = "Clear all";
@@ -195,9 +204,10 @@
             // llSelectAll
             // 
             this.llSelectAll.Dock = System.Windows.Forms.DockStyle.Right;
-            this.llSelectAll.Location = new System.Drawing.Point(768, 0);
+            this.llSelectAll.Location = new System.Drawing.Point(576, 0);
+            this.llSelectAll.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.llSelectAll.Name = "llSelectAll";
-            this.llSelectAll.Size = new System.Drawing.Size(100, 50);
+            this.llSelectAll.Size = new System.Drawing.Size(75, 40);
             this.llSelectAll.TabIndex = 0;
             this.llSelectAll.TabStop = true;
             this.llSelectAll.Text = "Select all";
@@ -210,8 +220,9 @@
             this.pnlSolution.Controls.Add(this.lblSolutionSelection);
             this.pnlSolution.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlSolution.Location = new System.Drawing.Point(0, 0);
+            this.pnlSolution.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.pnlSolution.Name = "pnlSolution";
-            this.pnlSolution.Size = new System.Drawing.Size(868, 40);
+            this.pnlSolution.Size = new System.Drawing.Size(651, 32);
             this.pnlSolution.TabIndex = 0;
             // 
             // cbbSolutions
@@ -219,9 +230,10 @@
             this.cbbSolutions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cbbSolutions.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbbSolutions.FormattingEnabled = true;
-            this.cbbSolutions.Location = new System.Drawing.Point(289, 0);
+            this.cbbSolutions.Location = new System.Drawing.Point(217, 0);
+            this.cbbSolutions.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cbbSolutions.Name = "cbbSolutions";
-            this.cbbSolutions.Size = new System.Drawing.Size(579, 33);
+            this.cbbSolutions.Size = new System.Drawing.Size(434, 28);
             this.cbbSolutions.Sorted = true;
             this.cbbSolutions.TabIndex = 1;
             this.cbbSolutions.SelectedIndexChanged += new System.EventHandler(this.cbbSolutions_SelectedIndexChanged);
@@ -230,21 +242,23 @@
             // 
             this.lblSolutionSelection.Dock = System.Windows.Forms.DockStyle.Left;
             this.lblSolutionSelection.Location = new System.Drawing.Point(0, 0);
+            this.lblSolutionSelection.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblSolutionSelection.Name = "lblSolutionSelection";
-            this.lblSolutionSelection.Size = new System.Drawing.Size(289, 40);
+            this.lblSolutionSelection.Size = new System.Drawing.Size(217, 32);
             this.lblSolutionSelection.TabIndex = 0;
-            this.lblSolutionSelection.Text = "Entities from solution";
+            this.lblSolutionSelection.Text = "Tables from solution";
             this.lblSolutionSelection.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // EntitySelectionDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(868, 584);
+            this.ClientSize = new System.Drawing.Size(651, 467);
             this.Controls.Add(this.pnlMain);
             this.Controls.Add(this.pnlFooter);
             this.Controls.Add(this.pnlHeader);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "EntitySelectionDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Load += new System.EventHandler(this.EntitySelectionDialog_Load);

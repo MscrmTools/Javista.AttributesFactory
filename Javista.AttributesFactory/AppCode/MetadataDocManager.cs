@@ -141,33 +141,38 @@ namespace Javista.AttributesFactory.AppCode
         private void ApplyConditionalFormatting(ExcelWorksheet sheet, int line)
         {
             // Max Length
-            AddConditionalFormattingExpression(sheet, "D3", 12, line, "$A$2", "$A$10");
-            AddConditionalFormattingExpression(sheet, "D3", 13, line, "$A$2");
-            AddConditionalFormattingExpression(sheet, "D3", 14, line, "$A$2");
-            AddConditionalFormattingExpression(sheet, "D3", 16, line, "$A$3", "$A$14");
-            AddConditionalFormattingExpression(sheet, "D3", 17, line, "$A$3", "$A$14");
-            AddConditionalFormattingExpression(sheet, "D3", 18, line, "$A$3", "$A$14");
-            AddConditionalFormattingExpression(sheet, "D3", 20, line, "$A$4");
-            AddConditionalFormattingExpression(sheet, "D3", 21, line, "$A$4");
-            AddConditionalFormattingExpression(sheet, "D3", 23, line, "$A$6");
-            AddConditionalFormattingExpression(sheet, "D3", 24, line, "$A$6");
-            AddConditionalFormattingExpression(sheet, "D3", 25, line, "$A$6");
-            AddConditionalFormattingExpression(sheet, "D3", 27, line, "$A$7");
-            AddConditionalFormattingExpression(sheet, "D3", 28, line, "$A$7");
-            AddConditionalFormattingExpression(sheet, "D3", 29, line, "$A$7");
-            AddConditionalFormattingExpression(sheet, "D3", 31, line, "$A$8");
-            AddConditionalFormattingExpression(sheet, "D3", 32, line, "$A$8");
-            AddConditionalFormattingExpression(sheet, "D3", 33, line, "$A$8");
-            AddConditionalFormattingExpression(sheet, "D3", 35, line, "$A$9");
-            AddConditionalFormattingExpression(sheet, "D3", 36, line, "$A$9");
-            AddConditionalFormattingExpression(sheet, "D3", 37, line, "$A$9");
-            AddConditionalFormattingExpression(sheet, "D3", 39, line, "$A$11");
-            AddConditionalFormattingExpression(sheet, "D3", 40, line, "$A$11");
+            AddConditionalFormattingExpression(sheet, "D3", 12, line, "$A$12", "$A$13");
+            AddConditionalFormattingExpression(sheet, "D3", 13, line, "$A$13");
+            AddConditionalFormattingExpression(sheet, "D3", 14, line, "$A$13");
+            AddConditionalFormattingExpression(sheet, "D3", 16, line, "$A$2", "$A$3");
+            AddConditionalFormattingExpression(sheet, "D3", 17, line, "$A$2", "$A$3");
+            AddConditionalFormattingExpression(sheet, "D3", 18, line, "$A$2", "$A$3");
+            AddConditionalFormattingExpression(sheet, "D3", 20, line, "$A$14");
+            AddConditionalFormattingExpression(sheet, "D3", 21, line, "$A$14");
+            AddConditionalFormattingExpression(sheet, "D3", 23, line, "$A$15");
+            AddConditionalFormattingExpression(sheet, "D3", 24, line, "$A$15");
+            AddConditionalFormattingExpression(sheet, "D3", 25, line, "$A$15");
+            AddConditionalFormattingExpression(sheet, "D3", 27, line, "$A$8");
+            AddConditionalFormattingExpression(sheet, "D3", 28, line, "$A$8");
+            AddConditionalFormattingExpression(sheet, "D3", 29, line, "$A$8");
+            AddConditionalFormattingExpression(sheet, "D3", 31, line, "$A$6");
+            AddConditionalFormattingExpression(sheet, "D3", 32, line, "$A$6");
+            AddConditionalFormattingExpression(sheet, "D3", 33, line, "$A$6");
+            AddConditionalFormattingExpression(sheet, "D3", 35, line, "$A$11");
+            AddConditionalFormattingExpression(sheet, "D3", 36, line, "$A$11");
+            AddConditionalFormattingExpression(sheet, "D3", 37, line, "$A$11");
+            AddConditionalFormattingExpression(sheet, "D3", 39, line, "$A$5");
+            AddConditionalFormattingExpression(sheet, "D3", 40, line, "$A$5");
 
             for (var i = 42; i <= 55; i++)
             {
-                AddConditionalFormattingExpression(sheet, "D3", i, line, "$A$12", "$A$13");
+                AddConditionalFormattingExpression(sheet, "D3", i, line, "$A$4", "$A$10");
             }
+
+            AddConditionalFormattingExpression(sheet, "D3", 57, line, "$A$7");
+            AddConditionalFormattingExpression(sheet, "D3", 59, line, "$A$9");
+            AddConditionalFormattingExpression(sheet, "D3", 60, line, "$A$9");
+            AddConditionalFormattingExpression(sheet, "D3", 61, line, "$A$9");
 
             AddConditionalFormattingExpression(sheet, "AS3", 46, line, "$I$3");
 
@@ -184,7 +189,7 @@ namespace Javista.AttributesFactory.AppCode
             var actionValidation = sheet.Cells[3, 1, line, 1].DataValidation.AddListDataValidation();
             actionValidation.Formula.ExcelFormula = "=ValidationData!$O$2:$O$3";
             var typeValidation = sheet.Cells[3, 4, line, 4].DataValidation.AddListDataValidation();
-            typeValidation.Formula.ExcelFormula = "=ValidationData!$A$2:$A$14";
+            typeValidation.Formula.ExcelFormula = "=ValidationData!$A$2:$A$15";
             var levelValidation = sheet.Cells[3, 7, line, 7].DataValidation.AddListDataValidation();
             levelValidation.Formula.ExcelFormula = "=ValidationData!$E$2:$E$4";
             var boolValidation = sheet.Cells[3, 8, line, 8].DataValidation.AddListDataValidation();
@@ -335,14 +340,14 @@ namespace Javista.AttributesFactory.AppCode
             }
             else if (amd is PicklistAttributeMetadata pamd)
             {
-                sheet.Cells[line, 4].Value = "OptionSet";
+                sheet.Cells[line, 4].Value = "Choice";
                 sheet.Cells[line, 16].Value = GetOptionSets(pamd.OptionSet);
                 sheet.Cells[line, 17].Value = pamd.OptionSet.IsGlobal ?? false ? "Yes" : "No";
                 sheet.Cells[line, 18].Value = pamd.DefaultFormValue ?? -1;
             }
             else if (amd is MultiSelectPicklistAttributeMetadata msamd)
             {
-                sheet.Cells[line, 4].Value = "Multiselect OptionSet";
+                sheet.Cells[line, 4].Value = "Choices";
                 sheet.Cells[line, 16].Value = GetOptionSets(msamd.OptionSet);
                 sheet.Cells[line, 17].Value = msamd.OptionSet.IsGlobal ?? false ? "Yes" : "No";
                 sheet.Cells[line, 18].Value = msamd.DefaultFormValue ?? -1;

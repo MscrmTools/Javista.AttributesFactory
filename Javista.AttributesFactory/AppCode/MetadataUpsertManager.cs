@@ -105,7 +105,7 @@ namespace Javista.AttributesFactory.AppCode
                     {
                         info.Attribute = $"{info.Attribute}Id";
                     }
-                    if (info.Type == "OptionSet" && settings.AddOptionSetSuffix && !info.Attribute.ToLower().EndsWith("code"))
+                    if ((info.Type == "Choice" || info.Type == "Choices") && settings.AddOptionSetSuffix && !info.Attribute.ToLower().EndsWith("code"))
                     {
                         info.Attribute = $"{info.Attribute}Code";
                     }
@@ -146,16 +146,18 @@ namespace Javista.AttributesFactory.AppCode
                                 amd = CreateStringAttribute(workSheet, i, PropertiesFirstCellIndex);
                                 break;
 
+                            case "Choice":
                             case "OptionSet":
                                 amd = CreateOptionsetAttribute(workSheet, i, PropertiesFirstCellIndex + 4, false, info.DisplayName, info.Attribute, info.Entity, fakeAmd.Description?.LocalizedLabels[0]?.Label, (existingAttribute as PicklistAttributeMetadata)?.OptionSet, existingAttribute != null);
                                 break;
 
                             case "Multiselect OptionSet":
+                            case "Choices":
 
                                 if (detail.OrganizationMajorVersion < 9)
                                 {
                                     throw new Exception(
-                                        "Multiselect OptionSet can only be created in a version 9 or above of Microsoft Dynamics 365");
+                                        "Choices can only be created in a version 9 or above of Microsoft Dynamics 365");
                                 }
 
                                 amd = CreateOptionsetAttribute(workSheet, i, PropertiesFirstCellIndex + 4, true, info.DisplayName, info.Attribute, info.Entity, fakeAmd.Description?.LocalizedLabels[0]?.Label, (existingAttribute as PicklistAttributeMetadata)?.OptionSet, existingAttribute != null);
@@ -387,7 +389,7 @@ namespace Javista.AttributesFactory.AppCode
             var stringValues = sheet.GetValue<string>(rowIndex, startCell);
             if (string.IsNullOrEmpty(stringValues))
             {
-                throw new Exception("Boolean values cannot be null");
+                throw new Exception("Two options values cannot be null");
             }
 
             foreach (var optionRow in stringValues.Split('\n'))

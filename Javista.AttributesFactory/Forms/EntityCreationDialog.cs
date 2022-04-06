@@ -100,7 +100,7 @@ namespace Javista.AttributesFactory.Forms
             {
                 foreach (var request in requests)
                 {
-                    ((BackgroundWorker)worker).ReportProgress(0, $"Creating entity {request.Entity.DisplayName.LocalizedLabels[0].Label}. Please wait...");
+                    ((BackgroundWorker)worker).ReportProgress(0, $"Creating table {request.Entity.DisplayName.LocalizedLabels[0].Label}. Please wait...");
 
                     var result = (CreateEntityResponse)_service.Execute(request);
 
@@ -118,7 +118,7 @@ namespace Javista.AttributesFactory.Forms
 
                 if (evt.Error != null)
                 {
-                    MessageBox.Show(this, $"An error occured when creating entities: {evt.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(this, $"An error occured when creating tables: {evt.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
                 else

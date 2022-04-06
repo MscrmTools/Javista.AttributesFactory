@@ -179,7 +179,7 @@
             this.tsbExportEntities.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbExportEntities.Name = "tsbExportEntities";
             this.tsbExportEntities.Size = new System.Drawing.Size(144, 29);
-            this.tsbExportEntities.Text = "Export entities";
+            this.tsbExportEntities.Text = "Export tables";
             this.tsbExportEntities.Click += new System.EventHandler(this.tsbExportEntities_Click);
             // 
             // pnlOptions

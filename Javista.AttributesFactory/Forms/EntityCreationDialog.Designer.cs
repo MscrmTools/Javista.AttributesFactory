@@ -58,41 +58,41 @@ namespace Javista.AttributesFactory.Forms
             this.pnlHeader.Controls.Add(this.lblHeader);
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlHeader.Location = new System.Drawing.Point(0, 0);
-            this.pnlHeader.Margin = new System.Windows.Forms.Padding(2);
             this.pnlHeader.Name = "pnlHeader";
-            this.pnlHeader.Padding = new System.Windows.Forms.Padding(10);
-            this.pnlHeader.Size = new System.Drawing.Size(798, 48);
+            this.pnlHeader.Padding = new System.Windows.Forms.Padding(15, 15, 15, 15);
+            this.pnlHeader.Size = new System.Drawing.Size(1197, 74);
             this.pnlHeader.TabIndex = 0;
             // 
             // lblHeader
             // 
             this.lblHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblHeader.Location = new System.Drawing.Point(10, 10);
+            this.lblHeader.Location = new System.Drawing.Point(15, 15);
+            this.lblHeader.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblHeader.Name = "lblHeader";
-            this.lblHeader.Size = new System.Drawing.Size(778, 28);
+            this.lblHeader.Size = new System.Drawing.Size(1400, 53);
             this.lblHeader.TabIndex = 0;
-            this.lblHeader.Text = "We detected entities that does not exist on the connected environment. You can cr" +
-    "eate them now";
+            this.lblHeader.Text = "We detected tables that does not exist on the connected environment. You can crea" +
+    "te them now";
             // 
             // pnlFooter
             // 
             this.pnlFooter.Controls.Add(this.btnCreateEntities);
             this.pnlFooter.Controls.Add(this.btnClose);
             this.pnlFooter.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlFooter.Location = new System.Drawing.Point(0, 348);
-            this.pnlFooter.Margin = new System.Windows.Forms.Padding(2);
+            this.pnlFooter.Location = new System.Drawing.Point(0, 547);
             this.pnlFooter.Name = "pnlFooter";
-            this.pnlFooter.Size = new System.Drawing.Size(798, 35);
+            this.pnlFooter.Size = new System.Drawing.Size(1197, 54);
             this.pnlFooter.TabIndex = 3;
             // 
             // btnCreateEntities
             // 
             this.btnCreateEntities.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreateEntities.Location = new System.Drawing.Point(597, 5);
+            this.btnCreateEntities.Location = new System.Drawing.Point(896, 8);
+            this.btnCreateEntities.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnCreateEntities.Name = "btnCreateEntities";
-            this.btnCreateEntities.Size = new System.Drawing.Size(110, 27);
+            this.btnCreateEntities.Size = new System.Drawing.Size(165, 42);
             this.btnCreateEntities.TabIndex = 1;
-            this.btnCreateEntities.Text = "Create Entities";
+            this.btnCreateEntities.Text = "Create Tables";
             this.btnCreateEntities.UseVisualStyleBackColor = true;
             this.btnCreateEntities.Click += new System.EventHandler(this.btnCreateEntities_Click);
             // 
@@ -100,37 +100,39 @@ namespace Javista.AttributesFactory.Forms
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnClose.Location = new System.Drawing.Point(713, 5);
+            this.btnClose.Location = new System.Drawing.Point(1070, 8);
+            this.btnClose.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(82, 27);
+            this.btnClose.Size = new System.Drawing.Size(123, 42);
             this.btnClose.TabIndex = 0;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             // 
             // statusStrip1
             // 
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 383);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 601);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(798, 22);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 21, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(1197, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 15);
             // 
             // pnlMain
             // 
             this.pnlMain.Controls.Add(this.dataGridView1);
             this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMain.Location = new System.Drawing.Point(0, 48);
-            this.pnlMain.Margin = new System.Windows.Forms.Padding(2);
+            this.pnlMain.Location = new System.Drawing.Point(0, 74);
             this.pnlMain.Name = "pnlMain";
-            this.pnlMain.Padding = new System.Windows.Forms.Padding(7, 6, 7, 6);
-            this.pnlMain.Size = new System.Drawing.Size(798, 300);
+            this.pnlMain.Padding = new System.Windows.Forms.Padding(10, 9, 10, 9);
+            this.pnlMain.Size = new System.Drawing.Size(1197, 473);
             this.pnlMain.TabIndex = 4;
             // 
             // dataGridView1
@@ -147,63 +149,75 @@ namespace Javista.AttributesFactory.Forms
             this.PrimaryAttributeSchemaName,
             this.PrimaryAttributeDisplayName});
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(7, 6);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(2);
+            this.dataGridView1.Location = new System.Drawing.Point(10, 9);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 62;
             this.dataGridView1.RowTemplate.Height = 28;
-            this.dataGridView1.Size = new System.Drawing.Size(784, 288);
+            this.dataGridView1.Size = new System.Drawing.Size(1177, 455);
             this.dataGridView1.TabIndex = 0;
             // 
             // EntitySchemaName
             // 
-            this.EntitySchemaName.HeaderText = "Entity Schema Name";
+            this.EntitySchemaName.HeaderText = "Table Schema Name";
+            this.EntitySchemaName.MinimumWidth = 8;
             this.EntitySchemaName.Name = "EntitySchemaName";
             this.EntitySchemaName.ReadOnly = true;
+            this.EntitySchemaName.Width = 150;
             // 
             // EntityOwnershipType
             // 
             this.EntityOwnershipType.HeaderText = "Ownership type";
+            this.EntityOwnershipType.MinimumWidth = 8;
             this.EntityOwnershipType.Name = "EntityOwnershipType";
+            this.EntityOwnershipType.Width = 150;
             // 
             // EntityDisplayName
             // 
             this.EntityDisplayName.HeaderText = "Display name";
+            this.EntityDisplayName.MinimumWidth = 8;
             this.EntityDisplayName.Name = "EntityDisplayName";
+            this.EntityDisplayName.Width = 150;
             // 
             // EntityCollectionDisplayName
             // 
             this.EntityCollectionDisplayName.HeaderText = "Display collection name";
+            this.EntityCollectionDisplayName.MinimumWidth = 8;
             this.EntityCollectionDisplayName.Name = "EntityCollectionDisplayName";
+            this.EntityCollectionDisplayName.Width = 150;
             // 
             // EntityIsActivity
             // 
             this.EntityIsActivity.HeaderText = "Is Activity";
+            this.EntityIsActivity.MinimumWidth = 8;
             this.EntityIsActivity.Name = "EntityIsActivity";
+            this.EntityIsActivity.Width = 150;
             // 
             // PrimaryAttributeSchemaName
             // 
-            this.PrimaryAttributeSchemaName.HeaderText = "Primary Attribute Schema name";
+            this.PrimaryAttributeSchemaName.HeaderText = "Primary Column Schema name";
+            this.PrimaryAttributeSchemaName.MinimumWidth = 8;
             this.PrimaryAttributeSchemaName.Name = "PrimaryAttributeSchemaName";
+            this.PrimaryAttributeSchemaName.Width = 150;
             // 
             // PrimaryAttributeDisplayName
             // 
-            this.PrimaryAttributeDisplayName.HeaderText = "Primary Attribute Display name";
+            this.PrimaryAttributeDisplayName.HeaderText = "Primary Column Display name";
+            this.PrimaryAttributeDisplayName.MinimumWidth = 8;
             this.PrimaryAttributeDisplayName.Name = "PrimaryAttributeDisplayName";
+            this.PrimaryAttributeDisplayName.Width = 150;
             // 
             // EntityCreationDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(798, 405);
+            this.ClientSize = new System.Drawing.Size(1197, 623);
             this.Controls.Add(this.pnlMain);
             this.Controls.Add(this.pnlFooter);
             this.Controls.Add(this.pnlHeader);
             this.Controls.Add(this.statusStrip1);
-            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "EntityCreationDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Missing entities detected!";
+            this.Text = "Missing tables detected!";
             this.pnlHeader.ResumeLayout(false);
             this.pnlFooter.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
