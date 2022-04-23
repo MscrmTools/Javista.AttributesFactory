@@ -31,7 +31,7 @@ namespace Javista.AttributesFactory.AppCode
 
         public IOrganizationService Service { get; set; }
 
-        public void GenerateDocumentation(List<EntityMetadata> emds, string filePath, bool loadAllAttributes, BackgroundWorker worker)
+        public void GenerateDocumentation(List<EntityMetadata> emds, string filePath, bool loadAllAttributes, bool loadDerivedAttributes, BackgroundWorker worker)
         {
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = "Javista.AttributesFactory.Template.Attributes_Template.xlsx";
@@ -63,6 +63,11 @@ namespace Javista.AttributesFactory.AppCode
                         foreach (var amd in fullEmd.Attributes.OrderBy(a => a.LogicalName))
                         {
                             if (!loadAllAttributes && !(amd.IsCustomAttribute ?? false))
+                            {
+                                continue;
+                            }
+
+                            if (!loadDerivedAttributes && IsBaseOrRollupDerivedAttribute(amd, fullEmd))
                             {
                                 continue;
                             }
@@ -285,6 +290,26 @@ namespace Javista.AttributesFactory.AppCode
                 case 2: return "Rollup";
                 default: return "n/a";
             }
+        }
+
+        private bool IsBaseOrRollupDerivedAttribute(AttributeMetadata amd, EntityMetadata emd)
+        {
+            if ((amd.LogicalName.EndsWith("_state")
+                || amd.LogicalName.EndsWith("_date")
+                || amd.LogicalName.EndsWith("_sum")
+                || amd.LogicalName.EndsWith("_count")
+                )
+                && emd.Attributes.Any(a => a.LogicalName == amd.LogicalName.Replace("_state", "").Replace("_date", "").Replace("_sum", "").Replace("_count", "") && a.SourceType == 2))
+            {
+                return true;
+            }
+
+            if (amd.LogicalName.EndsWith("_base") && emd.Attributes.Any(a => a.LogicalName == amd.LogicalName.Replace("_base", "") && a.AttributeType == AttributeTypeCode.Money))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private void ProcessDetails(AttributeMetadata amd, EntityMetadata emd, ExcelWorksheet sheet, int line)

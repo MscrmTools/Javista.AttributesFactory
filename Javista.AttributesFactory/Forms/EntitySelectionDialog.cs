@@ -25,11 +25,13 @@ namespace Javista.AttributesFactory.Forms
 
         public List<EntityMetadata> Entities { get; private set; }
         public bool LoadAllAttributes { get; private set; }
+        public bool LoadDerivedAttributes { get; private set; }
 
         private void btnOK_Click(object sender, System.EventArgs e)
         {
             Entities = lvEntities.CheckedItems.Cast<ListViewItem>().Select(i => (EntityMetadata)i.Tag).ToList();
             LoadAllAttributes = chkLoadAllAttributes.Checked;
+            LoadDerivedAttributes = chkExportDerivedAttributes.Checked;
         }
 
         private void cbbSolutions_SelectedIndexChanged(object sender, System.EventArgs e)

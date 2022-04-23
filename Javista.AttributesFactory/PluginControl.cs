@@ -292,7 +292,7 @@ namespace Javista.AttributesFactory
                 if (sfd.ShowDialog(this) == DialogResult.OK)
                 {
                     var mdg = new MetadataDocManager(Service, this);
-                    mdg.GenerateDocumentation(dialog.Entities, sfd.FileName, dialog.LoadAllAttributes, null);
+                    mdg.GenerateDocumentation(dialog.Entities, sfd.FileName, dialog.LoadAllAttributes, dialog.LoadDerivedAttributes, null);
 
                     if (MessageBox.Show(this, @"Do you want to open the document now?", @"Question",
                             MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
