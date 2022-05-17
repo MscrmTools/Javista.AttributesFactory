@@ -156,7 +156,7 @@ namespace Javista.AttributesFactory
         {
             var ofd = new OpenFileDialog
             {
-                Filter = @"Excel spreadsheet|*.xlsx"
+                Filter = @"Excel spreadsheet|*.xlsx|Excel spreadsheet with macros|*.xlsm|All files|*.*"
             };
             if (ofd.ShowDialog(this) == DialogResult.OK)
             {
