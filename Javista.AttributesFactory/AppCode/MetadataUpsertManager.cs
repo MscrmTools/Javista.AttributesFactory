@@ -1166,11 +1166,11 @@ namespace Javista.AttributesFactory.AppCode
                     fakeAmd.RequiredLevel = new AttributeRequiredLevelManagedProperty(AttributeRequiredLevel.None);
                     break;
 
-                case "Business required":
+                case "Business recommended":
                     fakeAmd.RequiredLevel = new AttributeRequiredLevelManagedProperty(AttributeRequiredLevel.Recommended);
                     break;
 
-                case "System required":
+                case "Business required":
                     fakeAmd.RequiredLevel =
                         new AttributeRequiredLevelManagedProperty(AttributeRequiredLevel.ApplicationRequired);
                     break;
