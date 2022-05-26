@@ -270,8 +270,8 @@ namespace Javista.AttributesFactory.AppCode
             switch (value)
             {
                 case AttributeRequiredLevel.None: return "Optional";
-                case AttributeRequiredLevel.Recommended: return "Business required";
-                case AttributeRequiredLevel.SystemRequired: return "System required";
+                case AttributeRequiredLevel.Recommended: return "Business recommended";
+                case AttributeRequiredLevel.SystemRequired: return "Business required";
                 default: return "Application required";
             }
         }
