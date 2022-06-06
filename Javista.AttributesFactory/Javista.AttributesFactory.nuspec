@@ -12,7 +12,10 @@
     <description>Create or Update attributes from an Excel template</description>
     <summary>Create or Update attributes from an Excel template</summary>
     <releaseNotes>
-      Adapted to latest naming convention for Dataverse objects and types
+      Added capability to exclude/include derived columns from export
+      Added capability to select any file extension for import (still requires to be an Excel file)
+      Reworked the way choices are handled to better fit with Global choices. Read comment in Excel template cell Q2
+      Renamed required levels names to fit with Dataverse
     </releaseNotes>
     <tags>XrmToolBox Attributes Factory Metadata</tags>
     <dependencies>
