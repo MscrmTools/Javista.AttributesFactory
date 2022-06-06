@@ -271,6 +271,7 @@
       <DependentUpon>EntitySelectionDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Template\Attributes_Template.xlsx" />
+    <EmbeddedResource Include="Template\Attributes_Template.xlsm" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="PluginControl.resx">

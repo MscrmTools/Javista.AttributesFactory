@@ -156,7 +156,7 @@ namespace Javista.AttributesFactory
         {
             var ofd = new OpenFileDialog
             {
-                Filter = @"Excel spreadsheet|*.xlsx|Excel spreadsheet with macros|*.xlsm|All files|*.*"
+                Filter = @"Excel spreadsheet with macros|*.xlsm|Excel spreadsheet|*.xlsx|All files|*.*"
             };
             if (ofd.ShowDialog(this) == DialogResult.OK)
             {
@@ -287,7 +287,7 @@ namespace Javista.AttributesFactory
             {
                 var sfd = new SaveFileDialog
                 {
-                    Filter = @"Excel workbook|*.xlsx"
+                    Filter = @"Excel workbook with macro|*.xlsm"
                 };
                 if (sfd.ShowDialog(this) == DialogResult.OK)
                 {
@@ -307,14 +307,14 @@ namespace Javista.AttributesFactory
         {
             var sfd = new SaveFileDialog
             {
-                Filter = @"Excel workbook|*.xlsx",
-                FileName = "Attributes_Template.xlsx"
+                Filter = @"Excel workbook with macro|*.xlsm",
+                FileName = "Attributes_Template.xlsm"
             };
 
             if (sfd.ShowDialog(this) == DialogResult.OK)
             {
                 var assembly = Assembly.GetExecutingAssembly();
-                var resourceName = "Javista.AttributesFactory.Template.Attributes_Template.xlsx";
+                var resourceName = "Javista.AttributesFactory.Template.Attributes_Template.xlsm";
 
                 using (Stream stream = assembly.GetManifestResourceStream(resourceName))
                 {

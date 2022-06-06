@@ -913,7 +913,23 @@ namespace Javista.AttributesFactory.AppCode
 
         private AttributeMetadata CreateOptionsetAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, bool isMultiSelect, string displayName, string schemaName, string entity, string description, OptionSetMetadata eomd, bool existingAttribute)
         {
-            var isGlobal = sheet.GetValue<string>(rowIndex, startCell + 1) == "Yes";
+            bool isGlobal = false;
+            string globalOptionSetName = "";
+
+            var globalValue = sheet.GetValue<string>(rowIndex, startCell + 1);
+            if (globalValue != "Yes" && globalValue != "No")
+            {
+                if (!string.IsNullOrEmpty(globalValue))
+                {
+                    isGlobal = true;
+                    globalOptionSetName = globalValue.ToLower();
+                }
+            }
+            else
+            {
+                throw new Exception("Choice(s) processing has changed. Please replace Yes/No value by the name of the global choice or empty for local choice");
+            }
+
             var omd = new OptionSetMetadata
             {
                 IsGlobal = isGlobal,
@@ -932,47 +948,41 @@ namespace Javista.AttributesFactory.AppCode
             {
                 throw new Exception("OptionSet values cannot be null");
             }
-            var containsValue = optionsString.IndexOf(':') > 0;
-            if (containsValue)
+
+            OptionMetadataCollection omc = new OptionMetadataCollection();
+
+            foreach (var optionRow in optionsString.Split('\n'))
             {
-                foreach (var optionRow in optionsString.Split('\n'))
+                var parts = optionRow.Split(':');
+
+                if (parts.Length != 2)
                 {
-                    var parts = optionRow.Split(':');
-
-                    if (parts.Length != 2)
-                    {
-                        continue;
-                    }
-
-                    var index = int.Parse(parts[0]);
-
-                    var om = new OptionMetadata(new Label(parts[1], settings.LanguageCode), index);
-
-                    if (parts.Length > 2)
-                    {
-                        om.Description = new Label(parts[2], settings.LanguageCode);
-                    }
-
-                    if (majorVersion >= 9)
-                    {
-                        if (parts.Length > 3)
-                        {
-                            om.ExternalValue = parts[3];
-                        }
-                    }
-
-                    omd.Options.Add(om);
+                    continue;
                 }
 
-                if (settings.AddOptionSetSuffix && !omd.Name.ToLower().EndsWith("code"))
+                var index = int.Parse(parts[0]);
+
+                var om = new OptionMetadata(new Label(parts[1], settings.LanguageCode), index);
+
+                if (parts.Length > 2)
                 {
-                    omd.Name = $"{omd.Name}Code";
+                    om.Description = new Label(parts[2], settings.LanguageCode);
                 }
+
+                if (majorVersion >= 9)
+                {
+                    if (parts.Length > 3)
+                    {
+                        om.ExternalValue = parts[3];
+                    }
+                }
+
+                omc.Add(om);
             }
-            else
+
+            if (settings.AddOptionSetSuffix && !omd.Name.ToLower().EndsWith("code"))
             {
-                omd.IsGlobal = true;
-                omd.Name = optionsString.ToLower();
+                omd.Name = $"{omd.Name}Code";
             }
 
             if (isGlobal)
@@ -984,42 +994,39 @@ namespace Javista.AttributesFactory.AppCode
                 else
                 {
                     omd.Name = omd.Name.ToLower();
-                }
-
-                if (containsValue)
-                {
-                    if (eomd == null)
-                    {
-                        service.Execute(new CreateOptionSetRequest
-                        {
-                            OptionSet = omd,
-                            SolutionUniqueName = settings.Solution.UniqueName
-                        });
-                    }
-                    else
-                    {
-                        service.Execute(new UpdateOptionSetRequest
-                        {
-                            OptionSet = omd,
-                            SolutionUniqueName = settings.Solution.UniqueName,
-                            MergeLabels = true
-                        });
-
-                        ApplyOptionsUpdate(eomd, omd);
-                    }
-                }
-                else
-                {
-                    omd.Name = optionsString.ToLower();
-
                     if (settings.AddOptionSetSuffix && !omd.Name.EndsWith("code"))
                     {
                         omd.Name = $"{omd.Name}code";
                     }
                 }
+
+                omd.Options.Clear();
+                omd.Options.AddRange(omc);
+
+                if (eomd == null)
+                {
+                    service.Execute(new CreateOptionSetRequest
+                    {
+                        OptionSet = omd,
+                        SolutionUniqueName = settings.Solution.UniqueName
+                    });
+                }
+                else
+                {
+                    service.Execute(new UpdateOptionSetRequest
+                    {
+                        OptionSet = omd,
+                        SolutionUniqueName = settings.Solution.UniqueName,
+                        MergeLabels = true
+                    });
+
+                    ApplyOptionsUpdate(eomd, omd);
+                }
             }
             else
             {
+                omd.Options.Clear();
+                omd.Options.AddRange(omc);
                 ApplyOptionsUpdate(eomd, omd, entity, schemaName);
             }
 

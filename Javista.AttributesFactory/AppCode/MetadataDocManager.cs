@@ -34,7 +34,7 @@ namespace Javista.AttributesFactory.AppCode
         public void GenerateDocumentation(List<EntityMetadata> emds, string filePath, bool loadAllAttributes, bool loadDerivedAttributes, BackgroundWorker worker)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "Javista.AttributesFactory.Template.Attributes_Template.xlsx";
+            var resourceName = "Javista.AttributesFactory.Template.Attributes_Template.xlsm";
 
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             {
@@ -367,15 +367,15 @@ namespace Javista.AttributesFactory.AppCode
             {
                 sheet.Cells[line, 4].Value = "Choice";
                 sheet.Cells[line, 16].Value = GetOptionSets(pamd.OptionSet);
-                sheet.Cells[line, 17].Value = pamd.OptionSet.IsGlobal ?? false ? "Yes" : "No";
-                sheet.Cells[line, 18].Value = pamd.DefaultFormValue ?? -1;
+                sheet.Cells[line, 17].Value = pamd.OptionSet.IsGlobal ?? false ? pamd.OptionSet.Name : "";
+                sheet.Cells[line, 18].Value = pamd.DefaultFormValue.HasValue ? pamd.DefaultFormValue.Value.ToString() : "";
             }
             else if (amd is MultiSelectPicklistAttributeMetadata msamd)
             {
                 sheet.Cells[line, 4].Value = "Choices";
                 sheet.Cells[line, 16].Value = GetOptionSets(msamd.OptionSet);
-                sheet.Cells[line, 17].Value = msamd.OptionSet.IsGlobal ?? false ? "Yes" : "No";
-                sheet.Cells[line, 18].Value = msamd.DefaultFormValue ?? -1;
+                sheet.Cells[line, 17].Value = msamd.OptionSet.IsGlobal ?? false ? msamd.OptionSet.Name : "";
+                sheet.Cells[line, 18].Value = msamd.DefaultFormValue.HasValue ? msamd.DefaultFormValue.Value.ToString() : "";
             }
             else if (amd is BooleanAttributeMetadata bamd)
             {
