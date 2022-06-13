@@ -944,40 +944,43 @@ namespace Javista.AttributesFactory.AppCode
             }
 
             string optionsString = sheet.GetValue<string>(rowIndex, startCell);
-            if (optionsString.Length == 0)
+            if (!isGlobal && optionsString.Length == 0)
             {
                 throw new Exception("OptionSet values cannot be null");
             }
 
             OptionMetadataCollection omc = new OptionMetadataCollection();
 
-            foreach (var optionRow in optionsString.Split('\n'))
+            if (optionsString != null)
             {
-                var parts = optionRow.Split(':');
-
-                if (parts.Length != 2)
+                foreach (var optionRow in optionsString.Split('\n'))
                 {
-                    continue;
-                }
+                    var parts = optionRow.Split(':');
 
-                var index = int.Parse(parts[0]);
-
-                var om = new OptionMetadata(new Label(parts[1], settings.LanguageCode), index);
-
-                if (parts.Length > 2)
-                {
-                    om.Description = new Label(parts[2], settings.LanguageCode);
-                }
-
-                if (majorVersion >= 9)
-                {
-                    if (parts.Length > 3)
+                    if (parts.Length != 2)
                     {
-                        om.ExternalValue = parts[3];
+                        continue;
                     }
-                }
 
-                omc.Add(om);
+                    var index = int.Parse(parts[0]);
+
+                    var om = new OptionMetadata(new Label(parts[1], settings.LanguageCode), index);
+
+                    if (parts.Length > 2)
+                    {
+                        om.Description = new Label(parts[2], settings.LanguageCode);
+                    }
+
+                    if (majorVersion >= 9)
+                    {
+                        if (parts.Length > 3)
+                        {
+                            om.ExternalValue = parts[3];
+                        }
+                    }
+
+                    omc.Add(om);
+                }
             }
 
             if (settings.AddOptionSetSuffix && !omd.Name.ToLower().EndsWith("code"))
@@ -1000,27 +1003,30 @@ namespace Javista.AttributesFactory.AppCode
                     }
                 }
 
-                omd.Options.Clear();
-                omd.Options.AddRange(omc);
-
-                if (eomd == null)
+                if (omc.Count > 0)
                 {
-                    service.Execute(new CreateOptionSetRequest
-                    {
-                        OptionSet = omd,
-                        SolutionUniqueName = settings.Solution.UniqueName
-                    });
-                }
-                else
-                {
-                    service.Execute(new UpdateOptionSetRequest
-                    {
-                        OptionSet = omd,
-                        SolutionUniqueName = settings.Solution.UniqueName,
-                        MergeLabels = true
-                    });
+                    omd.Options.Clear();
+                    omd.Options.AddRange(omc);
 
-                    ApplyOptionsUpdate(eomd, omd);
+                    if (eomd == null)
+                    {
+                        service.Execute(new CreateOptionSetRequest
+                        {
+                            OptionSet = omd,
+                            SolutionUniqueName = settings.Solution.UniqueName
+                        });
+                    }
+                    else
+                    {
+                        service.Execute(new UpdateOptionSetRequest
+                        {
+                            OptionSet = omd,
+                            SolutionUniqueName = settings.Solution.UniqueName,
+                            MergeLabels = true
+                        });
+
+                        ApplyOptionsUpdate(eomd, omd);
+                    }
                 }
             }
             else
