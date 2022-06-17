@@ -915,6 +915,7 @@ namespace Javista.AttributesFactory.AppCode
         {
             bool isGlobal = false;
             string globalOptionSetName = "";
+            OptionMetadataCollection globalOmc = new OptionMetadataCollection();
 
             var globalValue = sheet.GetValue<string>(rowIndex, startCell + 1);
             if (globalValue != "Yes" && globalValue != "No")
@@ -935,7 +936,7 @@ namespace Javista.AttributesFactory.AppCode
                 IsGlobal = isGlobal,
                 DisplayName = new Label(displayName, settings.LanguageCode),
                 OptionSetType = OptionSetType.Picklist,
-                Name = schemaName//.ToLower()
+                Name = isGlobal ? globalOptionSetName : schemaName
             };
 
             if (!string.IsNullOrEmpty(description))
@@ -981,6 +982,15 @@ namespace Javista.AttributesFactory.AppCode
 
                     omc.Add(om);
                 }
+            }
+            else if (isGlobal)
+            {
+                var request = new RetrieveOptionSetRequest
+                {
+                    Name = globalOptionSetName
+                };
+                var response = (RetrieveOptionSetResponse)service.Execute(request);
+                globalOmc.AddRange(((OptionSetMetadata)response.OptionSetMetadata).Options);
             }
 
             if (settings.AddOptionSetSuffix && !omd.Name.ToLower().EndsWith("code"))
@@ -1078,6 +1088,10 @@ namespace Javista.AttributesFactory.AppCode
                     if (defaultValue != -1)
                     {
                         if (omd.Options.Any(o => o.Value == defaultValue))
+                        {
+                            amd.DefaultFormValue = defaultValue;
+                        }
+                        else if(isGlobal && globalOmc.Any(o => o.Value == defaultValue))
                         {
                             amd.DefaultFormValue = defaultValue;
                         }
