@@ -12,7 +12,7 @@
     <description>Create or Update attributes from an Excel template</description>
     <summary>Create or Update attributes from an Excel template</summary>
     <releaseNotes>
-      Fixed issue when creating choice linked to a global choice (final fix)
+      Fixed issue with field type column (simple, calculated, rollup) based on attribute type (#22)
     </releaseNotes>
     <tags>XrmToolBox Attributes Factory Metadata</tags>
     <dependencies>
