@@ -31,6 +31,7 @@
             this.pnlHeader = new System.Windows.Forms.Panel();
             this.lblHeaderTitle = new System.Windows.Forms.Label();
             this.pnlFooter = new System.Windows.Forms.Panel();
+            this.chkExportDerivedAttributes = new System.Windows.Forms.CheckBox();
             this.chkLoadAllAttributes = new System.Windows.Forms.CheckBox();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -45,7 +46,6 @@
             this.pnlSolution = new System.Windows.Forms.Panel();
             this.cbbSolutions = new System.Windows.Forms.ComboBox();
             this.lblSolutionSelection = new System.Windows.Forms.Label();
-            this.chkExportDerivedAttributes = new System.Windows.Forms.CheckBox();
             this.pnlHeader.SuspendLayout();
             this.pnlFooter.SuspendLayout();
             this.pnlMain.SuspendLayout();
@@ -87,6 +87,17 @@
             this.pnlFooter.Name = "pnlFooter";
             this.pnlFooter.Size = new System.Drawing.Size(920, 60);
             this.pnlFooter.TabIndex = 1;
+            // 
+            // chkExportDerivedAttributes
+            // 
+            this.chkExportDerivedAttributes.Dock = System.Windows.Forms.DockStyle.Left;
+            this.chkExportDerivedAttributes.Location = new System.Drawing.Point(217, 0);
+            this.chkExportDerivedAttributes.Margin = new System.Windows.Forms.Padding(2);
+            this.chkExportDerivedAttributes.Name = "chkExportDerivedAttributes";
+            this.chkExportDerivedAttributes.Size = new System.Drawing.Size(420, 60);
+            this.chkExportDerivedAttributes.TabIndex = 30;
+            this.chkExportDerivedAttributes.Text = "Export derived columns (rollup, currency, virutal)";
+            this.chkExportDerivedAttributes.UseVisualStyleBackColor = true;
             // 
             // chkLoadAllAttributes
             // 
@@ -154,6 +165,7 @@
             this.lvEntities.TabIndex = 3;
             this.lvEntities.UseCompatibleStateImageBehavior = false;
             this.lvEntities.View = System.Windows.Forms.View.Details;
+            this.lvEntities.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvEntities_ColumnClick);
             // 
             // chDisplayName
             // 
@@ -250,17 +262,6 @@
             this.lblSolutionSelection.TabIndex = 0;
             this.lblSolutionSelection.Text = "Tables from solution";
             this.lblSolutionSelection.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // chkExportDerivedAttributes
-            // 
-            this.chkExportDerivedAttributes.Dock = System.Windows.Forms.DockStyle.Left;
-            this.chkExportDerivedAttributes.Location = new System.Drawing.Point(217, 0);
-            this.chkExportDerivedAttributes.Margin = new System.Windows.Forms.Padding(2);
-            this.chkExportDerivedAttributes.Name = "chkExportDerivedAttributes";
-            this.chkExportDerivedAttributes.Size = new System.Drawing.Size(420, 60);
-            this.chkExportDerivedAttributes.TabIndex = 30;
-            this.chkExportDerivedAttributes.Text = "Export derived columns (rollup, currency, virutal)";
-            this.chkExportDerivedAttributes.UseVisualStyleBackColor = true;
             // 
             // EntitySelectionDialog
             // 

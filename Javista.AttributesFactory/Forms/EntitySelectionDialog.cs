@@ -12,6 +12,7 @@ namespace Javista.AttributesFactory.Forms
     {
         private readonly IOrganizationService _service;
         private readonly List<SolutionInfo> _solutions;
+        private int orderColumn = 0;
 
         public EntitySelectionDialog(IOrganizationService service, List<SolutionInfo> solutions)
         {
@@ -72,6 +73,22 @@ namespace Javista.AttributesFactory.Forms
             {
                 item.Checked = true;
             }
+        }
+
+        private void lvEntities_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            if (orderColumn != e.Column)
+            {
+                orderColumn = e.Column;
+                lvEntities.Sorting = SortOrder.Ascending;
+            }
+            else
+            {
+                lvEntities.Sorting = lvEntities.Sorting == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+            }
+
+            lvEntities.ListViewItemSorter = new ListViewItemComparer(orderColumn, lvEntities.Sorting);
+            lvEntities.Sort();
         }
     }
 }
