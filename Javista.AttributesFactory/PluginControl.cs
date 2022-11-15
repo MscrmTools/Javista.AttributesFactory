@@ -291,14 +291,28 @@ namespace Javista.AttributesFactory
                 };
                 if (sfd.ShowDialog(this) == DialogResult.OK)
                 {
-                    var mdg = new MetadataDocManager(Service, this);
-                    mdg.GenerateDocumentation(dialog.Entities, sfd.FileName, dialog.LoadAllAttributes, dialog.LoadDerivedAttributes, null);
-
-                    if (MessageBox.Show(this, @"Do you want to open the document now?", @"Question",
-                            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    WorkAsync(new WorkAsyncInfo
                     {
-                        Process.Start(sfd.FileName);
-                    }
+                        Message = "Exporting tables...",
+                        Work = (bw, evt) =>
+                        {
+                            var mdg = new MetadataDocManager(Service, this);
+                            mdg.GenerateDocumentation(dialog.Entities, sfd.FileName, dialog.LoadAllAttributes, dialog.LoadDerivedAttributes, null);
+                        },
+                        PostWorkCallBack = evt =>
+                        {
+                            if (evt.Error != null)
+                            {
+                                MessageBox.Show(this, $"An error occured when generating the document: {evt.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+
+                            if (MessageBox.Show(this, @"Do you want to open the document now?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                            {
+                                Process.Start(sfd.FileName);
+                            }
+                        }
+                    });
                 }
             }
         }
