@@ -132,6 +132,8 @@ namespace Javista.AttributesFactory.AppCode
                             fakeAmd.MetadataId = existingAttribute.MetadataId;
                         }
 
+                        var templatePreNovember2022 = workSheet.Dimension.Columns == 62;
+
                         var type = workSheet.GetValue<string>(i, TypeCellIndex);
                         switch (type)
                         {
@@ -188,23 +190,23 @@ namespace Javista.AttributesFactory.AppCode
                                 break;
 
                             case "Date and time":
-                                amd = CreateDateTimeAttribute(workSheet, i, PropertiesFirstCellIndex + 27);
+                                amd = CreateDateTimeAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 27 : 28));
                                 break;
 
                             case "Lookup":
-                                amd = CreateLookupAttribute(workSheet, i, PropertiesFirstCellIndex + 30, fakeAmd, info, !fakeAmd.MetadataId.HasValue);
+                                amd = CreateLookupAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 30 : 31), fakeAmd, info, !fakeAmd.MetadataId.HasValue);
                                 break;
 
                             case "Customer":
-                                amd = CreateCustomerAttribute(workSheet, i, PropertiesFirstCellIndex + 31, fakeAmd, existingAttribute, info, !fakeAmd.MetadataId.HasValue);
+                                amd = CreateCustomerAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 31 : 32), fakeAmd, existingAttribute, info, !fakeAmd.MetadataId.HasValue);
                                 break;
 
                             case "File":
-                                amd = CreateFileAttribute(workSheet, i, PropertiesFirstCellIndex + 45);
+                                amd = CreateFileAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 45 : 46));
                                 break;
 
                             case "Image":
-                                amd = CreateImageAttribute(workSheet, i, PropertiesFirstCellIndex + 47);
+                                amd = CreateImageAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 47 : 48));
                                 break;
                         }
 
@@ -867,11 +869,28 @@ namespace Javista.AttributesFactory.AppCode
 
         private AttributeMetadata CreateMoneyAttribute(ExcelWorksheet sheet, int rowIndex, int startCell)
         {
+            int precisionSource = 0;
+            switch (sheet.GetValue<string>(rowIndex, startCell + 1))
+            {
+                case "Specific Precision":
+                    precisionSource = 0;
+                    break;
+
+                case "Pricing Decimal Precision":
+                    precisionSource = 1;
+                    break;
+
+                case "Currency Precision":
+                    precisionSource = 2;
+                    break;
+            }
+
             var mamd = new MoneyAttributeMetadata
             {
                 Precision = sheet.GetValue<int>(rowIndex, startCell),
-                MinValue = sheet.GetValue<double>(rowIndex, startCell + 1),
-                MaxValue = sheet.GetValue<double>(rowIndex, startCell + 2)
+                PrecisionSource = precisionSource,
+                MinValue = sheet.GetValue<double>(rowIndex, startCell + 2),
+                MaxValue = sheet.GetValue<double>(rowIndex, startCell + 3)
             };
 
             return mamd;
@@ -1091,7 +1110,7 @@ namespace Javista.AttributesFactory.AppCode
                         {
                             amd.DefaultFormValue = defaultValue;
                         }
-                        else if(isGlobal && globalOmc.Any(o => o.Value == defaultValue))
+                        else if (isGlobal && globalOmc.Any(o => o.Value == defaultValue))
                         {
                             amd.DefaultFormValue = defaultValue;
                         }

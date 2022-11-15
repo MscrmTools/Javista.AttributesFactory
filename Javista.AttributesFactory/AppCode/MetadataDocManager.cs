@@ -72,17 +72,18 @@ namespace Javista.AttributesFactory.AppCode
                                 continue;
                             }
 
-                            if (!amd.AttributeType.HasValue || amd.AttributeType.Value == AttributeTypeCode.Virtual
-                                || amd.AttributeOf != null)
+                            if ((!amd.AttributeType.HasValue || amd.AttributeType.Value == AttributeTypeCode.Virtual
+                                || amd.AttributeType.Value == AttributeTypeCode.Uniqueidentifier
+                                || amd.AttributeOf != null) && !(amd is ImageAttributeMetadata) && !(amd is FileAttributeMetadata))
                             {
                                 continue;
                             }
 
                             sheet.InsertRow(line, 1);
-                            sheet.Cells[line + 1, 1, line + 1, 56].Copy(sheet.Cells[line, 1]);
-                            sheet.Cells[line + 1, 1, line + 1, 56].Style.Border.BorderAround(ExcelBorderStyle.None);
+                            sheet.Cells[line + 1, 1, line + 1, 62].Copy(sheet.Cells[line, 1]);
+                            sheet.Cells[line + 1, 1, line + 1, 62].Style.Border.BorderAround(ExcelBorderStyle.None);
 
-                            for (int i = 1; i <= 56; i++)
+                            for (int i = 1; i <= 62; i++)
                             {
                                 var sourceRange = sheet.Cells[line + 1, i].Address;
                                 var sourceValidation = sheet.DataValidations[sourceRange];
@@ -121,6 +122,8 @@ namespace Javista.AttributesFactory.AppCode
 
                     ApplyDataValidation(sheet, line - 1);
                     ApplyConditionalFormatting(sheet, line - 1);
+
+                    sheet.Cells[1, 63, sheet.Dimension.Rows, 63].Merge = true;
 
                     package.SaveAs(new FileInfo(filePath));
                 }
@@ -166,22 +169,23 @@ namespace Javista.AttributesFactory.AppCode
             AddConditionalFormattingExpression(sheet, "D3", 35, line, "$A$11");
             AddConditionalFormattingExpression(sheet, "D3", 36, line, "$A$11");
             AddConditionalFormattingExpression(sheet, "D3", 37, line, "$A$11");
-            AddConditionalFormattingExpression(sheet, "D3", 39, line, "$A$5");
+            AddConditionalFormattingExpression(sheet, "D3", 38, line, "$A$11");
             AddConditionalFormattingExpression(sheet, "D3", 40, line, "$A$5");
+            AddConditionalFormattingExpression(sheet, "D3", 41, line, "$A$5");
 
-            for (var i = 42; i <= 55; i++)
+            for (var i = 43; i <= 56; i++)
             {
                 AddConditionalFormattingExpression(sheet, "D3", i, line, "$A$4", "$A$10");
             }
 
-            AddConditionalFormattingExpression(sheet, "D3", 57, line, "$A$7");
-            AddConditionalFormattingExpression(sheet, "D3", 59, line, "$A$9");
+            AddConditionalFormattingExpression(sheet, "D3", 58, line, "$A$7");
             AddConditionalFormattingExpression(sheet, "D3", 60, line, "$A$9");
             AddConditionalFormattingExpression(sheet, "D3", 61, line, "$A$9");
+            AddConditionalFormattingExpression(sheet, "D3", 62, line, "$A$9");
 
-            AddConditionalFormattingExpression(sheet, "AS3", 46, line, "$I$3");
+            AddConditionalFormattingExpression(sheet, "AS3", 47, line, "$I$3");
 
-            for (var i = 50; i <= 55; i++)
+            for (var i = 51; i <= 56; i++)
             {
                 AddConditionalFormattingExpression(sheet, "AW3", i, line, "$K$5");
             }
@@ -212,26 +216,26 @@ namespace Javista.AttributesFactory.AppCode
             var intFormatValidation = sheet.Cells[3, 23, line, 23].DataValidation.AddListDataValidation();
             intFormatValidation.Formula.ExcelFormula = "=ValidationData!$F$2:$F$6";
 
-            var datetimeBehaviorValidation = sheet.Cells[3, 39, line, 39].DataValidation.AddListDataValidation();
+            var datetimeBehaviorValidation = sheet.Cells[3, 40, line, 40].DataValidation.AddListDataValidation();
             datetimeBehaviorValidation.Formula.ExcelFormula = "=ValidationData!$H$2:$H$4";
-            var datetimeFormatValidation = sheet.Cells[3, 40, line, 40].DataValidation.AddListDataValidation();
+            var datetimeFormatValidation = sheet.Cells[3, 41, line, 41].DataValidation.AddListDataValidation();
             datetimeFormatValidation.Formula.ExcelFormula = "=ValidationData!$G$2:$G$3";
 
-            var relValidForAfValidation = sheet.Cells[3, 43, line, 43].DataValidation.AddListDataValidation();
+            var relValidForAfValidation = sheet.Cells[3, 44, line, 44].DataValidation.AddListDataValidation();
             relValidForAfValidation.Formula.ExcelFormula = "=ValidationData!$D$2:$D$34";
-            var relIsHierarchicalValidation = sheet.Cells[3, 44, line, 44].DataValidation.AddListDataValidation();
+            var relIsHierarchicalValidation = sheet.Cells[3, 45, line, 45].DataValidation.AddListDataValidation();
             relIsHierarchicalValidation.Formula.ExcelFormula = "=ValidationData!$D$2:$D$3";
-            var relDisplayBehaviorValidation = sheet.Cells[3, 45, line, 45].DataValidation.AddListDataValidation();
+            var relDisplayBehaviorValidation = sheet.Cells[3, 46, line, 46].DataValidation.AddListDataValidation();
             relDisplayBehaviorValidation.Formula.ExcelFormula = "=ValidationData!$I$2:$I$4";
-            var relDisplayZoneValidation = sheet.Cells[3, 47, line, 47].DataValidation.AddListDataValidation();
+            var relDisplayZoneValidation = sheet.Cells[3, 48, line, 48].DataValidation.AddListDataValidation();
             relDisplayZoneValidation.Formula.ExcelFormula = "=ValidationData!$J$2:$J$5";
-            var relBehaviorValidation = sheet.Cells[3, 49, line, 49].DataValidation.AddListDataValidation();
+            var relBehaviorValidation = sheet.Cells[3, 50, line, 50].DataValidation.AddListDataValidation();
             relBehaviorValidation.Formula.ExcelFormula = "=ValidationData!$K$2:$K$5";
-            var relCascadeValidation1 = sheet.Cells[3, 50, line, 53].DataValidation.AddListDataValidation();
+            var relCascadeValidation1 = sheet.Cells[3, 51, line, 54].DataValidation.AddListDataValidation();
             relCascadeValidation1.Formula.ExcelFormula = "=ValidationData!$L$2:$L$5";
-            var relCascadeDelValidation = sheet.Cells[3, 54, line, 54].DataValidation.AddListDataValidation();
+            var relCascadeDelValidation = sheet.Cells[3, 55, line, 55].DataValidation.AddListDataValidation();
             relCascadeDelValidation.Formula.ExcelFormula = "=ValidationData!$M$2:$M$4";
-            var relCascadeValidation2 = sheet.Cells[3, 55, line, 55].DataValidation.AddListDataValidation();
+            var relCascadeValidation2 = sheet.Cells[3, 56, line, 56].DataValidation.AddListDataValidation();
             relCascadeValidation2.Formula.ExcelFormula = "=ValidationData!$L$2:$L$5";
         }
 
@@ -268,6 +272,17 @@ namespace Javista.AttributesFactory.AppCode
             }
 
             return sb.ToString();
+        }
+
+        private string GetPrecisionSourceString(int v)
+        {
+            switch (v)
+            {
+                case 0: return "Specific Precision";
+                case 1: return "Pricing Decimal Precision";
+                case 2: return "Currency Precision";
+                default: return "n/a";
+            }
         }
 
         private object GetRequiredLevelString(AttributeRequiredLevel value)
@@ -432,8 +447,9 @@ namespace Javista.AttributesFactory.AppCode
             {
                 sheet.Cells[line, 4].Value = "Money";
                 sheet.Cells[line, 35].Value = mamd.Precision ?? -1;
-                sheet.Cells[line, 36].Value = mamd.MinValue ?? -1;
-                sheet.Cells[line, 37].Value = mamd.MaxValue ?? -1;
+                sheet.Cells[line, 36].Value = GetPrecisionSourceString(mamd.PrecisionSource ?? -1);
+                sheet.Cells[line, 37].Value = mamd.MinValue ?? -1;
+                sheet.Cells[line, 38].Value = mamd.MaxValue ?? -1;
             }
             else if (amd is DateTimeAttributeMetadata dtAmd)
             {
@@ -454,8 +470,8 @@ namespace Javista.AttributesFactory.AppCode
                 }
 
                 sheet.Cells[line, 4].Value = "Date and time";
-                sheet.Cells[line, 39].Value = behavior;
-                sheet.Cells[line, 40].Value = (dtAmd.Format ?? DateTimeFormat.DateOnly) == DateTimeFormat.DateOnly ? "Date only" : "Date and time";
+                sheet.Cells[line, 40].Value = behavior;
+                sheet.Cells[line, 41].Value = (dtAmd.Format ?? DateTimeFormat.DateOnly) == DateTimeFormat.DateOnly ? "Date only" : "Date and time";
             }
             else if (amd is LookupAttributeMetadata lamd)
             {
@@ -482,20 +498,20 @@ namespace Javista.AttributesFactory.AppCode
                 }
 
                 sheet.Cells[line, 4].Value = "Lookup";
-                sheet.Cells[line, 42].Value = String.Join(",", lamd.Targets);
-                sheet.Cells[line, 43].Value = lamd.IsValidForAdvancedFind.Value ? "Yes" : "No";
-                sheet.Cells[line, 44].Value = rel.IsHierarchical ?? false ? "Yes" : "No";
-                sheet.Cells[line, 45].Value = behavior;
-                sheet.Cells[line, 46].Value = rel.AssociatedMenuConfiguration.Label?.UserLocalizedLabel?.Label;
-                sheet.Cells[line, 47].Value = rel.AssociatedMenuConfiguration.Group ?? AssociatedMenuGroup.Details;
-                sheet.Cells[line, 48].Value = rel.AssociatedMenuConfiguration.Order ?? -1;
+                sheet.Cells[line, 43].Value = String.Join(",", lamd.Targets);
+                sheet.Cells[line, 44].Value = lamd.IsValidForAdvancedFind.Value ? "Yes" : "No";
+                sheet.Cells[line, 45].Value = rel.IsHierarchical ?? false ? "Yes" : "No";
+                sheet.Cells[line, 46].Value = behavior;
+                sheet.Cells[line, 47].Value = rel.AssociatedMenuConfiguration.Label?.UserLocalizedLabel?.Label;
+                sheet.Cells[line, 48].Value = rel.AssociatedMenuConfiguration.Group ?? AssociatedMenuGroup.Details;
+                sheet.Cells[line, 49].Value = rel.AssociatedMenuConfiguration.Order ?? -1;
 
-                sheet.Cells[line, 50].Value = GetCascadeText(rel.CascadeConfiguration.Assign ?? CascadeType.Cascade);
-                sheet.Cells[line, 51].Value = GetCascadeText(rel.CascadeConfiguration.Share ?? CascadeType.Cascade);
-                sheet.Cells[line, 52].Value = GetCascadeText(rel.CascadeConfiguration.Unshare ?? CascadeType.Cascade);
-                sheet.Cells[line, 53].Value = GetCascadeText(rel.CascadeConfiguration.Reparent ?? CascadeType.Cascade);
-                sheet.Cells[line, 54].Value = GetCascadeText(rel.CascadeConfiguration.Delete ?? CascadeType.Cascade, true);
-                sheet.Cells[line, 55].Value = GetCascadeText(rel.CascadeConfiguration.Merge ?? CascadeType.Cascade);
+                sheet.Cells[line, 51].Value = GetCascadeText(rel.CascadeConfiguration.Assign ?? CascadeType.Cascade);
+                sheet.Cells[line, 52].Value = GetCascadeText(rel.CascadeConfiguration.Share ?? CascadeType.Cascade);
+                sheet.Cells[line, 53].Value = GetCascadeText(rel.CascadeConfiguration.Unshare ?? CascadeType.Cascade);
+                sheet.Cells[line, 54].Value = GetCascadeText(rel.CascadeConfiguration.Reparent ?? CascadeType.Cascade);
+                sheet.Cells[line, 55].Value = GetCascadeText(rel.CascadeConfiguration.Delete ?? CascadeType.Cascade, true);
+                sheet.Cells[line, 56].Value = GetCascadeText(rel.CascadeConfiguration.Merge ?? CascadeType.Cascade);
 
                 if ((rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.Cascade
                     && (rel.CascadeConfiguration.Share ?? CascadeType.Cascade) == CascadeType.Cascade
@@ -505,7 +521,7 @@ namespace Javista.AttributesFactory.AppCode
                     && (rel.CascadeConfiguration.Delete ?? CascadeType.Cascade) == CascadeType.Cascade
                     && (rel.CascadeConfiguration.Merge ?? CascadeType.Cascade) == CascadeType.Cascade)
                 {
-                    sheet.Cells[line, 49].Value = "Parental";
+                    sheet.Cells[line, 50].Value = "Parental";
                 }
                 else if ((rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.NoCascade
                    && (rel.CascadeConfiguration.Share ?? CascadeType.Cascade) == CascadeType.NoCascade
@@ -515,7 +531,7 @@ namespace Javista.AttributesFactory.AppCode
                    && (rel.CascadeConfiguration.Delete ?? CascadeType.Cascade) == CascadeType.RemoveLink
                    && (rel.CascadeConfiguration.Merge ?? CascadeType.Cascade) == CascadeType.Cascade)
                 {
-                    sheet.Cells[line, 49].Value = "Referential";
+                    sheet.Cells[line, 50].Value = "Referential";
                 }
                 else if ((rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.NoCascade
                     && (rel.CascadeConfiguration.Share ?? CascadeType.Cascade) == CascadeType.NoCascade
@@ -525,10 +541,22 @@ namespace Javista.AttributesFactory.AppCode
                     && (rel.CascadeConfiguration.Delete ?? CascadeType.Cascade) == CascadeType.Restrict
                     && (rel.CascadeConfiguration.Merge ?? CascadeType.Cascade) == CascadeType.Cascade)
                 {
-                    sheet.Cells[line, 49].Value = "Referential, restrict delete";
+                    sheet.Cells[line, 50].Value = "Referential, restrict delete";
                 }
                 else
-                    sheet.Cells[line, 49].Value = "Custom";
+                    sheet.Cells[line, 50].Value = "Custom";
+            }
+            else if (amd is FileAttributeMetadata fileAmd)
+            {
+                sheet.Cells[line, 4].Value = "File";
+                sheet.Cells[line, 58].Value = fileAmd.MaxSizeInKB.Value.ToString();
+            }
+            else if (amd is ImageAttributeMetadata imageAmd)
+            {
+                sheet.Cells[line, 4].Value = "Image";
+                sheet.Cells[line, 60].Value = imageAmd.MaxSizeInKB ?? -1;
+                sheet.Cells[line, 61].Value = imageAmd.CanStoreFullImage ?? false;
+                sheet.Cells[line, 62].Value = imageAmd.IsPrimaryImage ?? false;
             }
         }
     }
