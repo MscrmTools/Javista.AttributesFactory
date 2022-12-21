@@ -12,9 +12,9 @@
     <description>Create or Update attributes from an Excel template</description>
     <summary>Create or Update attributes from an Excel template</summary>
     <releaseNotes>
-      Added missing property Precision Source for Money column type (#23)
-      Optimized table export
-      Added sorting for tables export selection
+      Added support for multi table lookup
+      Added support for many-to-many relationships
+      Added support for State and Status for export
     </releaseNotes>
     <tags>XrmToolBox Attributes Factory Metadata</tags>
     <dependencies>
