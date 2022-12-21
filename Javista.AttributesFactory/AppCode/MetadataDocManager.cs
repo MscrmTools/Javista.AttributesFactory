@@ -79,40 +79,8 @@ namespace Javista.AttributesFactory.AppCode
                                 continue;
                             }
 
-                            sheet.InsertRow(line, 1);
-                            sheet.Cells[line + 1, 1, line + 1, 62].Copy(sheet.Cells[line, 1]);
-                            sheet.Cells[line + 1, 1, line + 1, 62].Style.Border.BorderAround(ExcelBorderStyle.None);
-
-                            for (int i = 1; i <= 62; i++)
-                            {
-                                var sourceRange = sheet.Cells[line + 1, i].Address;
-                                var sourceValidation = sheet.DataValidations[sourceRange];
-                                if (sourceValidation != null)
-                                {
-                                    //Test for each type
-                                    if (sourceValidation.ValidationType.Type == eDataValidationType.List)
-                                    {
-                                        var destRange = sheet.Cells[line, i].Address;
-                                        var destCell = sheet.Cells[destRange];
-                                        var destVal = sheet.DataValidations.AddListValidation(destCell.Address);
-                                        destVal.Formula.ExcelFormula = ((IExcelDataValidationList)sourceValidation).Formula.ExcelFormula;
-                                    }
-                                }
-                            }
-
-                            sheet.Cells[line, 1].Value = "Process";
-                            sheet.Cells[line, 2].Value = amd.DisplayName?.UserLocalizedLabel?.Label ?? "N/A";
-                            sheet.Cells[line, 3].Value = amd.SchemaName;
-                            sheet.Cells[line, 4].Value = amd.AttributeTypeName?.Value ?? amd.AttributeType.ToString();
-                            sheet.Cells[line, 5].Value = amd.EntityLogicalName;
-                            sheet.Cells[line, 6].Value = amd.Description?.UserLocalizedLabel?.Label;
-                            sheet.Cells[line, 7].Value = GetRequiredLevelString(amd.RequiredLevel.Value);
-                            sheet.Cells[line, 8].Value = amd.IsValidForAdvancedFind.Value ? "Yes" : "No";
-                            sheet.Cells[line, 9].Value = amd.IsSecured ?? false ? "Yes" : "No";
-                            sheet.Cells[line, 10].Value = amd.IsAuditEnabled.Value ? "Yes" : "No";
-                            sheet.Cells[line, 11].Value = GetSourceTypeString(amd.SourceType ?? 0);
-
-                            ProcessDetails(amd, fullEmd, sheet, line);
+                            AddLine(sheet, amd, line);
+                            ProcessDetails(amd, fullEmd, sheet, ref line);
 
                             line++;
                         }
@@ -142,40 +110,76 @@ namespace Javista.AttributesFactory.AppCode
             }
             else
             {
-                formatting.Formula = $"=AND({reference}<>ValidationData!{values[0]},{reference}<>ValidationData!{values[1]})";
+                formatting.Formula = $"=AND({reference}<>ValidationData!{string.Join($",{reference}<>ValidationData!", values)})";
             }
+        }
+
+        private void AddLine(ExcelWorksheet sheet, AttributeMetadata amd, int line)
+        {
+            sheet.InsertRow(line, 1);
+            sheet.Cells[line + 1, 1, line + 1, 62].Copy(sheet.Cells[line, 1]);
+            sheet.Cells[line + 1, 1, line + 1, 62].Style.Border.BorderAround(ExcelBorderStyle.None);
+
+            for (int i = 1; i <= 62; i++)
+            {
+                var sourceRange = sheet.Cells[line + 1, i].Address;
+                var sourceValidation = sheet.DataValidations[sourceRange];
+                if (sourceValidation != null)
+                {
+                    //Test for each type
+                    if (sourceValidation.ValidationType.Type == eDataValidationType.List)
+                    {
+                        var destRange = sheet.Cells[line, i].Address;
+                        var destCell = sheet.Cells[destRange];
+                        var destVal = sheet.DataValidations.AddListValidation(destCell.Address);
+                        destVal.Formula.ExcelFormula = ((IExcelDataValidationList)sourceValidation).Formula.ExcelFormula;
+                    }
+                }
+            }
+
+            sheet.Cells[line, 1].Value = "Process";
+            sheet.Cells[line, 2].Value = amd.DisplayName?.UserLocalizedLabel?.Label ?? "N/A";
+            sheet.Cells[line, 3].Value = amd.SchemaName;
+            sheet.Cells[line, 4].Value = amd.AttributeTypeName?.Value ?? amd.AttributeType.ToString();
+            sheet.Cells[line, 5].Value = amd.EntityLogicalName;
+            sheet.Cells[line, 6].Value = amd.Description?.UserLocalizedLabel?.Label;
+            sheet.Cells[line, 7].Value = GetRequiredLevelString(amd.RequiredLevel.Value);
+            sheet.Cells[line, 8].Value = amd.IsValidForAdvancedFind.Value ? "Yes" : "No";
+            sheet.Cells[line, 9].Value = amd.IsSecured ?? false ? "Yes" : "No";
+            sheet.Cells[line, 10].Value = amd.IsAuditEnabled.Value ? "Yes" : "No";
+            sheet.Cells[line, 11].Value = GetSourceTypeString(amd.SourceType ?? 0);
         }
 
         private void ApplyConditionalFormatting(ExcelWorksheet sheet, int line)
         {
             // Max Length
-            AddConditionalFormattingExpression(sheet, "D3", 12, line, "$A$12", "$A$13");
-            AddConditionalFormattingExpression(sheet, "D3", 13, line, "$A$13");
-            AddConditionalFormattingExpression(sheet, "D3", 14, line, "$A$13");
+            AddConditionalFormattingExpression(sheet, "D3", 12, line, "$A$12", "$A$14");
+            AddConditionalFormattingExpression(sheet, "D3", 13, line, "$A$14");
+            AddConditionalFormattingExpression(sheet, "D3", 14, line, "$A$14");
             AddConditionalFormattingExpression(sheet, "D3", 16, line, "$A$2", "$A$3");
             AddConditionalFormattingExpression(sheet, "D3", 17, line, "$A$2", "$A$3");
             AddConditionalFormattingExpression(sheet, "D3", 18, line, "$A$2", "$A$3");
-            AddConditionalFormattingExpression(sheet, "D3", 20, line, "$A$14");
-            AddConditionalFormattingExpression(sheet, "D3", 21, line, "$A$14");
-            AddConditionalFormattingExpression(sheet, "D3", 23, line, "$A$15");
-            AddConditionalFormattingExpression(sheet, "D3", 24, line, "$A$15");
-            AddConditionalFormattingExpression(sheet, "D3", 25, line, "$A$15");
+            AddConditionalFormattingExpression(sheet, "D3", 20, line, "$A$15");
+            AddConditionalFormattingExpression(sheet, "D3", 21, line, "$A$15");
+            AddConditionalFormattingExpression(sheet, "D3", 23, line, "$A$16");
+            AddConditionalFormattingExpression(sheet, "D3", 24, line, "$A$16");
+            AddConditionalFormattingExpression(sheet, "D3", 25, line, "$A$16");
             AddConditionalFormattingExpression(sheet, "D3", 27, line, "$A$8");
             AddConditionalFormattingExpression(sheet, "D3", 28, line, "$A$8");
             AddConditionalFormattingExpression(sheet, "D3", 29, line, "$A$8");
             AddConditionalFormattingExpression(sheet, "D3", 31, line, "$A$6");
             AddConditionalFormattingExpression(sheet, "D3", 32, line, "$A$6");
             AddConditionalFormattingExpression(sheet, "D3", 33, line, "$A$6");
-            AddConditionalFormattingExpression(sheet, "D3", 35, line, "$A$11");
-            AddConditionalFormattingExpression(sheet, "D3", 36, line, "$A$11");
-            AddConditionalFormattingExpression(sheet, "D3", 37, line, "$A$11");
-            AddConditionalFormattingExpression(sheet, "D3", 38, line, "$A$11");
+            AddConditionalFormattingExpression(sheet, "D3", 35, line, "$A$12");
+            AddConditionalFormattingExpression(sheet, "D3", 36, line, "$A$12");
+            AddConditionalFormattingExpression(sheet, "D3", 37, line, "$A$12");
+            AddConditionalFormattingExpression(sheet, "D3", 38, line, "$A$12");
             AddConditionalFormattingExpression(sheet, "D3", 40, line, "$A$5");
             AddConditionalFormattingExpression(sheet, "D3", 41, line, "$A$5");
 
             for (var i = 43; i <= 56; i++)
             {
-                AddConditionalFormattingExpression(sheet, "D3", i, line, "$A$4", "$A$10");
+                AddConditionalFormattingExpression(sheet, "D3", i, line, "$A$4", "$A$10", "$A$11");
             }
 
             AddConditionalFormattingExpression(sheet, "D3", 58, line, "$A$7");
@@ -327,7 +331,7 @@ namespace Javista.AttributesFactory.AppCode
             return false;
         }
 
-        private void ProcessDetails(AttributeMetadata amd, EntityMetadata emd, ExcelWorksheet sheet, int line)
+        private void ProcessDetails(AttributeMetadata amd, EntityMetadata emd, ExcelWorksheet sheet, ref int line)
         {
             if (amd is StringAttributeMetadata samd)
             {
@@ -475,76 +479,89 @@ namespace Javista.AttributesFactory.AppCode
             }
             else if (amd is LookupAttributeMetadata lamd)
             {
-                var rel = emd.ManyToOneRelationships.FirstOrDefault(r => r.ReferencingAttribute == amd.LogicalName);
-                if (rel == null)
+                for (int i = 0; i < lamd.Targets.Length; i++)
                 {
-                    return;
+                    var targetEntity = lamd.Targets[i];
+
+                    if (i != 0)
+                    {
+                        line++;
+                        AddLine(sheet, amd, line);
+                    }
+
+                    var attr = lamd.LogicalName == "ownerid" ? (targetEntity == "systemuser" ? "owninguser" : "owningteam") : lamd.LogicalName;
+
+                    var rel = emd.ManyToOneRelationships.FirstOrDefault(r => r.ReferencingAttribute == attr && r.ReferencedEntity == targetEntity);
+                    if (rel == null)
+                    {
+                        return;
+                    }
+
+                    var behavior = string.Empty;
+                    switch (rel.AssociatedMenuConfiguration.Behavior ?? AssociatedMenuBehavior.UseCollectionName)
+                    {
+                        case AssociatedMenuBehavior.DoNotDisplay:
+                            behavior = "Do not display";
+                            break;
+
+                        case AssociatedMenuBehavior.UseCollectionName:
+                            behavior = "Use plural name";
+                            break;
+
+                        case AssociatedMenuBehavior.UseLabel:
+                            behavior = "Custom label";
+                            break;
+                    }
+
+                    sheet.Cells[line, 4].Value = lamd.Targets.Length > 1 ? "Lookup (Multi table)" : "Lookup";
+                    sheet.Cells[line, 43].Value = targetEntity;
+                    sheet.Cells[line, 44].Value = lamd.IsValidForAdvancedFind.Value ? "Yes" : "No";
+                    sheet.Cells[line, 45].Value = rel.IsHierarchical ?? false ? "Yes" : "No";
+                    sheet.Cells[line, 46].Value = behavior;
+                    sheet.Cells[line, 47].Value = rel.AssociatedMenuConfiguration.Label?.UserLocalizedLabel?.Label;
+                    sheet.Cells[line, 48].Value = rel.AssociatedMenuConfiguration.Group ?? AssociatedMenuGroup.Details;
+                    sheet.Cells[line, 49].Value = rel.AssociatedMenuConfiguration.Order ?? -1;
+
+                    sheet.Cells[line, 51].Value = GetCascadeText(rel.CascadeConfiguration.Assign ?? CascadeType.Cascade);
+                    sheet.Cells[line, 52].Value = GetCascadeText(rel.CascadeConfiguration.Share ?? CascadeType.Cascade);
+                    sheet.Cells[line, 53].Value = GetCascadeText(rel.CascadeConfiguration.Unshare ?? CascadeType.Cascade);
+                    sheet.Cells[line, 54].Value = GetCascadeText(rel.CascadeConfiguration.Reparent ?? CascadeType.Cascade);
+                    sheet.Cells[line, 55].Value = GetCascadeText(rel.CascadeConfiguration.Delete ?? CascadeType.Cascade, true);
+                    sheet.Cells[line, 56].Value = GetCascadeText(rel.CascadeConfiguration.Merge ?? CascadeType.Cascade);
+
+                    if ((rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.Cascade
+                        && (rel.CascadeConfiguration.Share ?? CascadeType.Cascade) == CascadeType.Cascade
+                        && (rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.Cascade
+                        && (rel.CascadeConfiguration.Unshare ?? CascadeType.Cascade) == CascadeType.Cascade
+                        && (rel.CascadeConfiguration.Reparent ?? CascadeType.Cascade) == CascadeType.Cascade
+                        && (rel.CascadeConfiguration.Delete ?? CascadeType.Cascade) == CascadeType.Cascade
+                        && (rel.CascadeConfiguration.Merge ?? CascadeType.Cascade) == CascadeType.Cascade)
+                    {
+                        sheet.Cells[line, 50].Value = "Parental";
+                    }
+                    else if ((rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.NoCascade
+                       && (rel.CascadeConfiguration.Share ?? CascadeType.Cascade) == CascadeType.NoCascade
+                       && (rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.NoCascade
+                       && (rel.CascadeConfiguration.Unshare ?? CascadeType.Cascade) == CascadeType.NoCascade
+                       && (rel.CascadeConfiguration.Reparent ?? CascadeType.Cascade) == CascadeType.NoCascade
+                       && (rel.CascadeConfiguration.Delete ?? CascadeType.Cascade) == CascadeType.RemoveLink
+                       && (rel.CascadeConfiguration.Merge ?? CascadeType.Cascade) == CascadeType.Cascade)
+                    {
+                        sheet.Cells[line, 50].Value = "Referential";
+                    }
+                    else if ((rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.NoCascade
+                        && (rel.CascadeConfiguration.Share ?? CascadeType.Cascade) == CascadeType.NoCascade
+                        && (rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.NoCascade
+                        && (rel.CascadeConfiguration.Unshare ?? CascadeType.Cascade) == CascadeType.NoCascade
+                        && (rel.CascadeConfiguration.Reparent ?? CascadeType.Cascade) == CascadeType.NoCascade
+                        && (rel.CascadeConfiguration.Delete ?? CascadeType.Cascade) == CascadeType.Restrict
+                        && (rel.CascadeConfiguration.Merge ?? CascadeType.Cascade) == CascadeType.Cascade)
+                    {
+                        sheet.Cells[line, 50].Value = "Referential, restrict delete";
+                    }
+                    else
+                        sheet.Cells[line, 50].Value = "Custom";
                 }
-
-                var behavior = string.Empty;
-                switch (rel.AssociatedMenuConfiguration.Behavior ?? AssociatedMenuBehavior.UseCollectionName)
-                {
-                    case AssociatedMenuBehavior.DoNotDisplay:
-                        behavior = "Do not display";
-                        break;
-
-                    case AssociatedMenuBehavior.UseCollectionName:
-                        behavior = "Use plural name";
-                        break;
-
-                    case AssociatedMenuBehavior.UseLabel:
-                        behavior = "Custom label";
-                        break;
-                }
-
-                sheet.Cells[line, 4].Value = "Lookup";
-                sheet.Cells[line, 43].Value = String.Join(",", lamd.Targets);
-                sheet.Cells[line, 44].Value = lamd.IsValidForAdvancedFind.Value ? "Yes" : "No";
-                sheet.Cells[line, 45].Value = rel.IsHierarchical ?? false ? "Yes" : "No";
-                sheet.Cells[line, 46].Value = behavior;
-                sheet.Cells[line, 47].Value = rel.AssociatedMenuConfiguration.Label?.UserLocalizedLabel?.Label;
-                sheet.Cells[line, 48].Value = rel.AssociatedMenuConfiguration.Group ?? AssociatedMenuGroup.Details;
-                sheet.Cells[line, 49].Value = rel.AssociatedMenuConfiguration.Order ?? -1;
-
-                sheet.Cells[line, 51].Value = GetCascadeText(rel.CascadeConfiguration.Assign ?? CascadeType.Cascade);
-                sheet.Cells[line, 52].Value = GetCascadeText(rel.CascadeConfiguration.Share ?? CascadeType.Cascade);
-                sheet.Cells[line, 53].Value = GetCascadeText(rel.CascadeConfiguration.Unshare ?? CascadeType.Cascade);
-                sheet.Cells[line, 54].Value = GetCascadeText(rel.CascadeConfiguration.Reparent ?? CascadeType.Cascade);
-                sheet.Cells[line, 55].Value = GetCascadeText(rel.CascadeConfiguration.Delete ?? CascadeType.Cascade, true);
-                sheet.Cells[line, 56].Value = GetCascadeText(rel.CascadeConfiguration.Merge ?? CascadeType.Cascade);
-
-                if ((rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.Cascade
-                    && (rel.CascadeConfiguration.Share ?? CascadeType.Cascade) == CascadeType.Cascade
-                    && (rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.Cascade
-                    && (rel.CascadeConfiguration.Unshare ?? CascadeType.Cascade) == CascadeType.Cascade
-                    && (rel.CascadeConfiguration.Reparent ?? CascadeType.Cascade) == CascadeType.Cascade
-                    && (rel.CascadeConfiguration.Delete ?? CascadeType.Cascade) == CascadeType.Cascade
-                    && (rel.CascadeConfiguration.Merge ?? CascadeType.Cascade) == CascadeType.Cascade)
-                {
-                    sheet.Cells[line, 50].Value = "Parental";
-                }
-                else if ((rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.NoCascade
-                   && (rel.CascadeConfiguration.Share ?? CascadeType.Cascade) == CascadeType.NoCascade
-                   && (rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.NoCascade
-                   && (rel.CascadeConfiguration.Unshare ?? CascadeType.Cascade) == CascadeType.NoCascade
-                   && (rel.CascadeConfiguration.Reparent ?? CascadeType.Cascade) == CascadeType.NoCascade
-                   && (rel.CascadeConfiguration.Delete ?? CascadeType.Cascade) == CascadeType.RemoveLink
-                   && (rel.CascadeConfiguration.Merge ?? CascadeType.Cascade) == CascadeType.Cascade)
-                {
-                    sheet.Cells[line, 50].Value = "Referential";
-                }
-                else if ((rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.NoCascade
-                    && (rel.CascadeConfiguration.Share ?? CascadeType.Cascade) == CascadeType.NoCascade
-                    && (rel.CascadeConfiguration.Assign ?? CascadeType.Cascade) == CascadeType.NoCascade
-                    && (rel.CascadeConfiguration.Unshare ?? CascadeType.Cascade) == CascadeType.NoCascade
-                    && (rel.CascadeConfiguration.Reparent ?? CascadeType.Cascade) == CascadeType.NoCascade
-                    && (rel.CascadeConfiguration.Delete ?? CascadeType.Cascade) == CascadeType.Restrict
-                    && (rel.CascadeConfiguration.Merge ?? CascadeType.Cascade) == CascadeType.Cascade)
-                {
-                    sheet.Cells[line, 50].Value = "Referential, restrict delete";
-                }
-                else
-                    sheet.Cells[line, 50].Value = "Custom";
             }
             else if (amd is FileAttributeMetadata fileAmd)
             {

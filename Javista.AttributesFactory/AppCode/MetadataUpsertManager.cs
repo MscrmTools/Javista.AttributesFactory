@@ -197,6 +197,10 @@ namespace Javista.AttributesFactory.AppCode
                                 amd = CreateLookupAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 30 : 31), fakeAmd, info, !fakeAmd.MetadataId.HasValue);
                                 break;
 
+                            case "Lookup (Multi table)":
+                                amd = CreateLookupMultiAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 30 : 31), fakeAmd, info, !fakeAmd.MetadataId.HasValue, ei.Attributes);
+                                break;
+
                             case "Customer":
                                 amd = CreateCustomerAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 31 : 32), fakeAmd, existingAttribute, info, !fakeAmd.MetadataId.HasValue);
                                 break;
@@ -270,10 +274,16 @@ namespace Javista.AttributesFactory.AppCode
 
                         try
                         {
-                            service.Execute(request);
+                            var response = service.Execute(request);
                             info.Success = true;
                             info.Processing = false;
                             worker.ReportProgress(percent, info);
+
+                            if (response is CreateAttributeResponse r)
+                            {
+                                amd.MetadataId = r.AttributeId;
+                                ei.Attributes.Add(amd);
+                            }
                         }
                         catch (FaultException<OrganizationServiceFault> error)
                         {
@@ -853,6 +863,198 @@ namespace Javista.AttributesFactory.AppCode
                 SolutionUniqueName = settings.Solution.UniqueName,
                 MergeLabels = true
             });
+
+            return lookup;
+        }
+
+        private AttributeMetadata CreateLookupMultiAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, AttributeMetadata fakeAmd, ProcessResult info, bool isCreate, List<AttributeMetadata> amds)
+        {
+            var amc = new AssociatedMenuConfiguration
+            {
+                Order = sheet.GetValue<int>(rowIndex, startCell + 6),
+                Group = new AssociatedMenuGroup?()
+            };
+
+            switch (sheet.GetValue<string>(rowIndex, startCell + 5))
+            {
+                case "Details":
+                    amc.Group = AssociatedMenuGroup.Details;
+                    break;
+
+                case "Sales":
+                    amc.Group = AssociatedMenuGroup.Sales;
+                    break;
+
+                case "Service":
+                    amc.Group = AssociatedMenuGroup.Service;
+                    break;
+
+                case "Marketing":
+                    amc.Group = AssociatedMenuGroup.Marketing;
+                    break;
+            }
+
+            switch (sheet.GetValue<string>(rowIndex, startCell + 3))
+            {
+                case "Do not display":
+                    amc.Behavior = AssociatedMenuBehavior.DoNotDisplay;
+                    break;
+
+                case "Custom label":
+                    amc.Behavior = AssociatedMenuBehavior.UseLabel;
+
+                    if (!string.IsNullOrEmpty(sheet.GetValue<string>(rowIndex, startCell + 4)))
+                    {
+                        amc.Label = new Label(sheet.GetValue<string>(rowIndex, startCell + 4), settings.LanguageCode);
+                    }
+                    else
+                    {
+                        throw new Exception("If display behavior is \"Custom Label\", the label must be specified");
+                    }
+
+                    break;
+
+                default:
+                    amc.Behavior = AssociatedMenuBehavior.UseCollectionName;
+                    break;
+            }
+
+            var cc = new CascadeConfiguration();
+            switch (sheet.GetValue<string>(rowIndex, startCell + 7))
+            {
+                case "Parental":
+                    cc.Assign = CascadeType.Cascade;
+                    cc.Delete = CascadeType.Cascade;
+                    cc.Merge = CascadeType.Cascade;
+                    cc.Reparent = CascadeType.Cascade;
+                    cc.RollupView = CascadeType.NoCascade;
+                    cc.Share = CascadeType.Cascade;
+                    cc.Unshare = CascadeType.Cascade;
+                    break;
+
+                case "Referential, restrict delete":
+                    cc.Assign = CascadeType.NoCascade;
+                    cc.Delete = CascadeType.Restrict;
+                    cc.Merge = CascadeType.NoCascade;
+                    cc.Reparent = CascadeType.NoCascade;
+                    cc.RollupView = CascadeType.NoCascade;
+                    cc.Share = CascadeType.NoCascade;
+                    cc.Unshare = CascadeType.NoCascade;
+                    break;
+
+                case "Custom":
+                    cc.RollupView = CascadeType.NoCascade;
+                    cc.Assign = GetCascade(sheet.GetValue<string>(rowIndex, startCell + 8));
+                    cc.Share = GetCascade(sheet.GetValue<string>(rowIndex, startCell + 9));
+                    cc.Unshare = GetCascade(sheet.GetValue<string>(rowIndex, startCell + 10));
+                    cc.Reparent = GetCascade(sheet.GetValue<string>(rowIndex, startCell + 11));
+                    cc.Delete = GetCascade(sheet.GetValue<string>(rowIndex, startCell + 12));
+                    cc.Merge = GetCascade(sheet.GetValue<string>(rowIndex, startCell + 13));
+                    break;
+
+                default:
+                    cc.Assign = CascadeType.NoCascade;
+                    cc.Delete = CascadeType.RemoveLink;
+                    cc.Merge = CascadeType.NoCascade;
+                    cc.Reparent = CascadeType.NoCascade;
+                    cc.RollupView = CascadeType.NoCascade;
+                    cc.Share = CascadeType.NoCascade;
+                    cc.Unshare = CascadeType.NoCascade;
+                    break;
+            }
+
+            var lookup = new LookupAttributeMetadata
+            {
+                DisplayName = fakeAmd.DisplayName,
+                SchemaName = fakeAmd.SchemaName,
+                LogicalName = fakeAmd.LogicalName,
+                IsValidForAdvancedFind = fakeAmd.IsValidForAdvancedFind,
+                RequiredLevel = fakeAmd.RequiredLevel,
+                IsSecured = fakeAmd.IsSecured,
+                IsAuditEnabled = fakeAmd.IsAuditEnabled,
+                Targets = new[] { sheet.GetValue<string>(rowIndex, startCell).ToLower() }
+            };
+
+            if (settings.AddLookupSuffix && !lookup.SchemaName.ToLower().EndsWith("id"))
+            {
+                lookup.SchemaName = $"{lookup.SchemaName}Id";
+                lookup.LogicalName = lookup.SchemaName.ToLower();
+            }
+
+            if (fakeAmd.Description != null)
+            {
+                lookup.Description = fakeAmd.Description;
+            }
+
+            var relationship = new OneToManyRelationshipMetadata
+            {
+                IsValidForAdvancedFind = sheet.GetValue<string>(rowIndex, startCell + 1) == "Yes",
+                SchemaName =
+                    $"{settings.Solution.Prefix}{info.Entity}_{sheet.GetValue<string>(rowIndex, startCell)}_{lookup.SchemaName}",
+                AssociatedMenuConfiguration = amc,
+                CascadeConfiguration = cc,
+                IsHierarchical = sheet.GetValue<string>(rowIndex, startCell + 2) == "Yes",
+                ReferencedEntity = sheet.GetValue<string>(rowIndex, startCell),
+                ReferencingEntity = info.Entity,
+                SecurityTypes = SecurityTypes.Append,
+            };
+
+            if (relationship.SchemaName.Length > 100)
+            {
+                relationship.SchemaName = relationship.SchemaName.Substring(0, 100);
+            }
+
+            if (isCreate)
+            {
+                var request = new OrganizationRequest
+                {
+                    RequestName = "CreatePolymorphicLookupAttribute",
+                    Parameters =
+                    {
+                        {"OneToManyRelationships", new OneToManyRelationshipMetadata[]{ relationship } },
+                        {"Lookup", lookup},
+                        {"SolutionUniqueName", settings.Solution.UniqueName}
+                    }
+                };
+
+                var response = service.Execute(request);
+
+                info.IsCreate = true;
+
+                lookup.MetadataId = (Guid)response.Results["AttributeId"];
+                amds.Add(lookup);
+
+                return null;
+            }
+
+            try
+            {
+                service.Execute(new RetrieveRelationshipRequest
+                {
+                    Name = relationship.SchemaName
+                });
+
+                info.IsCreate = false;
+
+                service.Execute(new UpdateRelationshipRequest
+                {
+                    Relationship = relationship,
+                    MergeLabels = true
+                });
+            }
+            catch (FaultException<OrganizationServiceFault> error)
+            {
+                if (error.Detail.ErrorCode != -2147220969) throw;
+
+                info.IsCreate = true;
+
+                service.Execute(new CreateOneToManyRequest
+                {
+                    Lookup = lookup,
+                    OneToManyRelationship = relationship,
+                    SolutionUniqueName = settings.Solution.UniqueName
+                });
+            }
 
             return lookup;
         }
