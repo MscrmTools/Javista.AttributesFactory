@@ -98,7 +98,7 @@ namespace Javista.AttributesFactory.AppCode
             }
         }
 
-        private void AddConditionalFormattingExpression(ExcelWorksheet sheet, string reference, int cellNumber, int endLineNumber, params string[] values)
+        private void AddConditionalFormattingExpressionForHiding(ExcelWorksheet sheet, string reference, int cellNumber, int endLineNumber, params string[] values)
         {
             var formatting = sheet.Cells[3, cellNumber, endLineNumber, cellNumber].ConditionalFormatting.AddExpression();
             formatting.Style.Fill.BackgroundColor.Color = Color.Gray;
@@ -111,6 +111,22 @@ namespace Javista.AttributesFactory.AppCode
             else
             {
                 formatting.Formula = $"=AND({reference}<>ValidationData!{string.Join($",{reference}<>ValidationData!", values)})";
+            }
+        }
+
+        private void AddConditionalFormattingExpressionForShowing(ExcelWorksheet sheet, string reference, int cellNumber, int endLineNumber, params string[] values)
+        {
+            var formatting = sheet.Cells[3, cellNumber, endLineNumber, cellNumber].ConditionalFormatting.AddExpression();
+            formatting.Style.Fill.BackgroundColor.Color = Color.Transparent;
+            formatting.Style.Font.Color.Color = Color.Black;
+
+            if (values.Length == 1)
+            {
+                formatting.Formula = $"={reference}=ValidationData!{values[0]}";
+            }
+            else
+            {
+                formatting.Formula = $"=OR({reference}=ValidationData!{string.Join($",{reference}=ValidationData!", values)})";
             }
         }
 
@@ -153,46 +169,49 @@ namespace Javista.AttributesFactory.AppCode
         private void ApplyConditionalFormatting(ExcelWorksheet sheet, int line)
         {
             // Max Length
-            AddConditionalFormattingExpression(sheet, "D3", 12, line, "$A$12", "$A$14");
-            AddConditionalFormattingExpression(sheet, "D3", 13, line, "$A$14");
-            AddConditionalFormattingExpression(sheet, "D3", 14, line, "$A$14");
-            AddConditionalFormattingExpression(sheet, "D3", 16, line, "$A$2", "$A$3");
-            AddConditionalFormattingExpression(sheet, "D3", 17, line, "$A$2", "$A$3");
-            AddConditionalFormattingExpression(sheet, "D3", 18, line, "$A$2", "$A$3");
-            AddConditionalFormattingExpression(sheet, "D3", 20, line, "$A$15");
-            AddConditionalFormattingExpression(sheet, "D3", 21, line, "$A$15");
-            AddConditionalFormattingExpression(sheet, "D3", 23, line, "$A$16");
-            AddConditionalFormattingExpression(sheet, "D3", 24, line, "$A$16");
-            AddConditionalFormattingExpression(sheet, "D3", 25, line, "$A$16");
-            AddConditionalFormattingExpression(sheet, "D3", 27, line, "$A$8");
-            AddConditionalFormattingExpression(sheet, "D3", 28, line, "$A$8");
-            AddConditionalFormattingExpression(sheet, "D3", 29, line, "$A$8");
-            AddConditionalFormattingExpression(sheet, "D3", 31, line, "$A$6");
-            AddConditionalFormattingExpression(sheet, "D3", 32, line, "$A$6");
-            AddConditionalFormattingExpression(sheet, "D3", 33, line, "$A$6");
-            AddConditionalFormattingExpression(sheet, "D3", 35, line, "$A$12");
-            AddConditionalFormattingExpression(sheet, "D3", 36, line, "$A$12");
-            AddConditionalFormattingExpression(sheet, "D3", 37, line, "$A$12");
-            AddConditionalFormattingExpression(sheet, "D3", 38, line, "$A$12");
-            AddConditionalFormattingExpression(sheet, "D3", 40, line, "$A$5");
-            AddConditionalFormattingExpression(sheet, "D3", 41, line, "$A$5");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 12, line, "$A$12", "$A$14");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 13, line, "$A$14");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 14, line, "$A$14");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 16, line, "$A$2", "$A$3", "$A$18", "$A$19");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 17, line, "$A$2", "$A$3", "$A$18", "$A$19");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 18, line, "$A$2", "$A$3", "$A$18", "$A$19");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 20, line, "$A$15");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 21, line, "$A$15");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 23, line, "$A$16");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 24, line, "$A$16");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 25, line, "$A$16");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 27, line, "$A$8");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 28, line, "$A$8");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 29, line, "$A$8");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 31, line, "$A$6");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 32, line, "$A$6");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 33, line, "$A$6");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 35, line, "$A$12");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 36, line, "$A$12");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 37, line, "$A$12");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 38, line, "$A$12");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 40, line, "$A$5");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 41, line, "$A$5");
 
             for (var i = 43; i <= 56; i++)
             {
-                AddConditionalFormattingExpression(sheet, "D3", i, line, "$A$4", "$A$10", "$A$11");
+                AddConditionalFormattingExpressionForHiding(sheet, "D3", i, line, "$A$4", "$A$10", "$A$11", "$A$17");
             }
 
-            AddConditionalFormattingExpression(sheet, "D3", 58, line, "$A$7");
-            AddConditionalFormattingExpression(sheet, "D3", 60, line, "$A$9");
-            AddConditionalFormattingExpression(sheet, "D3", 61, line, "$A$9");
-            AddConditionalFormattingExpression(sheet, "D3", 62, line, "$A$9");
-
-            AddConditionalFormattingExpression(sheet, "AS3", 47, line, "$I$3");
+            AddConditionalFormattingExpressionForShowing(sheet, "AT3", 47, line, "$I$3");
 
             for (var i = 51; i <= 56; i++)
             {
-                AddConditionalFormattingExpression(sheet, "AW3", i, line, "$K$5");
+                AddConditionalFormattingExpressionForHiding(sheet, "AX3", i, line, "$K$5");
+                AddConditionalFormattingExpressionForShowing(sheet, "AX3", i, line, "$K$5");
             }
+
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 58, line, "$A$7");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 60, line, "$A$9");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 61, line, "$A$9");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 62, line, "$A$9");
+
+            AddConditionalFormattingExpressionForHiding(sheet, "AS3", 47, line, "$I$3");
         }
 
         private void ApplyDataValidation(ExcelWorksheet sheet, int line)
@@ -388,6 +407,20 @@ namespace Javista.AttributesFactory.AppCode
                 sheet.Cells[line, 16].Value = GetOptionSets(pamd.OptionSet);
                 sheet.Cells[line, 17].Value = pamd.OptionSet.IsGlobal ?? false ? pamd.OptionSet.Name : "";
                 sheet.Cells[line, 18].Value = pamd.DefaultFormValue.HasValue ? pamd.DefaultFormValue.Value.ToString() : "";
+            }
+            else if (amd is StateAttributeMetadata stateAmd)
+            {
+                sheet.Cells[line, 4].Value = "StateType";
+                sheet.Cells[line, 16].Value = GetOptionSets(stateAmd.OptionSet);
+                sheet.Cells[line, 17].Value = stateAmd.OptionSet.IsGlobal ?? false ? stateAmd.OptionSet.Name : "";
+                sheet.Cells[line, 18].Value = stateAmd.DefaultFormValue.HasValue ? stateAmd.DefaultFormValue.Value.ToString() : "";
+            }
+            else if (amd is StatusAttributeMetadata statusAmd)
+            {
+                sheet.Cells[line, 4].Value = "StatusType";
+                sheet.Cells[line, 16].Value = GetOptionSets(statusAmd.OptionSet);
+                sheet.Cells[line, 17].Value = statusAmd.OptionSet.IsGlobal ?? false ? statusAmd.OptionSet.Name : "";
+                sheet.Cells[line, 18].Value = statusAmd.DefaultFormValue.HasValue ? statusAmd.DefaultFormValue.Value.ToString() : "";
             }
             else if (amd is MultiSelectPicklistAttributeMetadata msamd)
             {
