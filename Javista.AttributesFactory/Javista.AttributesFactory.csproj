@@ -223,6 +223,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppCode\Extensions.cs" />
     <Compile Include="AppCode\ListViewItemComparer.cs" />
     <Compile Include="AppCode\ListViewToCsv.cs" />
     <Compile Include="AppCode\MetadataDocManager.cs" />

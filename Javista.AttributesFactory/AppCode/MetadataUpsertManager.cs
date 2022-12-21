@@ -329,6 +329,55 @@ namespace Javista.AttributesFactory.AppCode
                         }
                     }
                 }
+
+                var nnWorkSheet = package.Workbook.Worksheets[package.Compatibility.IsWorksheets1Based ? 2 : 1];
+
+                index = 0;
+                for (int i = 3; i <= nnWorkSheet.Dimension.End.Row; i++)
+                {
+                    if (string.IsNullOrEmpty(nnWorkSheet.GetValue<string>(i, "D"))
+                        && string.IsNullOrEmpty(nnWorkSheet.GetValue<string>(i, "I"))
+                        || nnWorkSheet.GetValue<string>(i, 1) == "Ignore")
+                    {
+                        continue;
+                    }
+
+                    if (worker.CancellationPending)
+                    {
+                        return;
+                    }
+
+                    index++;
+
+                    var info = new ProcessResult
+                    {
+                        DisplayName = "Many to many",
+                        Attribute = nnWorkSheet.GetValue<string>(i, "B"),
+                        Type = "Many to many",
+                        Entity = $"{nnWorkSheet.GetValue<string>(i, "D")} / {nnWorkSheet.GetValue<string>(i, "I")}",
+                        Processing = true,
+                    };
+
+                    worker.ReportProgress(percent, info);
+                    percent = index * 100 / (nnWorkSheet.Dimension.End.Row - 2);
+
+                    try
+                    {
+                        ProcessNN(nnWorkSheet, i, info);
+
+                        info.Success = true;
+                    }
+                    catch (Exception e)
+                    {
+                        info.Success = false;
+                        info.Message = e.Message;
+                    }
+                    finally
+                    {
+                        info.Processing = false;
+                        worker.ReportProgress(percent, info);
+                    }
+                }
             }
         }
 
@@ -1369,6 +1418,21 @@ namespace Javista.AttributesFactory.AppCode
             return samd;
         }
 
+        private AssociatedMenuBehavior GetBehavior(string value)
+        {
+            switch (value)
+            {
+                case "Do not display":
+                    return AssociatedMenuBehavior.DoNotDisplay;
+
+                case "Custom label":
+                    return AssociatedMenuBehavior.UseLabel;
+
+                default:
+                    return AssociatedMenuBehavior.UseCollectionName;
+            }
+        }
+
         private CascadeType? GetCascade(string value)
         {
             switch (value)
@@ -1438,6 +1502,86 @@ namespace Javista.AttributesFactory.AppCode
                     break;
             }
             return fakeAmd;
+        }
+
+        private AssociatedMenuGroup GetGroup(string value)
+        {
+            switch (value)
+            {
+                default:
+                    return AssociatedMenuGroup.Details;
+
+                case "Sales":
+                    return AssociatedMenuGroup.Sales;
+
+                case "Service":
+                    return AssociatedMenuGroup.Service;
+
+                case "Marketing":
+                    return AssociatedMenuGroup.Marketing;
+            }
+        }
+
+        private void ProcessNN(ExcelWorksheet sheet, int line, ProcessResult info)
+        {
+            if (string.IsNullOrEmpty(sheet.GetValue<string>(line, "B")))
+            {
+                var name = $"{settings.Solution.Prefix}{sheet.GetValue<string>(line, "D")}_{sheet.GetValue<string>(line, "I")}";
+                if (name.Length > 100) name = name.Substring(0, 100);
+
+                sheet.SetValue("B" + line, name);
+            }
+
+            var nn = new ManyToManyRelationshipMetadata
+            {
+                Entity1LogicalName = sheet.GetValue<string>(line, "D"),
+                Entity1AssociatedMenuConfiguration = new AssociatedMenuConfiguration
+                {
+                    Behavior = GetBehavior(sheet.GetValue<string>(line, "E")),
+                    Group = GetGroup(sheet.GetValue<string>(line, "G")),
+                    Label = new Label(sheet.GetValue<string>(line, "F"), settings.LanguageCode),
+                    Order = sheet.GetValue<int>(line, "H")
+                },
+                Entity2LogicalName = sheet.GetValue<string>(line, "I"),
+                Entity2AssociatedMenuConfiguration = new AssociatedMenuConfiguration
+                {
+                    Behavior = GetBehavior(sheet.GetValue<string>(line, "J")),
+                    Group = GetGroup(sheet.GetValue<string>(line, "L")),
+                    Label = new Label(sheet.GetValue<string>(line, "K"), settings.LanguageCode),
+                    Order = sheet.GetValue<int>(line, "M")
+                },
+                IsValidForAdvancedFind = sheet.GetValue<string>(line, "C") == "Yes",
+                SchemaName = sheet.GetValue<string>(line, "B")
+            };
+
+            try
+            {
+                service.Execute(new RetrieveRelationshipRequest
+                {
+                    Name = nn.SchemaName
+                });
+
+                info.IsCreate = false;
+
+                service.Execute(new UpdateRelationshipRequest
+                {
+                    Relationship = nn,
+                    MergeLabels = true
+                });
+            }
+            catch (FaultException<OrganizationServiceFault> error)
+            {
+                if (error.Detail.ErrorCode != -2147220969) throw;
+
+                info.IsCreate = true;
+
+                service.Execute(new CreateManyToManyRequest
+                {
+                    ManyToManyRelationship = nn,
+                    IntersectEntitySchemaName = nn.SchemaName,
+                    SolutionUniqueName = settings.Solution.UniqueName
+                });
+            }
         }
     }
 }

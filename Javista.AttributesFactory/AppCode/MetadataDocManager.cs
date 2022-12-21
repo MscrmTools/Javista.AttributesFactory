@@ -49,8 +49,10 @@ namespace Javista.AttributesFactory.AppCode
                 using (ExcelPackage package = new ExcelPackage(stream))
                 {
                     ExcelWorksheet sheet = package.Workbook.Worksheets.First();
+                    ExcelWorksheet nnWorkSheet = package.Workbook.Worksheets[package.Compatibility.IsWorksheets1Based ? 2 : 1];
 
                     int line = 3;
+                    int lineNn = 3;
 
                     foreach (var emd in emds)
                     {
@@ -84,15 +86,29 @@ namespace Javista.AttributesFactory.AppCode
 
                             line++;
                         }
+
+                        foreach (var rmd in fullEmd.ManyToManyRelationships.OrderBy(a => a.SchemaName))
+                        {
+                            if (!loadAllAttributes && !(rmd.IsCustomRelationship ?? false))
+                            {
+                                continue;
+                            }
+
+                            AddLine(nnWorkSheet, rmd, lineNn);
+
+                            lineNn++;
+                        }
                     }
 
                     sheet.DeleteRow(line, line + 2);
+                    nnWorkSheet.DeleteRow(line, line + 1);
 
                     ApplyDataValidation(sheet, line - 1);
+                    ApplyDataValidation(nnWorkSheet, line - 1);
                     ApplyConditionalFormatting(sheet, line - 1);
 
                     sheet.Cells[1, 63, sheet.Dimension.Rows, 63].Merge = true;
-
+                    
                     package.SaveAs(new FileInfo(filePath));
                 }
             }
@@ -128,6 +144,77 @@ namespace Javista.AttributesFactory.AppCode
             {
                 formatting.Formula = $"=OR({reference}=ValidationData!{string.Join($",{reference}=ValidationData!", values)})";
             }
+        }
+
+        private void AddLine(ExcelWorksheet sheet, ManyToManyRelationshipMetadata rmd, int line)
+        {
+            sheet.InsertRow(line, 1);
+            sheet.Cells[line + 1, 1, line + 1, "M".PositionFromExcelColumn()].Copy(sheet.Cells[line, 1]);
+            sheet.Cells[line + 1, 1, line + 1, "M".PositionFromExcelColumn()].Style.Border.BorderAround(ExcelBorderStyle.None);
+
+            for (int i = 1; i <= "M".PositionFromExcelColumn(); i++)
+            {
+                var sourceRange = sheet.Cells[line + 1, i].Address;
+                var sourceValidation = sheet.DataValidations[sourceRange];
+                if (sourceValidation != null)
+                {
+                    //Test for each type
+                    if (sourceValidation.ValidationType.Type == eDataValidationType.List)
+                    {
+                        var destRange = sheet.Cells[line, i].Address;
+                        var destCell = sheet.Cells[destRange];
+                        var destVal = sheet.DataValidations.AddListValidation(destCell.Address);
+                        destVal.Formula.ExcelFormula = ((IExcelDataValidationList)sourceValidation).Formula.ExcelFormula;
+                    }
+                }
+            }
+
+            var behavior = string.Empty;
+            switch (rmd.Entity1AssociatedMenuConfiguration.Behavior ?? AssociatedMenuBehavior.UseCollectionName)
+            {
+                case AssociatedMenuBehavior.DoNotDisplay:
+                    behavior = "Do not display";
+                    break;
+
+                case AssociatedMenuBehavior.UseCollectionName:
+                    behavior = "Use plural name";
+                    break;
+
+                case AssociatedMenuBehavior.UseLabel:
+                    behavior = "Custom label";
+                    break;
+            }
+
+            sheet.Cells[line, 1].Value = "Process";
+            sheet.Cells[line, 2].Value = rmd.SchemaName;
+            sheet.Cells[line, 3].Value = rmd.IsValidForAdvancedFind ?? false ? "Yes" : "No";
+            sheet.Cells[line, 4].Value = rmd.Entity1LogicalName;
+            sheet.Cells[line, 5].Value = behavior;
+            sheet.Cells[line, 6].Value = rmd.Entity1AssociatedMenuConfiguration.Label?.UserLocalizedLabel?.Label;
+            sheet.Cells[line, 7].Value = rmd.Entity1AssociatedMenuConfiguration.Group ?? AssociatedMenuGroup.Details;
+            sheet.Cells[line, 8].Value = rmd.Entity1AssociatedMenuConfiguration.Order;
+
+            behavior = string.Empty;
+            switch (rmd.Entity2AssociatedMenuConfiguration.Behavior ?? AssociatedMenuBehavior.UseCollectionName)
+            {
+                case AssociatedMenuBehavior.DoNotDisplay:
+                    behavior = "Do not display";
+                    break;
+
+                case AssociatedMenuBehavior.UseCollectionName:
+                    behavior = "Use plural name";
+                    break;
+
+                case AssociatedMenuBehavior.UseLabel:
+                    behavior = "Custom label";
+                    break;
+            }
+
+            sheet.Cells[line, 9].Value = rmd.Entity2LogicalName;
+            sheet.Cells[line, 10].Value = behavior;
+            sheet.Cells[line, 11].Value = rmd.Entity2AssociatedMenuConfiguration.Label?.UserLocalizedLabel?.Label;
+            sheet.Cells[line, 12].Value = rmd.Entity2AssociatedMenuConfiguration.Group ?? AssociatedMenuGroup.Details;
+            sheet.Cells[line, 13].Value = rmd.Entity2AssociatedMenuConfiguration.Order;
         }
 
         private void AddLine(ExcelWorksheet sheet, AttributeMetadata amd, int line)
