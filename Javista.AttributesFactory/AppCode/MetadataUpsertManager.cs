@@ -41,9 +41,11 @@ namespace Javista.AttributesFactory.AppCode
         {
             var entities = new List<string>();
 
-            byte[] file = File.ReadAllBytes(settings.FilePath);
-            using (MemoryStream ms = new MemoryStream(file))
-            using (ExcelPackage package = new ExcelPackage(ms))
+            //byte[] file = File.ReadAllBytes(settings.FilePath);
+
+            using (var file = new FileStream(settings.FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            //using (MemoryStream ms = new MemoryStream(file))
+            using (ExcelPackage package = new ExcelPackage(file))
             {
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
 

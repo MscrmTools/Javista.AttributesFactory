@@ -12,6 +12,7 @@
     <description>Create or Update attributes from an Excel template</description>
     <summary>Create or Update attributes from an Excel template</summary>
     <releaseNotes>
+      Can now process Excel file even if the file is opened in Excel application
       Added support for tag {prefix} for table and column names to replace with selected solution prefix
       Optimized table creation process to support cancellation
     </releaseNotes>
