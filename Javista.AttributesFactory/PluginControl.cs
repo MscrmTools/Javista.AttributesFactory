@@ -72,7 +72,11 @@ namespace Javista.AttributesFactory
             if (entities.Count > 0)
             {
                 var ecd = new EntityCreationDialog(entities.Select(e => new NewEntityInfo { SchemaName = e }).ToArray(), settings, Service);
-                ecd.ShowDialog(this);
+                if (ecd.ShowDialog(this) == DialogResult.Cancel)
+                {
+                    SetWorkingState(false);
+                    return;
+                }
             }
 
             WorkAsync(new WorkAsyncInfo

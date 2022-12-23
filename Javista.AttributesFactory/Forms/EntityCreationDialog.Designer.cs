@@ -33,11 +33,11 @@ namespace Javista.AttributesFactory.Forms
             this.lblHeader = new System.Windows.Forms.Label();
             this.pnlFooter = new System.Windows.Forms.Panel();
             this.btnCreateEntities = new System.Windows.Forms.Button();
-            this.btnClose = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.pnlMain = new System.Windows.Forms.Panel();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dgvTables = new System.Windows.Forms.DataGridView();
             this.EntitySchemaName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.EntityOwnershipType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.EntityDisplayName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -49,7 +49,7 @@ namespace Javista.AttributesFactory.Forms
             this.pnlFooter.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.pnlMain.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvTables)).BeginInit();
             this.SuspendLayout();
             // 
             // pnlHeader
@@ -59,7 +59,7 @@ namespace Javista.AttributesFactory.Forms
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlHeader.Location = new System.Drawing.Point(0, 0);
             this.pnlHeader.Name = "pnlHeader";
-            this.pnlHeader.Padding = new System.Windows.Forms.Padding(15, 15, 15, 15);
+            this.pnlHeader.Padding = new System.Windows.Forms.Padding(15);
             this.pnlHeader.Size = new System.Drawing.Size(1197, 74);
             this.pnlHeader.TabIndex = 0;
             // 
@@ -69,7 +69,7 @@ namespace Javista.AttributesFactory.Forms
             this.lblHeader.Location = new System.Drawing.Point(15, 15);
             this.lblHeader.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblHeader.Name = "lblHeader";
-            this.lblHeader.Size = new System.Drawing.Size(1400, 53);
+            this.lblHeader.Size = new System.Drawing.Size(1167, 44);
             this.lblHeader.TabIndex = 0;
             this.lblHeader.Text = "We detected tables that does not exist on the connected environment. You can crea" +
     "te them now";
@@ -77,7 +77,7 @@ namespace Javista.AttributesFactory.Forms
             // pnlFooter
             // 
             this.pnlFooter.Controls.Add(this.btnCreateEntities);
-            this.pnlFooter.Controls.Add(this.btnClose);
+            this.pnlFooter.Controls.Add(this.btnCancel);
             this.pnlFooter.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnlFooter.Location = new System.Drawing.Point(0, 547);
             this.pnlFooter.Name = "pnlFooter";
@@ -96,17 +96,17 @@ namespace Javista.AttributesFactory.Forms
             this.btnCreateEntities.UseVisualStyleBackColor = true;
             this.btnCreateEntities.Click += new System.EventHandler(this.btnCreateEntities_Click);
             // 
-            // btnClose
+            // btnCancel
             // 
-            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnClose.Location = new System.Drawing.Point(1070, 8);
-            this.btnClose.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(123, 42);
-            this.btnClose.TabIndex = 0;
-            this.btnClose.Text = "Close";
-            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.Location = new System.Drawing.Point(1070, 8);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(123, 42);
+            this.btnCancel.TabIndex = 0;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // statusStrip1
             // 
@@ -127,7 +127,7 @@ namespace Javista.AttributesFactory.Forms
             // 
             // pnlMain
             // 
-            this.pnlMain.Controls.Add(this.dataGridView1);
+            this.pnlMain.Controls.Add(this.dgvTables);
             this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlMain.Location = new System.Drawing.Point(0, 74);
             this.pnlMain.Name = "pnlMain";
@@ -135,12 +135,12 @@ namespace Javista.AttributesFactory.Forms
             this.pnlMain.Size = new System.Drawing.Size(1197, 473);
             this.pnlMain.TabIndex = 4;
             // 
-            // dataGridView1
+            // dgvTables
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dgvTables.AllowUserToAddRows = false;
+            this.dgvTables.AllowUserToDeleteRows = false;
+            this.dgvTables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTables.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.EntitySchemaName,
             this.EntityOwnershipType,
             this.EntityDisplayName,
@@ -148,13 +148,13 @@ namespace Javista.AttributesFactory.Forms
             this.EntityIsActivity,
             this.PrimaryAttributeSchemaName,
             this.PrimaryAttributeDisplayName});
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(10, 9);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowHeadersWidth = 62;
-            this.dataGridView1.RowTemplate.Height = 28;
-            this.dataGridView1.Size = new System.Drawing.Size(1177, 455);
-            this.dataGridView1.TabIndex = 0;
+            this.dgvTables.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvTables.Location = new System.Drawing.Point(10, 9);
+            this.dgvTables.Name = "dgvTables";
+            this.dgvTables.RowHeadersWidth = 62;
+            this.dgvTables.RowTemplate.Height = 28;
+            this.dgvTables.Size = new System.Drawing.Size(1177, 455);
+            this.dgvTables.TabIndex = 0;
             // 
             // EntitySchemaName
             // 
@@ -216,6 +216,7 @@ namespace Javista.AttributesFactory.Forms
             this.Controls.Add(this.pnlHeader);
             this.Controls.Add(this.statusStrip1);
             this.Name = "EntityCreationDialog";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Missing tables detected!";
             this.pnlHeader.ResumeLayout(false);
@@ -223,7 +224,7 @@ namespace Javista.AttributesFactory.Forms
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.pnlMain.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvTables)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -237,9 +238,9 @@ namespace Javista.AttributesFactory.Forms
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.Button btnCreateEntities;
-        private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Panel pnlMain;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView dgvTables;
         private System.Windows.Forms.DataGridViewTextBoxColumn EntitySchemaName;
         private System.Windows.Forms.DataGridViewComboBoxColumn EntityOwnershipType;
         private System.Windows.Forms.DataGridViewTextBoxColumn EntityDisplayName;
