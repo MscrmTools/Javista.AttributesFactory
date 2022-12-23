@@ -23,7 +23,7 @@ namespace Javista.AttributesFactory.Forms
             foreach (var entity in entities)
             {
                 entity.PrimaryFieldDisplayName = "Name";
-                entity.PrimaryFieldSchemaName = $"{settings.Solution.Prefix}Name";
+                entity.PrimaryFieldSchemaName = $"{settings.Solution.Prefix}_Name";
             }
 
             InitializeComponent();

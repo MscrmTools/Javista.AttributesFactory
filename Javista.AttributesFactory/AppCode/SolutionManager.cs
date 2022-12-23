@@ -14,7 +14,7 @@ namespace Javista.AttributesFactory.AppCode
         {
             UniqueName = name;
             Id = id;
-            Prefix = $"{prefix}_";
+            Prefix = prefix;
             OptionSetPrefix = optionSetPrefix;
             this.friendlyName = friendlyName;
         }

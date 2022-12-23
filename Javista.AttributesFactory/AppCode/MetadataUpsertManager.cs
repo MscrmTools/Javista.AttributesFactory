@@ -58,7 +58,7 @@ namespace Javista.AttributesFactory.AppCode
 
                     index++;
 
-                    var entity = workSheet.GetValue<string>(i, EntityCellIndex);
+                    var entity = workSheet.GetValue<string>(i, EntityCellIndex).Replace("{prefix}", settings.Solution.Prefix);
                     if (!entities.Contains(entity)) entities.Add(entity);
                 }
             }
@@ -95,13 +95,13 @@ namespace Javista.AttributesFactory.AppCode
                     var info = new ProcessResult
                     {
                         DisplayName = workSheet.GetValue<string>(i, DisplayNameCellIndex),
-                        Attribute = workSheet.GetValue<string>(i, SchemaNameCellIndex),
+                        Attribute = workSheet.GetValue<string>(i, SchemaNameCellIndex).Replace("{prefix}", settings.Solution.Prefix),
                         Type = workSheet.GetValue<string>(i, TypeCellIndex),
-                        Entity = workSheet.GetValue<string>(i, EntityCellIndex).ToLower(),
+                        Entity = workSheet.GetValue<string>(i, EntityCellIndex).ToLower().Replace("{prefix}", settings.Solution.Prefix),
                         Processing = true,
                     };
 
-                    if ((info.Type == "Customer" || info.Type == "Lookup") && settings.AddLookupSuffix && !info.Attribute.EndsWith("Id"))
+                    if ((info.Type == "Customer" || info.Type == "Lookup" || info.Type == "Lookup (Multi table)") && settings.AddLookupSuffix && !info.Attribute.EndsWith("Id"))
                     {
                         info.Attribute = $"{info.Attribute}Id";
                     }
@@ -610,7 +610,7 @@ namespace Javista.AttributesFactory.AppCode
             var accountRelationship = new OneToManyRelationshipMetadata
             {
                 IsValidForAdvancedFind = sheet.GetValue<string>(rowIndex, startCell) == "Yes",
-                SchemaName = $"{settings.Solution.Prefix}{info.Entity}_account_{lookup.SchemaName}",
+                SchemaName = $"{settings.Solution.Prefix}_{info.Entity}_account_{lookup.SchemaName}",
                 AssociatedMenuConfiguration = amc,
                 CascadeConfiguration = cc,
                 IsHierarchical = false,
@@ -629,7 +629,7 @@ namespace Javista.AttributesFactory.AppCode
             var contactRelationship = new OneToManyRelationshipMetadata
             {
                 IsValidForAdvancedFind = sheet.GetValue<string>(rowIndex, startCell) == "Yes",
-                SchemaName = $"{settings.Solution.Prefix}{info.Entity}_contact_{lookup.SchemaName}",
+                SchemaName = $"{settings.Solution.Prefix}_{info.Entity}_contact_{lookup.SchemaName}",
                 AssociatedMenuConfiguration = amc,
                 CascadeConfiguration = cc,
                 IsHierarchical = false,
@@ -878,7 +878,7 @@ namespace Javista.AttributesFactory.AppCode
             {
                 IsValidForAdvancedFind = sheet.GetValue<string>(rowIndex, startCell + 1) == "Yes",
                 SchemaName =
-                    $"{settings.Solution.Prefix}{info.Entity}_{sheet.GetValue<string>(rowIndex, startCell)}_{lookup.SchemaName}",
+                    $"{settings.Solution.Prefix}_{info.Entity}_{sheet.GetValue<string>(rowIndex, startCell)}_{lookup.SchemaName}",
                 AssociatedMenuConfiguration = amc,
                 CascadeConfiguration = cc,
                 IsHierarchical = sheet.GetValue<string>(rowIndex, startCell + 2) == "Yes",
@@ -1039,7 +1039,7 @@ namespace Javista.AttributesFactory.AppCode
             {
                 IsValidForAdvancedFind = sheet.GetValue<string>(rowIndex, startCell + 1) == "Yes",
                 SchemaName =
-                    $"{settings.Solution.Prefix}{info.Entity}_{sheet.GetValue<string>(rowIndex, startCell)}_{lookup.SchemaName}",
+                    $"{settings.Solution.Prefix}_{info.Entity}_{sheet.GetValue<string>(rowIndex, startCell)}_{lookup.SchemaName}",
                 AssociatedMenuConfiguration = amc,
                 CascadeConfiguration = cc,
                 IsHierarchical = sheet.GetValue<string>(rowIndex, startCell + 2) == "Yes",
@@ -1526,7 +1526,7 @@ namespace Javista.AttributesFactory.AppCode
         {
             if (string.IsNullOrEmpty(sheet.GetValue<string>(line, "B")))
             {
-                var name = $"{settings.Solution.Prefix}{sheet.GetValue<string>(line, "D")}_{sheet.GetValue<string>(line, "I")}";
+                var name = $"{settings.Solution.Prefix}_{sheet.GetValue<string>(line, "D")}_{sheet.GetValue<string>(line, "I")}";
                 if (name.Length > 100) name = name.Substring(0, 100);
 
                 sheet.SetValue("B" + line, name);
