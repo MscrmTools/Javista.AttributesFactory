@@ -41,10 +41,7 @@ namespace Javista.AttributesFactory.AppCode
         {
             var entities = new List<string>();
 
-            //byte[] file = File.ReadAllBytes(settings.FilePath);
-
             using (var file = new FileStream(settings.FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            //using (MemoryStream ms = new MemoryStream(file))
             using (ExcelPackage package = new ExcelPackage(file))
             {
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
@@ -168,7 +165,7 @@ namespace Javista.AttributesFactory.AppCode
                                 break;
 
                             case "Two options":
-                                amd = CreateBooleanAttribute(workSheet, i, PropertiesFirstCellIndex + 8);
+                                amd = CreateBooleanAttribute(workSheet, i, PropertiesFirstCellIndex + 8, existingAttribute as BooleanAttributeMetadata);
                                 break;
 
                             case "Whole number":
@@ -233,7 +230,17 @@ namespace Javista.AttributesFactory.AppCode
                             }
                         }
 
-                        amd.DisplayName = fakeAmd.DisplayName;
+                        amd.DisplayName = existingAttribute.DisplayName ?? fakeAmd.DisplayName;
+                        var amdLabel = amd.DisplayName.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
+                        if (amdLabel != null)
+                        {
+                            amdLabel.Label = fakeAmd.DisplayName.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode)?.Label;
+                        }
+                        else
+                        {
+                            amd.DisplayName.LocalizedLabels.Add(new LocalizedLabel(fakeAmd.DisplayName.LocalizedLabels[settings.LanguageCode].Label, settings.LanguageCode));
+                        }
+
                         amd.SchemaName = fakeAmd.SchemaName;
                         amd.LogicalName = fakeAmd.LogicalName;
                         amd.IsValidForAdvancedFind = fakeAmd.IsValidForAdvancedFind;
@@ -242,9 +249,19 @@ namespace Javista.AttributesFactory.AppCode
                         amd.SourceType = fakeAmd.SourceType;
                         amd.MetadataId = fakeAmd.MetadataId;
                         amd.RequiredLevel = fakeAmd.RequiredLevel;
+
                         if (fakeAmd.Description != null)
                         {
-                            amd.Description = fakeAmd.Description;
+                            amd.Description = existingAttribute.Description ?? fakeAmd.Description;
+                            var amdDescription = amd.DisplayName.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
+                            if (amdDescription != null)
+                            {
+                                amdDescription.Label = fakeAmd.Description.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode)?.Label;
+                            }
+                            else
+                            {
+                                amd.Description.LocalizedLabels.Add(new LocalizedLabel(fakeAmd.Description.LocalizedLabels[settings.LanguageCode].Label, settings.LanguageCode));
+                            }
                         }
 
                         info.Attribute = amd.SchemaName;
@@ -443,7 +460,7 @@ namespace Javista.AttributesFactory.AppCode
             });
         }
 
-        private AttributeMetadata CreateBooleanAttribute(ExcelWorksheet sheet, int rowIndex, int startCell)
+        private AttributeMetadata CreateBooleanAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, BooleanAttributeMetadata ebmd)
         {
             var amd = new BooleanAttributeMetadata
             {
@@ -460,11 +477,57 @@ namespace Javista.AttributesFactory.AppCode
                 var parts = optionRow.Split(':');
                 if (parts[0] == "0")
                 {
-                    amd.OptionSet.FalseOption = new OptionMetadata(new Label(parts[1], settings.LanguageCode), int.Parse(parts[0]));
+                    amd.OptionSet.FalseOption = ebmd?.OptionSet?.FalseOption ?? new OptionMetadata(new Label(parts[1], settings.LanguageCode), int.Parse(parts[0]));
+
+                    var label = amd.OptionSet.FalseOption.Label.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
+                    if (label != null)
+                    {
+                        label.Label = parts[1];
+                    }
+                    else
+                    {
+                        amd.OptionSet.FalseOption.Label.LocalizedLabels.Add(new LocalizedLabel(parts[1], settings.LanguageCode));
+                    }
+
+                    if (parts.Length == 3 && !string.IsNullOrEmpty(parts[2]))
+                    {
+                        var desc = amd.OptionSet.FalseOption.Description.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
+                        if (desc != null)
+                        {
+                            desc.Label = parts[1];
+                        }
+                        else
+                        {
+                            amd.OptionSet.FalseOption.Description.LocalizedLabels.Add(new LocalizedLabel(parts[1], settings.LanguageCode));
+                        }
+                    }
                 }
                 else if (parts[0] == "1")
                 {
-                    amd.OptionSet.TrueOption = new OptionMetadata(new Label(parts[1], settings.LanguageCode), int.Parse(parts[0]));
+                    amd.OptionSet.TrueOption = ebmd?.OptionSet?.TrueOption ?? new OptionMetadata(new Label(parts[1], settings.LanguageCode), int.Parse(parts[0]));
+
+                    var label = amd.OptionSet.TrueOption.Label.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
+                    if (label != null)
+                    {
+                        label.Label = parts[1];
+                    }
+                    else
+                    {
+                        amd.OptionSet.TrueOption.Label.LocalizedLabels.Add(new LocalizedLabel(parts[1], settings.LanguageCode));
+                    }
+
+                    if (parts.Length == 3 && !string.IsNullOrEmpty(parts[2]))
+                    {
+                        var desc = amd.OptionSet.TrueOption.Description.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
+                        if (desc != null)
+                        {
+                            desc.Label = parts[1];
+                        }
+                        else
+                        {
+                            amd.OptionSet.TrueOption.Description.LocalizedLabels.Add(new LocalizedLabel(parts[1], settings.LanguageCode));
+                        }
+                    }
                 }
             }
 
@@ -1206,14 +1269,33 @@ namespace Javista.AttributesFactory.AppCode
             var omd = new OptionSetMetadata
             {
                 IsGlobal = isGlobal,
-                DisplayName = new Label(displayName, settings.LanguageCode),
+                DisplayName = eomd?.DisplayName ?? new Label(displayName, settings.LanguageCode),
                 OptionSetType = OptionSetType.Picklist,
                 Name = isGlobal ? globalOptionSetName : schemaName
             };
+            var label = omd.DisplayName.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
+            if (label != null)
+            {
+                label.Label = displayName;
+            }
+            else
+            {
+                omd.DisplayName.LocalizedLabels.Add(new LocalizedLabel(displayName, settings.LanguageCode));
+            }
 
             if (!string.IsNullOrEmpty(description))
             {
-                omd.Description = new Label(description, settings.LanguageCode);
+                omd.Description = eomd?.Description ?? new Label(description, settings.LanguageCode);
+
+                var desc = omd.Description.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
+                if (desc != null)
+                {
+                    desc.Label = description;
+                }
+                else
+                {
+                    omd.Description.LocalizedLabels.Add(new LocalizedLabel(description, settings.LanguageCode));
+                }
             }
 
             string optionsString = sheet.GetValue<string>(rowIndex, startCell);
@@ -1230,18 +1312,35 @@ namespace Javista.AttributesFactory.AppCode
                 {
                     var parts = optionRow.Split(':');
 
-                    if (parts.Length != 2)
+                    if (parts.Length < 2)
                     {
                         continue;
                     }
 
                     var index = int.Parse(parts[0]);
 
-                    var om = new OptionMetadata(new Label(parts[1], settings.LanguageCode), index);
+                    var om = eomd.Options.FirstOrDefault(o => o.Value.Value == index) ?? new OptionMetadata(new Label(parts[1], settings.LanguageCode), index);
+                    var currentLabel = om.Label.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
+                    if (currentLabel != null)
+                    {
+                        currentLabel.Label = parts[1];
+                    }
+                    else
+                    {
+                        om.Label.LocalizedLabels.Add(new LocalizedLabel(parts[1], settings.LanguageCode));
+                    }
 
                     if (parts.Length > 2)
                     {
-                        om.Description = new Label(parts[2], settings.LanguageCode);
+                        var desc = om.Description.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
+                        if (desc != null)
+                        {
+                            desc.Label = parts[2];
+                        }
+                        else
+                        {
+                            om.Description.LocalizedLabels.Add(new LocalizedLabel(parts[2], settings.LanguageCode));
+                        }
                     }
 
                     if (majorVersion >= 9)
