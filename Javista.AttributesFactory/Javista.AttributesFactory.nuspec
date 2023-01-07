@@ -12,8 +12,7 @@
     <description>Create or Update attributes from an Excel template</description>
     <summary>Create or Update attributes from an Excel template</summary>
     <releaseNotes>
-      Optimized the way labels are processed to avoid loosing translations when updating columns, choices and two options
-      Support for Two options description
+      Fixed NullReferenceException on column creation (#25)
     </releaseNotes>
     <tags>XrmToolBox Attributes Factory Metadata</tags>
     <dependencies>

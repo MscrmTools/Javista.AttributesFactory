@@ -230,7 +230,7 @@ namespace Javista.AttributesFactory.AppCode
                             }
                         }
 
-                        amd.DisplayName = existingAttribute.DisplayName ?? fakeAmd.DisplayName;
+                        amd.DisplayName = existingAttribute?.DisplayName ?? fakeAmd.DisplayName;
                         var amdLabel = amd.DisplayName.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
                         if (amdLabel != null)
                         {
@@ -252,7 +252,7 @@ namespace Javista.AttributesFactory.AppCode
 
                         if (fakeAmd.Description != null)
                         {
-                            amd.Description = existingAttribute.Description ?? fakeAmd.Description;
+                            amd.Description = existingAttribute?.Description ?? fakeAmd.Description;
                             var amdDescription = amd.DisplayName.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
                             if (amdDescription != null)
                             {
