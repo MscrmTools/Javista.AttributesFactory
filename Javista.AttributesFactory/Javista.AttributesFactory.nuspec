@@ -12,7 +12,8 @@
     <description>Create or Update attributes from an Excel template</description>
     <summary>Create or Update attributes from an Excel template</summary>
     <releaseNotes>
-      Fixed NullReferenceException on column creation (#25)
+      Fixed issue with option set creation (#25)
+      Fixed description stored in displayname (#26)
     </releaseNotes>
     <tags>XrmToolBox Attributes Factory Metadata</tags>
     <dependencies>
