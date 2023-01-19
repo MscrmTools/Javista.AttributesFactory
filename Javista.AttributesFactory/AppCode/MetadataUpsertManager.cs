@@ -253,7 +253,7 @@ namespace Javista.AttributesFactory.AppCode
                         if (fakeAmd.Description != null)
                         {
                             amd.Description = existingAttribute?.Description ?? fakeAmd.Description;
-                            var amdDescription = amd.DisplayName.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
+                            var amdDescription = amd.Description.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
                             if (amdDescription != null)
                             {
                                 amdDescription.Label = fakeAmd.Description.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode)?.Label;
@@ -1319,7 +1319,7 @@ namespace Javista.AttributesFactory.AppCode
 
                     var index = int.Parse(parts[0]);
 
-                    var om = eomd.Options.FirstOrDefault(o => o.Value.Value == index) ?? new OptionMetadata(new Label(parts[1], settings.LanguageCode), index);
+                    var om = eomd?.Options.FirstOrDefault(o => o.Value.Value == index) ?? new OptionMetadata(new Label(parts[1], settings.LanguageCode), index);
                     var currentLabel = om.Label.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
                     if (currentLabel != null)
                     {
