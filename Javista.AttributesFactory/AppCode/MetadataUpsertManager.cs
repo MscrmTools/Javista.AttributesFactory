@@ -57,7 +57,7 @@ namespace Javista.AttributesFactory.AppCode
 
                     index++;
 
-                    var entity = workSheet.GetValue<string>(i, EntityCellIndex).Replace("{prefix}", settings.Solution.Prefix);
+                    var entity = workSheet.GetValue<string>(i, EntityCellIndex).ToLower().Replace("{prefix}", settings.Solution.Prefix);
                     if (!entities.Contains(entity)) entities.Add(entity);
                 }
             }
@@ -925,7 +925,7 @@ namespace Javista.AttributesFactory.AppCode
                 RequiredLevel = fakeAmd.RequiredLevel,
                 IsSecured = fakeAmd.IsSecured,
                 IsAuditEnabled = fakeAmd.IsAuditEnabled,
-                Targets = new[] { sheet.GetValue<string>(rowIndex, startCell).ToLower() }
+                Targets = new[] { sheet.GetValue<string>(rowIndex, startCell).ToLower().Replace("{prefix}", settings.Solution.Prefix) }
             };
 
             if (settings.AddLookupSuffix && !lookup.SchemaName.ToLower().EndsWith("id"))
@@ -947,9 +947,9 @@ namespace Javista.AttributesFactory.AppCode
                 AssociatedMenuConfiguration = amc,
                 CascadeConfiguration = cc,
                 IsHierarchical = sheet.GetValue<string>(rowIndex, startCell + 2) == "Yes",
-                ReferencedEntity = sheet.GetValue<string>(rowIndex, startCell),
-                ReferencingEntity = info.Entity,
-                SecurityTypes = SecurityTypes.Append,
+                ReferencedEntity = sheet.GetValue<string>(rowIndex, startCell).ToLower().Replace("{prefix}", settings.Solution.Prefix),
+                ReferencingEntity = info.Entity.ToLower(),
+                SecurityTypes = SecurityTypes.Append
             };
 
             if (relationship.SchemaName.Length > 100)
@@ -1086,7 +1086,7 @@ namespace Javista.AttributesFactory.AppCode
                 RequiredLevel = fakeAmd.RequiredLevel,
                 IsSecured = fakeAmd.IsSecured,
                 IsAuditEnabled = fakeAmd.IsAuditEnabled,
-                Targets = new[] { sheet.GetValue<string>(rowIndex, startCell).ToLower() }
+                Targets = new[] { sheet.GetValue<string>(rowIndex, startCell).ToLower().Replace("{prefix}", settings.Solution.Prefix) }
             };
 
             if (settings.AddLookupSuffix && !lookup.SchemaName.ToLower().EndsWith("id"))
@@ -1108,9 +1108,9 @@ namespace Javista.AttributesFactory.AppCode
                 AssociatedMenuConfiguration = amc,
                 CascadeConfiguration = cc,
                 IsHierarchical = sheet.GetValue<string>(rowIndex, startCell + 2) == "Yes",
-                ReferencedEntity = sheet.GetValue<string>(rowIndex, startCell),
-                ReferencingEntity = info.Entity,
-                SecurityTypes = SecurityTypes.Append,
+                ReferencedEntity = sheet.GetValue<string>(rowIndex, startCell).ToLower().Replace("{prefix}", settings.Solution.Prefix),
+                ReferencingEntity = info.Entity.ToLower(),
+                SecurityTypes = SecurityTypes.Append
             };
 
             if (relationship.SchemaName.Length > 100)
