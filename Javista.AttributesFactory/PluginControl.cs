@@ -71,11 +71,13 @@ namespace Javista.AttributesFactory
             var entities = MetadataManager.GetNotExistingEntities(manager.GetEntities(), Service);
             if (entities.Count > 0)
             {
-                var ecd = new EntityCreationDialog(entities.Select(e => new NewEntityInfo { SchemaName = e }).ToArray(), settings, Service);
-                if (ecd.ShowDialog(this) == DialogResult.Cancel)
+                using (var ecd = new EntityCreationDialog(entities.Select(e => new NewEntityInfo { SchemaName = e }).ToArray(), settings, Service))
                 {
-                    SetWorkingState(false);
-                    return;
+                    if (ecd.ShowDialog(this) == DialogResult.Cancel)
+                    {
+                        SetWorkingState(false);
+                        return;
+                    }
                 }
             }
 
