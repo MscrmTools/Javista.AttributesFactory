@@ -943,7 +943,7 @@ namespace Javista.AttributesFactory.AppCode
             {
                 IsValidForAdvancedFind = sheet.GetValue<string>(rowIndex, startCell + 1) == "Yes",
                 SchemaName =
-                    $"{settings.Solution.Prefix}_{info.Entity}_{sheet.GetValue<string>(rowIndex, startCell)}_{lookup.SchemaName}",
+                    $"{settings.Solution.Prefix}_{info.Entity}_{sheet.GetValue<string>(rowIndex, startCell).Replace("{prefix}", settings.Solution.Prefix)}_{lookup.SchemaName}",
                 AssociatedMenuConfiguration = amc,
                 CascadeConfiguration = cc,
                 IsHierarchical = sheet.GetValue<string>(rowIndex, startCell + 2) == "Yes",
@@ -1104,7 +1104,7 @@ namespace Javista.AttributesFactory.AppCode
             {
                 IsValidForAdvancedFind = sheet.GetValue<string>(rowIndex, startCell + 1) == "Yes",
                 SchemaName =
-                    $"{settings.Solution.Prefix}_{info.Entity}_{sheet.GetValue<string>(rowIndex, startCell)}_{lookup.SchemaName}",
+                    $"{settings.Solution.Prefix}_{info.Entity}_{sheet.GetValue<string>(rowIndex, startCell).Replace("{prefix}", settings.Solution.Prefix)}_{lookup.SchemaName}",
                 AssociatedMenuConfiguration = amc,
                 CascadeConfiguration = cc,
                 IsHierarchical = sheet.GetValue<string>(rowIndex, startCell + 2) == "Yes",
