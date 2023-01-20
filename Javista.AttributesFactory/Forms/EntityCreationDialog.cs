@@ -25,6 +25,9 @@ namespace Javista.AttributesFactory.Forms
             {
                 entity.PrimaryFieldDisplayName = "Name";
                 entity.PrimaryFieldSchemaName = $"{settings.Solution.Prefix}_Name";
+                entity.PrimaryFieldRequired = true;
+                entity.PrimaryFieldLength = 100;
+                entity.OwnershipType = "User owned";
             }
 
             InitializeComponent();
@@ -38,8 +41,12 @@ namespace Javista.AttributesFactory.Forms
             dgvTables.Columns[4].DataPropertyName = "IsActivity";
             dgvTables.Columns[5].DataPropertyName = "PrimaryFieldSchemaName";
             dgvTables.Columns[6].DataPropertyName = "PrimaryFieldDisplayName";
+            dgvTables.Columns[7].DataPropertyName = "PrimaryFieldLength";
+            dgvTables.Columns[8].DataPropertyName = "PrimaryFieldRequired";
 
             ((DataGridViewComboBoxColumn)dgvTables.Columns[1]).Items.AddRange("User owned", "Organization owned");
+
+            dgvTables.CellValueChanged += dgvTables_CellValueChanged;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -82,6 +89,12 @@ namespace Javista.AttributesFactory.Forms
 
             foreach (DataGridViewRow row in dgvTables.Rows)
             {
+                if (!int.TryParse(((DataGridViewTextBoxCell)row.Cells[7]).Value.ToString(), out int length))
+                {
+                    MessageBox.Show(this, "Primary column length format is not an integer", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 var createRequest = new CreateEntityRequest
                 {
                     //Define the entity
@@ -98,8 +111,8 @@ namespace Javista.AttributesFactory.Forms
                     PrimaryAttribute = new StringAttributeMetadata
                     {
                         SchemaName = ((DataGridViewTextBoxCell)row.Cells[5]).Value.ToString(),
-                        RequiredLevel = new AttributeRequiredLevelManagedProperty(AttributeRequiredLevel.ApplicationRequired),
-                        MaxLength = 100,
+                        RequiredLevel = new AttributeRequiredLevelManagedProperty((bool)((DataGridViewCheckBoxCell)row.Cells[8]).Value ? AttributeRequiredLevel.ApplicationRequired : AttributeRequiredLevel.None),
+                        MaxLength = length,
                         FormatName = StringFormatName.Text,
                         DisplayName = new Microsoft.Xrm.Sdk.Label(((DataGridViewTextBoxCell)row.Cells[6]).Value.ToString(), _settings.LanguageCode)
                     }
@@ -122,16 +135,29 @@ namespace Javista.AttributesFactory.Forms
                         return;
                     }
 
-                    ((BackgroundWorker)worker).ReportProgress(0, $"Creating table {request.Entity.DisplayName.LocalizedLabels[0].Label}. Please wait...");
-
-                    var result = (CreateEntityResponse)_service.Execute(request);
-
-                    _service.Execute(new AddSolutionComponentRequest
+                    try
                     {
-                        ComponentType = 1,
-                        ComponentId = result.EntityId,
-                        SolutionUniqueName = _settings.Solution.UniqueName
-                    });
+                        ((BackgroundWorker)worker).ReportProgress(0, $"Checking existence of table {request.Entity.DisplayName.LocalizedLabels[0].Label}...");
+
+                        _service.Execute(new RetrieveEntityRequest
+                        {
+                            LogicalName = request.Entity.SchemaName.ToLower(),
+                            EntityFilters = EntityFilters.Entity
+                        });
+                    }
+                    catch
+                    {
+                        ((BackgroundWorker)worker).ReportProgress(0, $"Creating table {request.Entity.DisplayName.LocalizedLabels[0].Label}. Please wait...");
+
+                        var result = (CreateEntityResponse)_service.Execute(request);
+
+                        _service.Execute(new AddSolutionComponentRequest
+                        {
+                            ComponentType = 1,
+                            ComponentId = result.EntityId,
+                            SolutionUniqueName = _settings.Solution.UniqueName
+                        });
+                    }
 
                     if (((BackgroundWorker)worker).CancellationPending)
                     {
@@ -167,6 +193,28 @@ namespace Javista.AttributesFactory.Forms
                 toolStripStatusLabel1.Text = evt.UserState.ToString();
             };
             bw.RunWorkerAsync();
+        }
+
+        private void dgvTables_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 2)
+            {
+                dgvTables.Rows[e.RowIndex].Cells[e.ColumnIndex + 1].Value = $"{dgvTables.Rows[e.RowIndex].Cells[e.ColumnIndex].Value}s";
+            }
+            else if ((new List<int> { 5, 6, 7, 8 }).Contains(e.ColumnIndex) && dgvTables.Rows.Count > 1)
+            {
+                if (MessageBox.Show(this, "Do you want to apply this value to other row(s)?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    dgvTables.CellValueChanged -= dgvTables_CellValueChanged;
+                    foreach (DataGridViewRow row in dgvTables.Rows)
+                    {
+                        if (row.Index == e.RowIndex) continue;
+
+                        row.Cells[e.ColumnIndex].Value = dgvTables.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                    }
+                    dgvTables.CellValueChanged += dgvTables_CellValueChanged;
+                }
+            }
         }
     }
 }

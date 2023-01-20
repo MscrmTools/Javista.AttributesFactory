@@ -45,6 +45,8 @@ namespace Javista.AttributesFactory.Forms
             this.EntityIsActivity = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.PrimaryAttributeSchemaName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PrimaryAttributeDisplayName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.PrimaryAttributeLength = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.PrimaryAttributeRequired = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.pnlHeader.SuspendLayout();
             this.pnlFooter.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -147,7 +149,9 @@ namespace Javista.AttributesFactory.Forms
             this.EntityCollectionDisplayName,
             this.EntityIsActivity,
             this.PrimaryAttributeSchemaName,
-            this.PrimaryAttributeDisplayName});
+            this.PrimaryAttributeDisplayName,
+            this.PrimaryAttributeLength,
+            this.PrimaryAttributeRequired});
             this.dgvTables.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvTables.Location = new System.Drawing.Point(10, 9);
             this.dgvTables.Name = "dgvTables";
@@ -206,6 +210,20 @@ namespace Javista.AttributesFactory.Forms
             this.PrimaryAttributeDisplayName.Name = "PrimaryAttributeDisplayName";
             this.PrimaryAttributeDisplayName.Width = 150;
             // 
+            // PrimaryAttributeLength
+            // 
+            this.PrimaryAttributeLength.HeaderText = "Primary Column Length";
+            this.PrimaryAttributeLength.MinimumWidth = 8;
+            this.PrimaryAttributeLength.Name = "PrimaryAttributeLength";
+            this.PrimaryAttributeLength.Width = 150;
+            // 
+            // PrimaryAttributeRequired
+            // 
+            this.PrimaryAttributeRequired.HeaderText = "Primary Column Required";
+            this.PrimaryAttributeRequired.MinimumWidth = 8;
+            this.PrimaryAttributeRequired.Name = "PrimaryAttributeRequired";
+            this.PrimaryAttributeRequired.Width = 150;
+            // 
             // EntityCreationDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -248,5 +266,7 @@ namespace Javista.AttributesFactory.Forms
         private System.Windows.Forms.DataGridViewCheckBoxColumn EntityIsActivity;
         private System.Windows.Forms.DataGridViewTextBoxColumn PrimaryAttributeSchemaName;
         private System.Windows.Forms.DataGridViewTextBoxColumn PrimaryAttributeDisplayName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn PrimaryAttributeLength;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn PrimaryAttributeRequired;
     }
 }

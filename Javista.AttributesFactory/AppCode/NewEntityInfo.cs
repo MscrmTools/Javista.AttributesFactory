@@ -9,6 +9,8 @@ namespace Javista.AttributesFactory.AppCode
         public bool IsActivity { get; set; }
         public string OwnershipType { get; set; }
         public string PrimaryFieldDisplayName { get; set; }
+        public int PrimaryFieldLength { get; set; }
+        public bool PrimaryFieldRequired { get; set; }
         public string PrimaryFieldSchemaName { get; set; }
         public string SchemaName { get; set; }
     }
