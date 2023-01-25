@@ -1332,6 +1332,8 @@ namespace Javista.AttributesFactory.AppCode
 
                     if (parts.Length > 2)
                     {
+                        if (om.Description == null) om.Description = new Label();
+
                         var desc = om.Description.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
                         if (desc != null)
                         {
