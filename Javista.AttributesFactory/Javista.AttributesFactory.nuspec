@@ -12,10 +12,7 @@
     <description>Create or Update attributes from an Excel template</description>
     <summary>Create or Update attributes from an Excel template</summary>
     <releaseNotes>
-      Fixed issue where {prefix} tag was not applied for Lookups target
-      Fixed issue when detecting missing tables was failing due to usage of schema name instead of logical name
-      Added possibility to set length and requirement for primary column when creating missing tables
-      Added possibility to copy value from one row to other rows when creating missing tables
+      Fixed issue with optionset descriptions (NullReferenceException)
     </releaseNotes>
     <tags>XrmToolBox Attributes Factory Metadata</tags>
     <dependencies>
