@@ -151,12 +151,28 @@ namespace Javista.AttributesFactory.Forms
 
                         var result = (CreateEntityResponse)_service.Execute(request);
 
-                        _service.Execute(new AddSolutionComponentRequest
+                        if (((BackgroundWorker)worker).CancellationPending)
                         {
-                            ComponentType = 1,
-                            ComponentId = result.EntityId,
-                            SolutionUniqueName = _settings.Solution.UniqueName
-                        });
+                            evt.Cancel = true;
+                            return;
+                        }
+
+                        try
+                        {
+                            ((BackgroundWorker)worker).ReportProgress(0, $"Adding table {request.Entity.DisplayName.LocalizedLabels[0].Label} to solution. Please wait...");
+
+                            _service.Execute(new AddSolutionComponentRequest
+                            {
+                                ComponentType = 1,
+                                ComponentId = result.EntityId,
+                                SolutionUniqueName = _settings.Solution.UniqueName,
+                                DoNotIncludeSubcomponents = false
+                            });
+                        }
+                        catch
+                        {
+                            // We don't want to fail if adding to solution fails
+                        }
                     }
 
                     if (((BackgroundWorker)worker).CancellationPending)
