@@ -12,7 +12,7 @@
     <description>Create or Update attributes from an Excel template</description>
     <summary>Create or Update attributes from an Excel template</summary>
     <releaseNotes>
-      Fixed issue with optionset descriptions (NullReferenceException)
+      Added possibility to provide Schema name for relationship created from a Lookup column
     </releaseNotes>
     <tags>XrmToolBox Attributes Factory Metadata</tags>
     <dependencies>
