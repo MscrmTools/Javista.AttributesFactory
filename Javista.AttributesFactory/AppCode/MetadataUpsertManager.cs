@@ -76,6 +76,7 @@ namespace Javista.AttributesFactory.AppCode
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
                 int percent = 0;
                 int index = 0;
+
                 for (int i = 3; i <= workSheet.Dimension.End.Row; i++)
                 {
                     if (string.IsNullOrEmpty(workSheet.GetValue<string>(i, TypeCellIndex))
@@ -132,6 +133,7 @@ namespace Javista.AttributesFactory.AppCode
                         }
 
                         var templatePreNovember2022 = workSheet.Dimension.Columns == 62;
+                        var templatePreJanuary2023 = workSheet.Dimension.Columns == 63;
 
                         var type = workSheet.GetValue<string>(i, TypeCellIndex);
                         switch (type)
@@ -193,11 +195,11 @@ namespace Javista.AttributesFactory.AppCode
                                 break;
 
                             case "Lookup":
-                                amd = CreateLookupAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 30 : 31), fakeAmd, info, !fakeAmd.MetadataId.HasValue);
+                                amd = CreateLookupAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 30 : 31), fakeAmd, info, !fakeAmd.MetadataId.HasValue, templatePreJanuary2023);
                                 break;
 
                             case "Lookup (Multi table)":
-                                amd = CreateLookupMultiAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 30 : 31), fakeAmd, info, !fakeAmd.MetadataId.HasValue, ei.Attributes);
+                                amd = CreateLookupMultiAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 30 : 31), fakeAmd, info, !fakeAmd.MetadataId.HasValue, ei.Attributes, templatePreJanuary2023);
                                 break;
 
                             case "Customer":
@@ -205,11 +207,11 @@ namespace Javista.AttributesFactory.AppCode
                                 break;
 
                             case "File":
-                                amd = CreateFileAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 45 : 46));
+                                amd = CreateFileAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 45 : templatePreJanuary2023 ? 46 : 47));
                                 break;
 
                             case "Image":
-                                amd = CreateImageAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 47 : 48));
+                                amd = CreateImageAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 47 : templatePreJanuary2023 ? 48 : 49));
                                 break;
                         }
 
@@ -820,7 +822,7 @@ namespace Javista.AttributesFactory.AppCode
             return iamd;
         }
 
-        private AttributeMetadata CreateLookupAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, AttributeMetadata fakeAmd, ProcessResult info, bool isCreate)
+        private AttributeMetadata CreateLookupAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, AttributeMetadata fakeAmd, ProcessResult info, bool isCreate, bool isTemplatePreJanuary2023)
         {
             var amc = new AssociatedMenuConfiguration
             {
@@ -939,10 +941,12 @@ namespace Javista.AttributesFactory.AppCode
                 lookup.Description = fakeAmd.Description;
             }
 
+            var schemaName = isTemplatePreJanuary2023 ? null : sheet.GetValue<string>(rowIndex, startCell + 14)?.Replace("{prefix}", settings.Solution.Prefix);
+
             var relationship = new OneToManyRelationshipMetadata
             {
                 IsValidForAdvancedFind = sheet.GetValue<string>(rowIndex, startCell + 1) == "Yes",
-                SchemaName =
+                SchemaName = !string.IsNullOrEmpty(schemaName) ? schemaName :
                     $"{settings.Solution.Prefix}_{info.Entity}_{sheet.GetValue<string>(rowIndex, startCell).Replace("{prefix}", settings.Solution.Prefix)}_{lookup.SchemaName}",
                 AssociatedMenuConfiguration = amc,
                 CascadeConfiguration = cc,
@@ -981,7 +985,7 @@ namespace Javista.AttributesFactory.AppCode
             return lookup;
         }
 
-        private AttributeMetadata CreateLookupMultiAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, AttributeMetadata fakeAmd, ProcessResult info, bool isCreate, List<AttributeMetadata> amds)
+        private AttributeMetadata CreateLookupMultiAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, AttributeMetadata fakeAmd, ProcessResult info, bool isCreate, List<AttributeMetadata> amds, bool isTemplatePreJanuary2023)
         {
             var amc = new AssociatedMenuConfiguration
             {
@@ -1100,10 +1104,12 @@ namespace Javista.AttributesFactory.AppCode
                 lookup.Description = fakeAmd.Description;
             }
 
+            var schemaName = isTemplatePreJanuary2023 ? null : sheet.GetValue<string>(rowIndex, startCell + 14)?.Replace("{prefix}", settings.Solution.Prefix);
+
             var relationship = new OneToManyRelationshipMetadata
             {
                 IsValidForAdvancedFind = sheet.GetValue<string>(rowIndex, startCell + 1) == "Yes",
-                SchemaName =
+                SchemaName = !string.IsNullOrEmpty(schemaName) ? schemaName :
                     $"{settings.Solution.Prefix}_{info.Entity}_{sheet.GetValue<string>(rowIndex, startCell).Replace("{prefix}", settings.Solution.Prefix)}_{lookup.SchemaName}",
                 AssociatedMenuConfiguration = amc,
                 CascadeConfiguration = cc,
