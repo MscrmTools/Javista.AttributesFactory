@@ -353,7 +353,7 @@ namespace Javista.AttributesFactory
 
                 if (MessageBox.Show(this, $@"File saved to {sfd.FileName}! Would you like to open it now? (requires Excel)", @"Success", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    Process.Start("EXCEL.EXE", sfd.FileName);
+                    Process.Start("EXCEL.EXE", $"\"{sfd.FileName}\"");
                 }
             }
         }
