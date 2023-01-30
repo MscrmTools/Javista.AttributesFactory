@@ -44,6 +44,7 @@ namespace Javista.AttributesFactory.AppCode
             using (var file = new FileStream(settings.FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (ExcelPackage package = new ExcelPackage(file))
             {
+                // Attributes sheet
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
 
                 int index = 0;
@@ -57,7 +58,35 @@ namespace Javista.AttributesFactory.AppCode
 
                     index++;
 
+                    // Entity cell
                     var entity = workSheet.GetValue<string>(i, EntityCellIndex).ToLower().Replace("{prefix}", settings.Solution.Prefix);
+                    if (!entities.Contains(entity)) entities.Add(entity);
+
+                    // Target entity cell for lookup
+                    entity = workSheet.GetValue<string>(i, "AQ")?.ToLower().Replace("{prefix}", settings.Solution.Prefix);
+                    if (!string.IsNullOrEmpty(entity) && !entities.Contains(entity)) entities.Add(entity);
+                }
+
+                // NN relationships sheet
+                workSheet = package.Workbook.Worksheets.Skip(1).First();
+
+                index = 0;
+                for (int i = 3; i <= workSheet.Dimension.End.Row; i++)
+                {
+                    if (string.IsNullOrEmpty(workSheet.GetValue<string>(i, TypeCellIndex))
+                    || workSheet.GetValue<string>(i, 1) == "Ignore")
+                    {
+                        continue;
+                    }
+
+                    index++;
+
+                    // Entity 1 cell
+                    var entity = workSheet.GetValue<string>(i, "D").ToLower().Replace("{prefix}", settings.Solution.Prefix);
+                    if (!entities.Contains(entity)) entities.Add(entity);
+
+                    // Entity 2 cell
+                    entity = workSheet.GetValue<string>(i, "I").ToLower().Replace("{prefix}", settings.Solution.Prefix);
                     if (!entities.Contains(entity)) entities.Add(entity);
                 }
             }
@@ -101,7 +130,7 @@ namespace Javista.AttributesFactory.AppCode
                         Processing = true,
                     };
 
-                    if ((info.Type == "Customer" || info.Type == "Lookup" || info.Type == "Lookup (Multi table)") && settings.AddLookupSuffix && !info.Attribute.EndsWith("Id"))
+                    if ((info.Type == "Customer" || info.Type == "Lookup" || info.Type == "Lookup (Multi table)") && settings.AddLookupSuffix && !info.Attribute.ToLower().EndsWith("id"))
                     {
                         info.Attribute = $"{info.Attribute}Id";
                     }
@@ -1397,16 +1426,14 @@ namespace Javista.AttributesFactory.AppCode
                     omd.Options.Clear();
                     omd.Options.AddRange(omc);
 
-                    if (eomd == null)
+                    try
                     {
-                        service.Execute(new CreateOptionSetRequest
+                        service.Execute(new RetrieveOptionSetRequest
                         {
-                            OptionSet = omd,
-                            SolutionUniqueName = settings.Solution.UniqueName
+                            Name = omd.Name,
+                            RetrieveAsIfPublished = true
                         });
-                    }
-                    else
-                    {
+
                         service.Execute(new UpdateOptionSetRequest
                         {
                             OptionSet = omd,
@@ -1415,6 +1442,14 @@ namespace Javista.AttributesFactory.AppCode
                         });
 
                         ApplyOptionsUpdate(eomd, omd);
+                    }
+                    catch
+                    {
+                        service.Execute(new CreateOptionSetRequest
+                        {
+                            OptionSet = omd,
+                            SolutionUniqueName = settings.Solution.UniqueName
+                        });
                     }
                 }
             }
@@ -1641,22 +1676,25 @@ namespace Javista.AttributesFactory.AppCode
                 sheet.SetValue("B" + line, name);
             }
 
+            var behavior1 = GetBehavior(sheet.GetValue<string>(line, "E"));
+            var behavior2 = GetBehavior(sheet.GetValue<string>(line, "J"));
+
             var nn = new ManyToManyRelationshipMetadata
             {
-                Entity1LogicalName = sheet.GetValue<string>(line, "D"),
+                Entity1LogicalName = sheet.GetValue<string>(line, "D").ToLower(),
                 Entity1AssociatedMenuConfiguration = new AssociatedMenuConfiguration
                 {
-                    Behavior = GetBehavior(sheet.GetValue<string>(line, "E")),
+                    Behavior = behavior1,
                     Group = GetGroup(sheet.GetValue<string>(line, "G")),
-                    Label = new Label(sheet.GetValue<string>(line, "F"), settings.LanguageCode),
+                    Label = behavior1 == AssociatedMenuBehavior.UseLabel ? new Label(sheet.GetValue<string>(line, "F"), settings.LanguageCode) : null,
                     Order = sheet.GetValue<int>(line, "H")
                 },
-                Entity2LogicalName = sheet.GetValue<string>(line, "I"),
+                Entity2LogicalName = sheet.GetValue<string>(line, "I").ToLower(),
                 Entity2AssociatedMenuConfiguration = new AssociatedMenuConfiguration
                 {
-                    Behavior = GetBehavior(sheet.GetValue<string>(line, "J")),
+                    Behavior = behavior2,
                     Group = GetGroup(sheet.GetValue<string>(line, "L")),
-                    Label = new Label(sheet.GetValue<string>(line, "K"), settings.LanguageCode),
+                    Label = behavior2 == AssociatedMenuBehavior.UseLabel ? new Label(sheet.GetValue<string>(line, "K"), settings.LanguageCode) : null,
                     Order = sheet.GetValue<int>(line, "M")
                 },
                 IsValidForAdvancedFind = sheet.GetValue<string>(line, "C") == "Yes",
