@@ -3,9 +3,12 @@ using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
+using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 namespace Javista.AttributesFactory.Forms
@@ -47,6 +50,8 @@ namespace Javista.AttributesFactory.Forms
             ((DataGridViewComboBoxColumn)dgvTables.Columns[1]).Items.AddRange("User owned", "Organization owned");
 
             dgvTables.CellValueChanged += dgvTables_CellValueChanged;
+
+            LoadApps();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -121,12 +126,17 @@ namespace Javista.AttributesFactory.Forms
                 requests.Add(createRequest);
             }
 
+            var app = cbbApps.SelectedItem as MdAInfo;
+
             btnCreateEntities.Enabled = false;
             dgvTables.Enabled = false;
 
             bw = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = true };
             bw.DoWork += (worker, evt) =>
             {
+                var sb = new StringBuilder();
+                evt.Result = sb;
+
                 foreach (var request in requests)
                 {
                     if (((BackgroundWorker)worker).CancellationPending)
@@ -171,7 +181,30 @@ namespace Javista.AttributesFactory.Forms
                         }
                         catch
                         {
-                            // We don't want to fail if adding to solution fails
+                            // We don't want to fail if adding to application fails
+                            sb.AppendLine($"- Adding table {request.Entity.DisplayName.LocalizedLabels[0].Label} to solution");
+                        }
+
+                        if (app != null)
+                        {
+                            try
+                            {
+                                ((BackgroundWorker)worker).ReportProgress(0, $"Adding table {request.Entity.DisplayName.LocalizedLabels[0].Label} to application {app}. Please wait...");
+
+                                _service.Execute(new AddAppComponentsRequest
+                                {
+                                    AppId = app.Id,
+                                    Components = new EntityReferenceCollection
+                                    {
+                                        new EntityReference(request.Entity.SchemaName.ToLower(), result.EntityId)
+                                    }
+                                });
+                            }
+                            catch
+                            {
+                                // We don't want to fail if adding to solution fails
+                                sb.AppendLine($"- Adding table {request.Entity.DisplayName.LocalizedLabels[0].Label} to application {app}");
+                            }
                         }
                     }
 
@@ -200,6 +233,11 @@ namespace Javista.AttributesFactory.Forms
                 }
                 else
                 {
+                    if (evt.Result != null)
+                    {
+                        MessageBox.Show(this, $"The following action did not succeed:\n{evt.Result}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+
                     DialogResult = DialogResult.OK;
                     Close();
                 }
@@ -231,6 +269,33 @@ namespace Javista.AttributesFactory.Forms
                     dgvTables.CellValueChanged += dgvTables_CellValueChanged;
                 }
             }
+        }
+
+        private void LoadApps()
+        {
+            bw = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = true };
+            bw.DoWork += (worker, evt) =>
+            {
+                evt.Result = _service.RetrieveMultiple(new QueryExpression("appmodule")
+                {
+                    NoLock = true,
+                    ColumnSet = new ColumnSet("name"),
+                    Orders =
+                {
+                    new OrderExpression("name", OrderType.Ascending)
+                }
+                }).Entities.Select(e => new MdAInfo(e)).ToList();
+            };
+            bw.RunWorkerCompleted += (worker, evt) =>
+            {
+                cbbApps.Items.AddRange(((List<MdAInfo>)evt.Result).ToArray());
+                cbbApps.Enabled = cbbApps.Items.Count > 0;
+                cbbApps.Width = TextRenderer.MeasureText(MdAInfo.MaxLengthValue, cbbApps.Font).Width + 20;
+                cbbApps.Top = pnlOptions.Height / 2 - cbbApps.Height / 2;
+                lblAddToModelDrivenApp.SetAutoWidth();
+            };
+
+            bw.RunWorkerAsync();
         }
     }
 }

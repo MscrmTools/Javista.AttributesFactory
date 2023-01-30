@@ -1,5 +1,6 @@
 ﻿using OfficeOpenXml;
 using System;
+using System.Windows.Forms;
 
 namespace Javista.AttributesFactory.AppCode
 {
@@ -20,6 +21,11 @@ namespace Javista.AttributesFactory.AppCode
             }
 
             return position;
+        }
+
+        public static void SetAutoWidth(this Label label)
+        {
+            label.Width = TextRenderer.MeasureText(label.Text, label.Font).Width;
         }
     }
 }

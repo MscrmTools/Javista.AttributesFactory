@@ -247,6 +247,7 @@
     <Compile Include="Forms\EntitySelectionDialog.Designer.cs">
       <DependentUpon>EntitySelectionDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="AppCode\MdAInfo.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="PluginControl.cs">
       <SubType>UserControl</SubType>
