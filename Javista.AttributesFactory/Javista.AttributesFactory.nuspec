@@ -12,7 +12,14 @@
     <description>Create or Update attributes from an Excel template</description>
     <summary>Create or Update attributes from an Excel template</summary>
     <releaseNotes>
-      Added possibility to provide Schema name for relationship created from a Lookup column
+      Newly created entities are added with all their assets in the target solution
+      Added possibility to select a model driven application where to add newly created tables
+      Added possibility to provide user defined Lookup relationship schema name
+      Fixed detection of missing entities (using Lookup target entity and NN relationship entities)
+      Fixed some {prefix} tag replacement not handle (Lookup target entity)
+      Fixed content exported for Lookup relationship schema name
+      Fixed multiple export of many-to-many rlationships
+      Optimized memory consumption
     </releaseNotes>
     <tags>XrmToolBox Attributes Factory Metadata</tags>
     <dependencies>
