@@ -160,13 +160,15 @@ namespace Javista.AttributesFactory
 
         private void btnOpenFile_Click(object sender, EventArgs e)
         {
-            var ofd = new OpenFileDialog
+            using (var ofd = new OpenFileDialog
             {
                 Filter = @"Excel spreadsheet with macros|*.xlsm|Excel spreadsheet|*.xlsx|All files|*.*"
-            };
-            if (ofd.ShowDialog(this) == DialogResult.OK)
+            })
             {
-                txtFilePath.Text = ofd.FileName;
+                if (ofd.ShowDialog(this) == DialogResult.OK)
+                {
+                    txtFilePath.Text = ofd.FileName;
+                }
             }
         }
 
@@ -230,14 +232,15 @@ namespace Javista.AttributesFactory
 
         private void exportLogsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var sfd = new SaveFileDialog
+            using (var sfd = new SaveFileDialog
             {
                 Filter = @"CSV file|*.csv"
-            };
-
-            if (sfd.ShowDialog(this) == DialogResult.OK)
+            })
             {
-                lvLogs.ToCsv(sfd.FileName);
+                if (sfd.ShowDialog(this) == DialogResult.OK)
+                {
+                    lvLogs.ToCsv(sfd.FileName);
+                }
             }
         }
 
@@ -288,72 +291,78 @@ namespace Javista.AttributesFactory
 
         private void tsbExportEntities_Click(object sender, EventArgs e)
         {
-            var dialog = new EntitySelectionDialog(Service, _solutions);
-            if (dialog.ShowDialog(this) == DialogResult.OK)
+            using (var dialog = new EntitySelectionDialog(Service, _solutions))
             {
-                var sfd = new SaveFileDialog
+                if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    Filter = @"Excel workbook with macro|*.xlsm"
-                };
-                if (sfd.ShowDialog(this) == DialogResult.OK)
-                {
-                    WorkAsync(new WorkAsyncInfo
+                    using (var sfd = new SaveFileDialog
                     {
-                        Message = "Exporting tables...",
-                        Work = (bw, evt) =>
+                        Filter = @"Excel workbook with macro|*.xlsm"
+                    })
+                    {
+                        if (sfd.ShowDialog(this) == DialogResult.OK)
                         {
-                            var mdg = new MetadataDocManager(Service, this);
-                            mdg.GenerateDocumentation(dialog.Entities, sfd.FileName, dialog.LoadAllAttributes, dialog.LoadDerivedAttributes, null);
-                        },
-                        PostWorkCallBack = evt =>
-                        {
-                            if (evt.Error != null)
+                            WorkAsync(new WorkAsyncInfo
                             {
-                                MessageBox.Show(this, $"An error occured when generating the document: {evt.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
-                            }
+                                Message = "Exporting tables...",
+                                Work = (bw, evt) =>
+                                {
+                                    var mdg = new MetadataDocManager(Service, this);
+                                    mdg.GenerateDocumentation(dialog.Entities, sfd.FileName, dialog.LoadAllAttributes, dialog.LoadDerivedAttributes, null);
+                                },
+                                PostWorkCallBack = evt =>
+                                {
+                                    if (evt.Error != null)
+                                    {
+                                        MessageBox.Show(this, $"An error occured when generating the document: {evt.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        return;
+                                    }
 
-                            if (MessageBox.Show(this, @"Do you want to open the document now?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                            {
-                                Process.Start(sfd.FileName);
-                            }
+                                    if (MessageBox.Show(this, @"Do you want to open the document now?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                                    {
+                                        Process.Start(sfd.FileName);
+                                    }
+                                }
+                            });
                         }
-                    });
+                    }
                 }
             }
         }
 
         private void tsbGetTemplate_Click(object sender, EventArgs e)
         {
-            var sfd = new SaveFileDialog
+            using (var sfd = new SaveFileDialog
             {
                 Filter = @"Excel workbook with macro|*.xlsm",
                 FileName = "Attributes_Template.xlsm"
-            };
+            })
 
-            if (sfd.ShowDialog(this) == DialogResult.OK)
             {
-                var assembly = Assembly.GetExecutingAssembly();
-                var resourceName = "Javista.AttributesFactory.Template.Attributes_Template.xlsm";
-
-                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                if (sfd.ShowDialog(this) == DialogResult.OK)
                 {
-                    if (stream == null)
-                    {
-                        MessageBox.Show(this, @"There was an error trying to retrieve the Excel template", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                    using (FileStream fileStream = File.Create(sfd.FileName, (int)stream.Length))
-                    {
-                        byte[] bytesInStream = new byte[stream.Length];
-                        stream.Read(bytesInStream, 0, bytesInStream.Length);
-                        fileStream.Write(bytesInStream, 0, bytesInStream.Length);
-                    }
-                }
+                    var assembly = Assembly.GetExecutingAssembly();
+                    var resourceName = "Javista.AttributesFactory.Template.Attributes_Template.xlsm";
 
-                if (MessageBox.Show(this, $@"File saved to {sfd.FileName}! Would you like to open it now? (requires Excel)", @"Success", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    Process.Start("EXCEL.EXE", $"\"{sfd.FileName}\"");
+                    using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                    {
+                        if (stream == null)
+                        {
+                            MessageBox.Show(this, @"There was an error trying to retrieve the Excel template", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        using (FileStream fileStream = File.Create(sfd.FileName, (int)stream.Length))
+                        {
+                            byte[] bytesInStream = new byte[stream.Length];
+                            stream.Read(bytesInStream, 0, bytesInStream.Length);
+                            fileStream.Write(bytesInStream, 0, bytesInStream.Length);
+                        }
+                    }
+
+                    if (MessageBox.Show(this, $@"File saved to {sfd.FileName}! Would you like to open it now? (requires Excel)", @"Success", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        Process.Start("EXCEL.EXE", sfd.FileName);
+                    }
                 }
             }
         }
