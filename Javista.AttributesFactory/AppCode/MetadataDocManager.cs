@@ -54,6 +54,8 @@ namespace Javista.AttributesFactory.AppCode
                     int line = 3;
                     int lineNn = 3;
 
+                    var rels = new List<string>();
+
                     foreach (var emd in emds)
                     {
                         var fullEmd = ((RetrieveEntityResponse)Service.Execute(new RetrieveEntityRequest
@@ -94,6 +96,9 @@ namespace Javista.AttributesFactory.AppCode
                                 continue;
                             }
 
+                            if(rels.Contains(rmd.SchemaName)) continue;
+                            rels.Add(rmd.SchemaName);
+
                             AddLine(nnWorkSheet, rmd, lineNn);
 
                             lineNn++;
@@ -107,8 +112,8 @@ namespace Javista.AttributesFactory.AppCode
                     ApplyDataValidation(nnWorkSheet, line - 1);
                     ApplyConditionalFormatting(sheet, line - 1);
 
-                    sheet.Cells[1, 63, sheet.Dimension.Rows, 63].Merge = true;
-                    
+                    sheet.Cells[1, 64, sheet.Dimension.Rows, 64].Merge = true;
+
                     package.SaveAs(new FileInfo(filePath));
                 }
             }
@@ -280,7 +285,7 @@ namespace Javista.AttributesFactory.AppCode
             AddConditionalFormattingExpressionForHiding(sheet, "D3", 40, line, "$A$5");
             AddConditionalFormattingExpressionForHiding(sheet, "D3", 41, line, "$A$5");
 
-            for (var i = 43; i <= 56; i++)
+            for (var i = 43; i <= 57; i++)
             {
                 AddConditionalFormattingExpressionForHiding(sheet, "D3", i, line, "$A$4", "$A$10", "$A$11", "$A$17");
             }
@@ -293,10 +298,10 @@ namespace Javista.AttributesFactory.AppCode
                 AddConditionalFormattingExpressionForShowing(sheet, "AX3", i, line, "$K$5");
             }
 
-            AddConditionalFormattingExpressionForHiding(sheet, "D3", 58, line, "$A$7");
-            AddConditionalFormattingExpressionForHiding(sheet, "D3", 60, line, "$A$9");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 59, line, "$A$7");
             AddConditionalFormattingExpressionForHiding(sheet, "D3", 61, line, "$A$9");
             AddConditionalFormattingExpressionForHiding(sheet, "D3", 62, line, "$A$9");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 63, line, "$A$9");
 
             AddConditionalFormattingExpressionForHiding(sheet, "AS3", 47, line, "$I$3");
         }
@@ -681,19 +686,21 @@ namespace Javista.AttributesFactory.AppCode
                     }
                     else
                         sheet.Cells[line, 50].Value = "Custom";
+
+                    sheet.Cells[line, 57].Value = rel.SchemaName;
                 }
             }
             else if (amd is FileAttributeMetadata fileAmd)
             {
                 sheet.Cells[line, 4].Value = "File";
-                sheet.Cells[line, 58].Value = fileAmd.MaxSizeInKB.Value.ToString();
+                sheet.Cells[line, 59].Value = fileAmd.MaxSizeInKB.Value.ToString();
             }
             else if (amd is ImageAttributeMetadata imageAmd)
             {
                 sheet.Cells[line, 4].Value = "Image";
-                sheet.Cells[line, 60].Value = imageAmd.MaxSizeInKB ?? -1;
-                sheet.Cells[line, 61].Value = imageAmd.CanStoreFullImage ?? false;
-                sheet.Cells[line, 62].Value = imageAmd.IsPrimaryImage ?? false;
+                sheet.Cells[line, 61].Value = imageAmd.MaxSizeInKB ?? -1;
+                sheet.Cells[line, 62].Value = imageAmd.CanStoreFullImage ?? false;
+                sheet.Cells[line, 63].Value = imageAmd.IsPrimaryImage ?? false;
             }
         }
     }
