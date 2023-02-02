@@ -96,7 +96,7 @@ namespace Javista.AttributesFactory.AppCode
                                 continue;
                             }
 
-                            if(rels.Contains(rmd.SchemaName)) continue;
+                            if (rels.Contains(rmd.SchemaName)) continue;
                             rels.Add(rmd.SchemaName);
 
                             AddLine(nnWorkSheet, rmd, lineNn);
@@ -109,10 +109,10 @@ namespace Javista.AttributesFactory.AppCode
                     nnWorkSheet.DeleteRow(line, line + 1);
 
                     ApplyDataValidation(sheet, line - 1);
-                    ApplyDataValidation(nnWorkSheet, line - 1);
+                    ApplyDataValidationNN(nnWorkSheet, line - 1);
                     ApplyConditionalFormatting(sheet, line - 1);
 
-                    sheet.Cells[1, 64, sheet.Dimension.Rows, 64].Merge = true;
+                    sheet.Cells[1, 66, sheet.Dimension.Rows, 66].Merge = true;
 
                     package.SaveAs(new FileInfo(filePath));
                 }
@@ -127,11 +127,11 @@ namespace Javista.AttributesFactory.AppCode
 
             if (values.Length == 1)
             {
-                formatting.Formula = $"={reference}<>ValidationData!{values[0]}";
+                formatting.Formula = $"={reference}<>VD!{values[0]}";
             }
             else
             {
-                formatting.Formula = $"=AND({reference}<>ValidationData!{string.Join($",{reference}<>ValidationData!", values)})";
+                formatting.Formula = $"=AND({reference}<>VD!{string.Join($",{reference}<>VD!", values)})";
             }
         }
 
@@ -143,11 +143,11 @@ namespace Javista.AttributesFactory.AppCode
 
             if (values.Length == 1)
             {
-                formatting.Formula = $"={reference}=ValidationData!{values[0]}";
+                formatting.Formula = $"={reference}=VD!{values[0]}";
             }
             else
             {
-                formatting.Formula = $"=OR({reference}=ValidationData!{string.Join($",{reference}=ValidationData!", values)})";
+                formatting.Formula = $"=OR({reference}=VD!{string.Join($",{reference}=VD!", values)})";
             }
         }
 
@@ -225,10 +225,10 @@ namespace Javista.AttributesFactory.AppCode
         private void AddLine(ExcelWorksheet sheet, AttributeMetadata amd, int line)
         {
             sheet.InsertRow(line, 1);
-            sheet.Cells[line + 1, 1, line + 1, 62].Copy(sheet.Cells[line, 1]);
-            sheet.Cells[line + 1, 1, line + 1, 62].Style.Border.BorderAround(ExcelBorderStyle.None);
+            sheet.Cells[line + 1, 1, line + 1, 65].Copy(sheet.Cells[line, 1]);
+            sheet.Cells[line + 1, 1, line + 1, 65].Style.Border.BorderAround(ExcelBorderStyle.None);
 
-            for (int i = 1; i <= 62; i++)
+            for (int i = 1; i <= 65; i++)
             {
                 var sourceRange = sheet.Cells[line + 1, i].Address;
                 var sourceValidation = sheet.DataValidations[sourceRange];
@@ -304,6 +304,8 @@ namespace Javista.AttributesFactory.AppCode
             AddConditionalFormattingExpressionForHiding(sheet, "D3", 63, line, "$A$9");
 
             AddConditionalFormattingExpressionForHiding(sheet, "AS3", 47, line, "$I$3");
+
+            AddConditionalFormattingExpressionForHiding(sheet, "K3", 65, line, "$C$5", "$C$9");
         }
 
         private void ApplyDataValidation(ExcelWorksheet sheet, int line)
@@ -311,47 +313,67 @@ namespace Javista.AttributesFactory.AppCode
             sheet.DataValidations.RemoveAll(x => x != null);
 
             var actionValidation = sheet.Cells[3, 1, line, 1].DataValidation.AddListDataValidation();
-            actionValidation.Formula.ExcelFormula = "=ValidationData!$O$2:$O$3";
+            actionValidation.Formula.ExcelFormula = "=VD!$O$2:$O$3";
             var typeValidation = sheet.Cells[3, 4, line, 4].DataValidation.AddListDataValidation();
-            typeValidation.Formula.ExcelFormula = "=ValidationData!$A$2:$A$15";
+            typeValidation.Formula.ExcelFormula = "=VD!$A$2:$A$15";
             var levelValidation = sheet.Cells[3, 7, line, 7].DataValidation.AddListDataValidation();
-            levelValidation.Formula.ExcelFormula = "=ValidationData!$E$2:$E$4";
+            levelValidation.Formula.ExcelFormula = "=VD!$E$2:$E$4";
             var boolValidation = sheet.Cells[3, 8, line, 8].DataValidation.AddListDataValidation();
-            boolValidation.Formula.ExcelFormula = "=ValidationData!$D$2:$D$3";
+            boolValidation.Formula.ExcelFormula = "=VD!$D$2:$D$3";
             var boolValidation2 = sheet.Cells[3, 9, line, 9].DataValidation.AddListDataValidation();
-            boolValidation2.Formula.ExcelFormula = "=ValidationData!$D$2:$D$3";
+            boolValidation2.Formula.ExcelFormula = "=VD!$D$2:$D$3";
             var boolValidation3 = sheet.Cells[3, 10, line, 10].DataValidation.AddListDataValidation();
-            boolValidation3.Formula.ExcelFormula = "=ValidationData!$D$2:$D$3";
+            boolValidation3.Formula.ExcelFormula = "=VD!$D$2:$D$3";
 
             var sourceTypeValidation = sheet.Cells[3, 11, line, 11].DataValidation.AddListDataValidation();
-            sourceTypeValidation.Formula.ExcelFormula = "=ValidationData!$C$2:$C$4";
+            sourceTypeValidation.Formula.ExcelFormula = "=IF(D4=VD!$A$2,VD!$C$2:$C$3,IF(OR(D4=VD!$A$5,D4=VD!$A$6),VD!$C$2:$C$5,IF(OR(D4=VD!$A$12,D4=VD!$A$16),VD!$C$2:$C$4,IF(OR(D4=VD!$A$14,D4=VD!$A$15),VD!$C$7:$C$9,VD!$C$2))))";
 
             var textFormatValidation = sheet.Cells[3, 13, line, 13].DataValidation.AddListDataValidation();
-            textFormatValidation.Formula.ExcelFormula = "=ValidationData!$B$2:$B$9";
+            textFormatValidation.Formula.ExcelFormula = "=VD!$B$2:$B$9";
             var intFormatValidation = sheet.Cells[3, 23, line, 23].DataValidation.AddListDataValidation();
-            intFormatValidation.Formula.ExcelFormula = "=ValidationData!$F$2:$F$6";
+            intFormatValidation.Formula.ExcelFormula = "=VD!$F$2:$F$6";
 
             var datetimeBehaviorValidation = sheet.Cells[3, 40, line, 40].DataValidation.AddListDataValidation();
-            datetimeBehaviorValidation.Formula.ExcelFormula = "=ValidationData!$H$2:$H$4";
+            datetimeBehaviorValidation.Formula.ExcelFormula = "=VD!$H$2:$H$4";
             var datetimeFormatValidation = sheet.Cells[3, 41, line, 41].DataValidation.AddListDataValidation();
-            datetimeFormatValidation.Formula.ExcelFormula = "=ValidationData!$G$2:$G$3";
+            datetimeFormatValidation.Formula.ExcelFormula = "=VD!$G$2:$G$3";
 
             var relValidForAfValidation = sheet.Cells[3, 44, line, 44].DataValidation.AddListDataValidation();
-            relValidForAfValidation.Formula.ExcelFormula = "=ValidationData!$D$2:$D$34";
+            relValidForAfValidation.Formula.ExcelFormula = "=VD!$D$2:$D$34";
             var relIsHierarchicalValidation = sheet.Cells[3, 45, line, 45].DataValidation.AddListDataValidation();
-            relIsHierarchicalValidation.Formula.ExcelFormula = "=ValidationData!$D$2:$D$3";
+            relIsHierarchicalValidation.Formula.ExcelFormula = "=VD!$D$2:$D$3";
             var relDisplayBehaviorValidation = sheet.Cells[3, 46, line, 46].DataValidation.AddListDataValidation();
-            relDisplayBehaviorValidation.Formula.ExcelFormula = "=ValidationData!$I$2:$I$4";
+            relDisplayBehaviorValidation.Formula.ExcelFormula = "=VD!$I$2:$I$4";
             var relDisplayZoneValidation = sheet.Cells[3, 48, line, 48].DataValidation.AddListDataValidation();
-            relDisplayZoneValidation.Formula.ExcelFormula = "=ValidationData!$J$2:$J$5";
+            relDisplayZoneValidation.Formula.ExcelFormula = "=VD!$J$2:$J$5";
             var relBehaviorValidation = sheet.Cells[3, 50, line, 50].DataValidation.AddListDataValidation();
-            relBehaviorValidation.Formula.ExcelFormula = "=ValidationData!$K$2:$K$5";
+            relBehaviorValidation.Formula.ExcelFormula = "=VD!$K$2:$K$5";
             var relCascadeValidation1 = sheet.Cells[3, 51, line, 54].DataValidation.AddListDataValidation();
-            relCascadeValidation1.Formula.ExcelFormula = "=ValidationData!$L$2:$L$5";
+            relCascadeValidation1.Formula.ExcelFormula = "=VD!$L$2:$L$5";
             var relCascadeDelValidation = sheet.Cells[3, 55, line, 55].DataValidation.AddListDataValidation();
-            relCascadeDelValidation.Formula.ExcelFormula = "=ValidationData!$M$2:$M$4";
+            relCascadeDelValidation.Formula.ExcelFormula = "=VD!$M$2:$M$4";
             var relCascadeValidation2 = sheet.Cells[3, 56, line, 56].DataValidation.AddListDataValidation();
-            relCascadeValidation2.Formula.ExcelFormula = "=ValidationData!$L$2:$L$5";
+            relCascadeValidation2.Formula.ExcelFormula = "=VD!$L$2:$L$5";
+        }
+
+        private void ApplyDataValidationNN(ExcelWorksheet sheet, int line)
+        {
+            sheet.DataValidations.RemoveAll(x => x != null);
+
+            var actionValidation = sheet.Cells[3, 1, line, 1].DataValidation.AddListDataValidation();
+            actionValidation.Formula.ExcelFormula = "=VD!$O$2:$O$3";
+            var boolValidation = sheet.Cells[3, 3, line, 3].DataValidation.AddListDataValidation();
+            boolValidation.Formula.ExcelFormula = "=VD!$D$2:$D$3";
+
+            var relDisplayBehaviorValidation = sheet.Cells[3, 5, line, 5].DataValidation.AddListDataValidation();
+            relDisplayBehaviorValidation.Formula.ExcelFormula = "=VD!$I$2:$I$4";
+            var relDisplayBehaviorValidation2 = sheet.Cells[3, 10, line, 10].DataValidation.AddListDataValidation();
+            relDisplayBehaviorValidation2.Formula.ExcelFormula = "=VD!$I$2:$I$4";
+
+            var relDisplayZoneValidation = sheet.Cells[3, 7, line, 7].DataValidation.AddListDataValidation();
+            relDisplayZoneValidation.Formula.ExcelFormula = "=VD!$J$2:$J$5";
+            var relDisplayZoneValidation2 = sheet.Cells[3, 12, line, 12].DataValidation.AddListDataValidation();
+            relDisplayZoneValidation2.Formula.ExcelFormula = "=VD!$J$2:$J$5";
         }
 
         private string GetCascadeText(CascadeType type, bool isDeleteBehavior = false)
@@ -418,6 +440,7 @@ namespace Javista.AttributesFactory.AppCode
                 case 0: return "Simple";
                 case 1: return "Calculated";
                 case 2: return "Rollup";
+                case 3: return "Formula";
                 default: return "n/a";
             }
         }
@@ -486,6 +509,8 @@ namespace Javista.AttributesFactory.AppCode
                 sheet.Cells[line, 12].Value = samd.MaxLength;
                 sheet.Cells[line, 13].Value = format;
                 sheet.Cells[line, 14].Value = samd.AutoNumberFormat;
+
+                sheet.Cells[line, 65].Value = samd.FormulaDefinition;
             }
             else if (amd is MemoAttributeMetadata memoAmd)
             {
@@ -526,6 +551,8 @@ namespace Javista.AttributesFactory.AppCode
                 sheet.Cells[line, 4].Value = "Two options";
                 sheet.Cells[line, 20].Value = $"{bamd.OptionSet.FalseOption.Value ?? -1}:{bamd.OptionSet.FalseOption?.Label?.UserLocalizedLabel?.Label}{Environment.NewLine}{bamd.OptionSet.TrueOption.Value ?? -1}:{bamd.OptionSet.TrueOption?.Label?.UserLocalizedLabel?.Label}";
                 sheet.Cells[line, 21].Value = bamd.DefaultValue ?? false ? "True" : "False";
+
+                sheet.Cells[line, 65].Value = bamd.FormulaDefinition;
             }
             else if (amd is IntegerAttributeMetadata iamd)
             {
@@ -571,6 +598,8 @@ namespace Javista.AttributesFactory.AppCode
                 sheet.Cells[line, 31].Value = decAmd.Precision ?? -1;
                 sheet.Cells[line, 32].Value = decAmd.MinValue ?? -1;
                 sheet.Cells[line, 33].Value = decAmd.MaxValue ?? -1;
+
+                sheet.Cells[line, 65].Value = decAmd.FormulaDefinition;
             }
             else if (amd is MoneyAttributeMetadata mamd)
             {
@@ -601,6 +630,8 @@ namespace Javista.AttributesFactory.AppCode
                 sheet.Cells[line, 4].Value = "Date and time";
                 sheet.Cells[line, 40].Value = behavior;
                 sheet.Cells[line, 41].Value = (dtAmd.Format ?? DateTimeFormat.DateOnly) == DateTimeFormat.DateOnly ? "Date only" : "Date and time";
+
+                sheet.Cells[line, 65].Value = dtAmd.FormulaDefinition;
             }
             else if (amd is LookupAttributeMetadata lamd)
             {

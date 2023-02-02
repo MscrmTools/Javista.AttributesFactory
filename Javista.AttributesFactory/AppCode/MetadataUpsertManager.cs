@@ -497,6 +497,14 @@ namespace Javista.AttributesFactory.AppCode
             {
                 OptionSet = new BooleanOptionSetMetadata(),
             };
+
+            var formula = sheet.GetValue<string>(rowIndex, "BM");
+            if (sheet.GetValue<string>(rowIndex, "K") == "Formula" && !string.IsNullOrEmpty(formula))
+            {
+                amd.FormulaDefinition = formula;
+                amd.SourceType = 3;
+            }
+
             var stringValues = sheet.GetValue<string>(rowIndex, startCell);
             if (string.IsNullOrEmpty(stringValues))
             {
@@ -802,6 +810,13 @@ namespace Javista.AttributesFactory.AppCode
                     break;
             }
 
+            var formula = sheet.GetValue<string>(rowIndex, "BM");
+            if (sheet.GetValue<string>(rowIndex, "K") == "Formula" && !string.IsNullOrEmpty(formula))
+            {
+                amd.FormulaDefinition = formula;
+                amd.SourceType = 3;
+            }
+
             return amd;
         }
 
@@ -813,6 +828,13 @@ namespace Javista.AttributesFactory.AppCode
                 MinValue = sheet.GetValue<decimal>(rowIndex, startCell + 1),
                 MaxValue = sheet.GetValue<decimal>(rowIndex, startCell + 2)
             };
+
+            var formula = sheet.GetValue<string>(rowIndex, "BM");
+            if (sheet.GetValue<string>(rowIndex, "K") == "Formula" && !string.IsNullOrEmpty(formula))
+            {
+                damd.FormulaDefinition = formula;
+                damd.SourceType = 3;
+            }
 
             return damd;
         }
@@ -1529,8 +1551,16 @@ namespace Javista.AttributesFactory.AppCode
             var samd = new StringAttributeMetadata
             {
                 MaxLength = sheet.GetValue<int>(rowIndex, startCell),
-                AutoNumberFormat = sheet.GetValue<string>(rowIndex, startCell + 2)
+                AutoNumberFormat = sheet.GetValue<string>(rowIndex, startCell + 2),
             };
+
+            var formula = sheet.GetValue<string>(rowIndex, "BM");
+            if (sheet.GetValue<string>(rowIndex, "K") == "Formula" && !string.IsNullOrEmpty(formula))
+            {
+                samd.FormulaDefinition = formula;
+                samd.MaxLength = 4000;
+                samd.SourceType = 3;
+            }
 
             switch (sheet.GetValue<string>(rowIndex, startCell + 1))
             {
@@ -1643,6 +1673,10 @@ namespace Javista.AttributesFactory.AppCode
 
                 case "Rollup":
                     fakeAmd.SourceType = 2;
+                    break;
+
+                case "Formula":
+                    fakeAmd.SourceType = 3;
                     break;
             }
             return fakeAmd;

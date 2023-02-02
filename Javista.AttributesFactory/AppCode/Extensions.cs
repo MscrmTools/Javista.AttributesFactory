@@ -15,9 +15,11 @@ namespace Javista.AttributesFactory.AppCode
         {
             int position = 0;
 
-            for (int i = 0; i < range.Length; i++)
+            for (int i = range.Length - 1; i >= 0; i--)
             {
-                position += (i != 0 ? 25 : 0) + ((int)range.ToUpper()[i]) - 64;
+                int letterPosition = range.ToUpper()[i] - 64;
+
+                position += (i != range.Length - 1 ? letterPosition * 25 : 0) + range.ToUpper()[i] - 64;
             }
 
             return position;
