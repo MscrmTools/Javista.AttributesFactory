@@ -139,8 +139,46 @@ namespace Javista.AttributesFactory.AppCode
                         info.Attribute = $"{info.Attribute}Code";
                     }
 
+                    if (workSheet.GetValue<string>(i, 1) == "Delete")
+                    {
+                        info.IsDelete = true;
+                    }
+
                     worker.ReportProgress(percent, info);
                     percent = index * 100 / (workSheet.Dimension.End.Row - 2);
+
+                    if (info.IsDelete)
+                    {
+                        try
+                        {
+                            service.Execute(new DeleteAttributeRequest
+                            {
+                                EntityLogicalName = info.Entity.ToLower(),
+                                LogicalName = info.Attribute.ToLower()
+                            });
+
+                            info.Success = true;
+                            info.Processing = false;
+                        }
+                        catch (Exception e)
+                        {
+                            info.Success = false;
+                            info.Processing = false;
+                            info.Message = e.Message;
+                            worker.ReportProgress(percent, info);
+                        }
+                        finally
+                        {
+                            if (settings.ThrottleInSeconds != 0)
+                            {
+                                Thread.Sleep(settings.ThrottleInSeconds * 1000);
+                            }
+
+                            worker.ReportProgress(percent, info);
+                        }
+
+                        continue;
+                    }
 
                     try
                     {
@@ -401,15 +439,52 @@ namespace Javista.AttributesFactory.AppCode
 
                     var info = new ProcessResult
                     {
-                        DisplayName = "Many to many",
-                        Attribute = nnWorkSheet.GetValue<string>(i, "B"),
+                        DisplayName = $"{nnWorkSheet.GetValue<string>(i, "D")} / {nnWorkSheet.GetValue<string>(i, "I")}",
+                        Attribute = nnWorkSheet.GetValue<string>(i, "B").Replace("{prefix}", settings.Solution.Prefix),
                         Type = "Many to many",
                         Entity = $"{nnWorkSheet.GetValue<string>(i, "D")} / {nnWorkSheet.GetValue<string>(i, "I")}",
                         Processing = true,
                     };
 
+                    if (nnWorkSheet.GetValue<string>(i, 1) == "Delete")
+                    {
+                        info.IsDelete = true;
+                    }
+
                     worker.ReportProgress(percent, info);
                     percent = index * 100 / (nnWorkSheet.Dimension.End.Row - 2);
+
+                    if (info.IsDelete)
+                    {
+                        try
+                        {
+                            service.Execute(new DeleteRelationshipRequest
+                            {
+                                Name = info.Attribute
+                            });
+
+                            info.Success = true;
+                            info.Processing = false;
+                        }
+                        catch (Exception e)
+                        {
+                            info.Success = false;
+                            info.Processing = false;
+                            info.Message = e.Message;
+                            worker.ReportProgress(percent, info);
+                        }
+                        finally
+                        {
+                            if (settings.ThrottleInSeconds != 0)
+                            {
+                                Thread.Sleep(settings.ThrottleInSeconds * 1000);
+                            }
+
+                            worker.ReportProgress(percent, info);
+                        }
+
+                        continue;
+                    }
 
                     try
                     {
@@ -1715,7 +1790,7 @@ namespace Javista.AttributesFactory.AppCode
 
             var nn = new ManyToManyRelationshipMetadata
             {
-                Entity1LogicalName = sheet.GetValue<string>(line, "D").ToLower(),
+                Entity1LogicalName = sheet.GetValue<string>(line, "D").ToLower().Replace("{prefix}", settings.Solution.Prefix),
                 Entity1AssociatedMenuConfiguration = new AssociatedMenuConfiguration
                 {
                     Behavior = behavior1,
@@ -1723,7 +1798,7 @@ namespace Javista.AttributesFactory.AppCode
                     Label = behavior1 == AssociatedMenuBehavior.UseLabel ? new Label(sheet.GetValue<string>(line, "F"), settings.LanguageCode) : null,
                     Order = sheet.GetValue<int>(line, "H")
                 },
-                Entity2LogicalName = sheet.GetValue<string>(line, "I").ToLower(),
+                Entity2LogicalName = sheet.GetValue<string>(line, "I").ToLower().Replace("{prefix}", settings.Solution.Prefix),
                 Entity2AssociatedMenuConfiguration = new AssociatedMenuConfiguration
                 {
                     Behavior = behavior2,
@@ -1732,7 +1807,7 @@ namespace Javista.AttributesFactory.AppCode
                     Order = sheet.GetValue<int>(line, "M")
                 },
                 IsValidForAdvancedFind = sheet.GetValue<string>(line, "C") == "Yes",
-                SchemaName = sheet.GetValue<string>(line, "B")
+                SchemaName = sheet.GetValue<string>(line, "B").Replace("{prefix}", settings.Solution.Prefix)
             };
 
             try

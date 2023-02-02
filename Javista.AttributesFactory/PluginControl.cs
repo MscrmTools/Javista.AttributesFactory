@@ -101,13 +101,14 @@ namespace Javista.AttributesFactory
                         {
                             item.ImageIndex = 1;
                             item.SubItems[3].Text = info.Attribute;
-                            item.SubItems[5].Text = info.IsCreate ? @"Created" : @"Updated";
+                            item.SubItems[5].Text = info.IsDelete ? "Deleted" : info.IsCreate ? @"Created" : @"Updated";
+                            item.SubItems[6].Text = "";
                         }
                         else
                         {
                             item.ImageIndex = 2;
                             item.SubItems[3].Text = info.Attribute;
-                            item.SubItems[5].Text = $@"{(info.IsCreate ? "Create" : "Update")} Error";
+                            item.SubItems[5].Text = $@"{(info.IsDelete ? "Delete" : info.IsCreate ? "Create" : "Update")} Error";
                             item.SubItems[6].Text = info.Message;
                         }
                     }
@@ -123,8 +124,8 @@ namespace Javista.AttributesFactory
                         item.SubItems.Add(info.Type);
                         item.SubItems.Add(info.Attribute);
                         item.SubItems.Add(info.Entity);
-                        item.SubItems.Add(info.Processing ? "Processing..." : info.Success ? info.IsCreate ? "Created" : "Updated" : info.IsCreate ? "Create Error" : "Update Error");
-                        item.SubItems.Add(string.Empty);
+                        item.SubItems.Add(info.Processing ? "Processing..." : info.Success ? info.IsDelete ? "Deleted" : info.IsCreate ? "Created" : "Updated" : info.IsDelete ? "Delete Error" : info.IsCreate ? "Create Error" : "Update Error");
+                        item.SubItems.Add(info.IsDelete ? $"Deleting {(info.Type == "Many to many" ? "relationship" : "column")}" : "");
 
                         lvLogs.Items.Add(item);
                     }

@@ -10,5 +10,6 @@
         public bool Success { get; set; }
         public string Type { get; set; }
         public bool IsCreate { get; set; }
+        public bool IsDelete { get; internal set; }
     }
 }
