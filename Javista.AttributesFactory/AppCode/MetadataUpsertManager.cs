@@ -60,11 +60,11 @@ namespace Javista.AttributesFactory.AppCode
 
                     // Entity cell
                     var entity = workSheet.GetValue<string>(i, EntityCellIndex).Replace("{prefix}", settings.Solution.Prefix);
-                    if (!entities.Contains(entity)) entities.Add(entity);
+                    if (!entities.Select(e => e.ToLower()).Contains(entity.ToLower())) entities.Add(entity);
 
                     // Target entity cell for lookup
                     entity = workSheet.GetValue<string>(i, "AQ")?.Replace("{prefix}", settings.Solution.Prefix);
-                    if (!string.IsNullOrEmpty(entity) && !entities.Contains(entity)) entities.Add(entity);
+                    if (!string.IsNullOrEmpty(entity) && !entities.Select(e => e.ToLower()).Contains(entity.ToLower())) entities.Add(entity);
                 }
 
                 // NN relationships sheet
@@ -83,11 +83,11 @@ namespace Javista.AttributesFactory.AppCode
 
                     // Entity 1 cell
                     var entity = workSheet.GetValue<string>(i, "D").Replace("{prefix}", settings.Solution.Prefix);
-                    if (!entities.Contains(entity)) entities.Add(entity);
+                    if (!entities.Select(e => e.ToLower()).Contains(entity.ToLower())) entities.Add(entity);
 
                     // Entity 2 cell
                     entity = workSheet.GetValue<string>(i, "I").Replace("{prefix}", settings.Solution.Prefix);
-                    if (!entities.Contains(entity)) entities.Add(entity);
+                    if (!entities.Select(e => e.ToLower()).Contains(entity.ToLower())) entities.Add(entity);
                 }
             }
 
@@ -98,9 +98,8 @@ namespace Javista.AttributesFactory.AppCode
         {
             var eiCache = new List<EntityInfo>();
 
-            byte[] file = File.ReadAllBytes(settings.FilePath);
-            using (MemoryStream ms = new MemoryStream(file))
-            using (ExcelPackage package = new ExcelPackage(ms))
+            using (var file = new FileStream(settings.FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (ExcelPackage package = new ExcelPackage(file))
             {
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
                 int percent = 0;

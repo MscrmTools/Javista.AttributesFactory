@@ -88,7 +88,14 @@ namespace Javista.AttributesFactory.AppCode
 
             var response = (RetrieveMetadataChangesResponse)service.Execute(retrieveMetadataChangesRequest);
 
-            return entities.Except(response.EntityMetadata.Select(e => e.SchemaName)).ToList();
+            var newList = new List<string>();
+            foreach (var entity in entities)
+            {
+                if (response.EntityMetadata.Any(e => e.LogicalName == entity.ToLower())) continue;
+                newList.Add(entity);
+            }
+
+            return newList;
         }
     }
 }
