@@ -175,8 +175,7 @@ namespace Javista.AttributesFactory.Forms
                             {
                                 ComponentType = 1,
                                 ComponentId = result.EntityId,
-                                SolutionUniqueName = _settings.Solution.UniqueName,
-                                DoNotIncludeSubcomponents = false
+                                SolutionUniqueName = _settings.Solution.UniqueName
                             });
                         }
                         catch
@@ -233,7 +232,7 @@ namespace Javista.AttributesFactory.Forms
                 }
                 else
                 {
-                    if (evt.Result != null)
+                    if (evt.Result != null && ((StringBuilder)evt.Result).Length > 0)
                     {
                         MessageBox.Show(this, $"The following action did not succeed:\n{evt.Result}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }

@@ -76,7 +76,7 @@ namespace Javista.AttributesFactory.AppCode
                 Properties = new MetadataPropertiesExpression
                 {
                     AllProperties = false,
-                    PropertyNames = { "DisplayName", "LogicalName" }
+                    PropertyNames = { "DisplayName", "LogicalName", "SchemaName" }
                 }
             };
 
@@ -88,7 +88,7 @@ namespace Javista.AttributesFactory.AppCode
 
             var response = (RetrieveMetadataChangesResponse)service.Execute(retrieveMetadataChangesRequest);
 
-            return entities.Except(response.EntityMetadata.Select(e => e.LogicalName)).ToList();
+            return entities.Except(response.EntityMetadata.Select(e => e.SchemaName)).ToList();
         }
     }
 }

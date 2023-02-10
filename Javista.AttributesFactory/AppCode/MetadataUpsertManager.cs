@@ -59,11 +59,11 @@ namespace Javista.AttributesFactory.AppCode
                     index++;
 
                     // Entity cell
-                    var entity = workSheet.GetValue<string>(i, EntityCellIndex).ToLower().Replace("{prefix}", settings.Solution.Prefix);
+                    var entity = workSheet.GetValue<string>(i, EntityCellIndex).Replace("{prefix}", settings.Solution.Prefix);
                     if (!entities.Contains(entity)) entities.Add(entity);
 
                     // Target entity cell for lookup
-                    entity = workSheet.GetValue<string>(i, "AQ")?.ToLower().Replace("{prefix}", settings.Solution.Prefix);
+                    entity = workSheet.GetValue<string>(i, "AQ")?.Replace("{prefix}", settings.Solution.Prefix);
                     if (!string.IsNullOrEmpty(entity) && !entities.Contains(entity)) entities.Add(entity);
                 }
 
@@ -82,11 +82,11 @@ namespace Javista.AttributesFactory.AppCode
                     index++;
 
                     // Entity 1 cell
-                    var entity = workSheet.GetValue<string>(i, "D").ToLower().Replace("{prefix}", settings.Solution.Prefix);
+                    var entity = workSheet.GetValue<string>(i, "D").Replace("{prefix}", settings.Solution.Prefix);
                     if (!entities.Contains(entity)) entities.Add(entity);
 
                     // Entity 2 cell
-                    entity = workSheet.GetValue<string>(i, "I").ToLower().Replace("{prefix}", settings.Solution.Prefix);
+                    entity = workSheet.GetValue<string>(i, "I").Replace("{prefix}", settings.Solution.Prefix);
                     if (!entities.Contains(entity)) entities.Add(entity);
                 }
             }

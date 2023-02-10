@@ -13,6 +13,8 @@
     <summary>Create or Update attributes from an Excel template</summary>
     <releaseNotes>
       Fixed issue when creating/updating Two options column with value description
+      Fixed Schema name of newly created was always in lower case
+      Fixed adding newly created entity to solution without all metadata
     </releaseNotes>
     <tags>XrmToolBox Attributes Factory Metadata</tags>
     <dependencies>
