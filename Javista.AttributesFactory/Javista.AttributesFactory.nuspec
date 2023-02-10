@@ -12,8 +12,7 @@
     <description>Create or Update attributes from an Excel template</description>
     <summary>Create or Update attributes from an Excel template</summary>
     <releaseNotes>
-      Added support for columns and relationships deletion
-      Fixed issue when using {prefix} tag for many to many relationships information
+      Fixed issue when creating/updating Two options column with value description
     </releaseNotes>
     <tags>XrmToolBox Attributes Factory Metadata</tags>
     <dependencies>

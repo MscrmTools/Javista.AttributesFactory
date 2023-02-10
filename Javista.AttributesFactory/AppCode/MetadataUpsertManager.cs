@@ -605,14 +605,19 @@ namespace Javista.AttributesFactory.AppCode
 
                     if (parts.Length == 3 && !string.IsNullOrEmpty(parts[2]))
                     {
+                        if (amd.OptionSet.FalseOption.Description == null)
+                        {
+                            amd.OptionSet.FalseOption.Description = new Label();
+                        }
+
                         var desc = amd.OptionSet.FalseOption.Description.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
                         if (desc != null)
                         {
-                            desc.Label = parts[1];
+                            desc.Label = parts[2];
                         }
                         else
                         {
-                            amd.OptionSet.FalseOption.Description.LocalizedLabels.Add(new LocalizedLabel(parts[1], settings.LanguageCode));
+                            amd.OptionSet.FalseOption.Description.LocalizedLabels.Add(new LocalizedLabel(parts[2], settings.LanguageCode));
                         }
                     }
                 }
@@ -632,14 +637,19 @@ namespace Javista.AttributesFactory.AppCode
 
                     if (parts.Length == 3 && !string.IsNullOrEmpty(parts[2]))
                     {
+                        if (amd.OptionSet.TrueOption.Description == null)
+                        {
+                            amd.OptionSet.TrueOption.Description = new Label();
+                        }
+
                         var desc = amd.OptionSet.TrueOption.Description.LocalizedLabels.FirstOrDefault(l => l.LanguageCode == settings.LanguageCode);
                         if (desc != null)
                         {
-                            desc.Label = parts[1];
+                            desc.Label = parts[2];
                         }
                         else
                         {
-                            amd.OptionSet.TrueOption.Description.LocalizedLabels.Add(new LocalizedLabel(parts[1], settings.LanguageCode));
+                            amd.OptionSet.TrueOption.Description.LocalizedLabels.Add(new LocalizedLabel(parts[2], settings.LanguageCode));
                         }
                     }
                 }
