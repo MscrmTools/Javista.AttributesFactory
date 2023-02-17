@@ -261,8 +261,8 @@ namespace Javista.AttributesFactory.AppCode
         private void ApplyConditionalFormatting(ExcelWorksheet sheet, int line)
         {
             // Max Length
-            AddConditionalFormattingExpressionForHiding(sheet, "D3", 12, line, "$A$12", "$A$14");
-            AddConditionalFormattingExpressionForHiding(sheet, "D3", 13, line, "$A$14");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 12, line, "$A$13", "$A$14");
+            AddConditionalFormattingExpressionForHiding(sheet, "D3", 13, line, "$A$13", "$A$14");
             AddConditionalFormattingExpressionForHiding(sheet, "D3", 14, line, "$A$14");
             AddConditionalFormattingExpressionForHiding(sheet, "D3", 16, line, "$A$2", "$A$3", "$A$18", "$A$19");
             AddConditionalFormattingExpressionForHiding(sheet, "D3", 17, line, "$A$2", "$A$3", "$A$18", "$A$19");
@@ -329,7 +329,7 @@ namespace Javista.AttributesFactory.AppCode
             sourceTypeValidation.Formula.ExcelFormula = "=IF(D4=VD!$A$2,VD!$C$2:$C$3,IF(OR(D4=VD!$A$5,D4=VD!$A$6),VD!$C$2:$C$5,IF(OR(D4=VD!$A$12,D4=VD!$A$16),VD!$C$2:$C$4,IF(OR(D4=VD!$A$14,D4=VD!$A$15),VD!$C$7:$C$9,VD!$C$2))))";
 
             var textFormatValidation = sheet.Cells[3, 13, line, 13].DataValidation.AddListDataValidation();
-            textFormatValidation.Formula.ExcelFormula = "=VD!$B$2:$B$9";
+            textFormatValidation.Formula.ExcelFormula = "=IF(D3=VD!$A$14,SingleList,MultiList)";
             var intFormatValidation = sheet.Cells[3, 23, line, 23].DataValidation.AddListDataValidation();
             intFormatValidation.Formula.ExcelFormula = "=VD!$F$2:$F$6";
 
@@ -516,6 +516,7 @@ namespace Javista.AttributesFactory.AppCode
             {
                 sheet.Cells[line, 4].Value = "Multiple lines of text";
                 sheet.Cells[line, 12].Value = memoAmd.MaxLength;
+                sheet.Cells[line, 13].Value = memoAmd.FormatName.Value == "RichText" ? "Rich Text" : "Text";
                 sheet.Cells[line, 14].Value = memoAmd.AutoNumberFormat;
             }
             else if (amd is PicklistAttributeMetadata pamd)

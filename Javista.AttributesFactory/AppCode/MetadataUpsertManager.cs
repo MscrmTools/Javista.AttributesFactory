@@ -1318,7 +1318,8 @@ namespace Javista.AttributesFactory.AppCode
         {
             var mamd = new MemoAttributeMetadata
             {
-                MaxLength = sheet.GetValue<int>(rowIndex, startCell)
+                MaxLength = sheet.GetValue<int>(rowIndex, startCell),
+                Format = sheet.GetValue<string>(rowIndex, "M") == "Rich Text" ? StringFormat.RichText : StringFormat.Text
             };
 
             return mamd;
