@@ -38,6 +38,9 @@ namespace Javista.AttributesFactory.Forms
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.pnlMain = new System.Windows.Forms.Panel();
             this.dgvTables = new System.Windows.Forms.DataGridView();
+            this.pnlOptions = new System.Windows.Forms.Panel();
+            this.cbbApps = new System.Windows.Forms.ComboBox();
+            this.lblAddToModelDrivenApp = new System.Windows.Forms.Label();
             this.EntitySchemaName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.EntityOwnershipType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.EntityDisplayName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -47,9 +50,6 @@ namespace Javista.AttributesFactory.Forms
             this.PrimaryAttributeDisplayName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PrimaryAttributeLength = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PrimaryAttributeRequired = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.pnlOptions = new System.Windows.Forms.Panel();
-            this.cbbApps = new System.Windows.Forms.ComboBox();
-            this.lblAddToModelDrivenApp = new System.Windows.Forms.Label();
             this.pnlHeader.SuspendLayout();
             this.pnlFooter.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -66,7 +66,7 @@ namespace Javista.AttributesFactory.Forms
             this.pnlHeader.Location = new System.Drawing.Point(0, 0);
             this.pnlHeader.Name = "pnlHeader";
             this.pnlHeader.Padding = new System.Windows.Forms.Padding(15);
-            this.pnlHeader.Size = new System.Drawing.Size(1244, 74);
+            this.pnlHeader.Size = new System.Drawing.Size(1650, 74);
             this.pnlHeader.TabIndex = 0;
             // 
             // lblHeader
@@ -75,7 +75,7 @@ namespace Javista.AttributesFactory.Forms
             this.lblHeader.Location = new System.Drawing.Point(15, 15);
             this.lblHeader.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblHeader.Name = "lblHeader";
-            this.lblHeader.Size = new System.Drawing.Size(1214, 44);
+            this.lblHeader.Size = new System.Drawing.Size(1620, 44);
             this.lblHeader.TabIndex = 0;
             this.lblHeader.Text = "We detected tables that does not exist on the connected environment. You can crea" +
     "te them now";
@@ -87,13 +87,13 @@ namespace Javista.AttributesFactory.Forms
             this.pnlFooter.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnlFooter.Location = new System.Drawing.Point(0, 544);
             this.pnlFooter.Name = "pnlFooter";
-            this.pnlFooter.Size = new System.Drawing.Size(1244, 57);
+            this.pnlFooter.Size = new System.Drawing.Size(1650, 57);
             this.pnlFooter.TabIndex = 3;
             // 
             // btnCreateEntities
             // 
             this.btnCreateEntities.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreateEntities.Location = new System.Drawing.Point(943, 8);
+            this.btnCreateEntities.Location = new System.Drawing.Point(1349, 8);
             this.btnCreateEntities.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnCreateEntities.Name = "btnCreateEntities";
             this.btnCreateEntities.Size = new System.Drawing.Size(165, 42);
@@ -105,7 +105,7 @@ namespace Javista.AttributesFactory.Forms
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(1117, 8);
+            this.btnCancel.Location = new System.Drawing.Point(1523, 8);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(123, 42);
@@ -122,7 +122,7 @@ namespace Javista.AttributesFactory.Forms
             this.statusStrip1.Location = new System.Drawing.Point(0, 601);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 21, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1244, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1650, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -135,11 +135,11 @@ namespace Javista.AttributesFactory.Forms
             // 
             this.pnlMain.Controls.Add(this.dgvTables);
             this.pnlMain.Controls.Add(this.pnlOptions);
+            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlMain.Location = new System.Drawing.Point(0, 74);
             this.pnlMain.Name = "pnlMain";
-            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlMain.Padding = new System.Windows.Forms.Padding(10, 9, 10, 9);
-            this.pnlMain.Size = new System.Drawing.Size(1234, 473);
+            this.pnlMain.Size = new System.Drawing.Size(1650, 470);
             this.pnlMain.TabIndex = 4;
             // 
             // dgvTables
@@ -162,8 +162,37 @@ namespace Javista.AttributesFactory.Forms
             this.dgvTables.Name = "dgvTables";
             this.dgvTables.RowHeadersWidth = 62;
             this.dgvTables.RowTemplate.Height = 28;
-            this.dgvTables.Size = new System.Drawing.Size(1214, 410);
+            this.dgvTables.Size = new System.Drawing.Size(1630, 407);
             this.dgvTables.TabIndex = 0;
+            // 
+            // pnlOptions
+            // 
+            this.pnlOptions.Controls.Add(this.cbbApps);
+            this.pnlOptions.Controls.Add(this.lblAddToModelDrivenApp);
+            this.pnlOptions.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlOptions.Location = new System.Drawing.Point(10, 416);
+            this.pnlOptions.Name = "pnlOptions";
+            this.pnlOptions.Size = new System.Drawing.Size(1630, 45);
+            this.pnlOptions.TabIndex = 1;
+            // 
+            // cbbApps
+            // 
+            this.cbbApps.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbbApps.FormattingEnabled = true;
+            this.cbbApps.Location = new System.Drawing.Point(197, 12);
+            this.cbbApps.Name = "cbbApps";
+            this.cbbApps.Size = new System.Drawing.Size(238, 28);
+            this.cbbApps.TabIndex = 1;
+            // 
+            // lblAddToModelDrivenApp
+            // 
+            this.lblAddToModelDrivenApp.Dock = System.Windows.Forms.DockStyle.Left;
+            this.lblAddToModelDrivenApp.Location = new System.Drawing.Point(0, 0);
+            this.lblAddToModelDrivenApp.Name = "lblAddToModelDrivenApp";
+            this.lblAddToModelDrivenApp.Size = new System.Drawing.Size(191, 45);
+            this.lblAddToModelDrivenApp.TabIndex = 0;
+            this.lblAddToModelDrivenApp.Text = "Add to Model driven app : ";
+            this.lblAddToModelDrivenApp.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // EntitySchemaName
             // 
@@ -189,7 +218,7 @@ namespace Javista.AttributesFactory.Forms
             // 
             // EntityCollectionDisplayName
             // 
-            this.EntityCollectionDisplayName.HeaderText = "Display collection name";
+            this.EntityCollectionDisplayName.HeaderText = "Plural display name";
             this.EntityCollectionDisplayName.MinimumWidth = 8;
             this.EntityCollectionDisplayName.Name = "EntityCollectionDisplayName";
             this.EntityCollectionDisplayName.Width = 150;
@@ -229,40 +258,11 @@ namespace Javista.AttributesFactory.Forms
             this.PrimaryAttributeRequired.Name = "PrimaryAttributeRequired";
             this.PrimaryAttributeRequired.Width = 150;
             // 
-            // pnlOptions
-            // 
-            this.pnlOptions.Controls.Add(this.cbbApps);
-            this.pnlOptions.Controls.Add(this.lblAddToModelDrivenApp);
-            this.pnlOptions.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlOptions.Location = new System.Drawing.Point(10, 419);
-            this.pnlOptions.Name = "pnlOptions";
-            this.pnlOptions.Size = new System.Drawing.Size(1214, 45);
-            this.pnlOptions.TabIndex = 1;
-            // 
-            // cbbApps
-            // 
-            this.cbbApps.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbbApps.FormattingEnabled = true;
-            this.cbbApps.Location = new System.Drawing.Point(197, 12);
-            this.cbbApps.Name = "cbbApps";
-            this.cbbApps.Size = new System.Drawing.Size(238, 28);
-            this.cbbApps.TabIndex = 1;
-            // 
-            // lblAddToModelDrivenApp
-            // 
-            this.lblAddToModelDrivenApp.Dock = System.Windows.Forms.DockStyle.Left;
-            this.lblAddToModelDrivenApp.Location = new System.Drawing.Point(0, 0);
-            this.lblAddToModelDrivenApp.Name = "lblAddToModelDrivenApp";
-            this.lblAddToModelDrivenApp.Size = new System.Drawing.Size(191, 45);
-            this.lblAddToModelDrivenApp.TabIndex = 0;
-            this.lblAddToModelDrivenApp.Text = "Add to Model driven app : ";
-            this.lblAddToModelDrivenApp.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // EntityCreationDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1244, 623);
+            this.ClientSize = new System.Drawing.Size(1650, 623);
             this.Controls.Add(this.pnlMain);
             this.Controls.Add(this.pnlFooter);
             this.Controls.Add(this.pnlHeader);
@@ -294,6 +294,9 @@ namespace Javista.AttributesFactory.Forms
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Panel pnlMain;
         private System.Windows.Forms.DataGridView dgvTables;
+        private System.Windows.Forms.Panel pnlOptions;
+        private System.Windows.Forms.Label lblAddToModelDrivenApp;
+        private System.Windows.Forms.ComboBox cbbApps;
         private System.Windows.Forms.DataGridViewTextBoxColumn EntitySchemaName;
         private System.Windows.Forms.DataGridViewComboBoxColumn EntityOwnershipType;
         private System.Windows.Forms.DataGridViewTextBoxColumn EntityDisplayName;
@@ -303,8 +306,5 @@ namespace Javista.AttributesFactory.Forms
         private System.Windows.Forms.DataGridViewTextBoxColumn PrimaryAttributeDisplayName;
         private System.Windows.Forms.DataGridViewTextBoxColumn PrimaryAttributeLength;
         private System.Windows.Forms.DataGridViewCheckBoxColumn PrimaryAttributeRequired;
-        private System.Windows.Forms.Panel pnlOptions;
-        private System.Windows.Forms.Label lblAddToModelDrivenApp;
-        private System.Windows.Forms.ComboBox cbbApps;
     }
 }
