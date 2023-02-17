@@ -12,11 +12,14 @@
     <description>Create or Update attributes from an Excel template</description>
     <summary>Create or Update attributes from an Excel template</summary>
     <releaseNotes>
-      Fixed issue introdued with latest version for table existence
-      Fixed partial issue where Excel should be closed to use it in the tool
-      Fixed issue when creating/updating Two options column with value description
-      Fixed Schema name of newly created was always in lower case
-      Fixed adding newly created entity to solution without all metadata
+      Added support for Multi line text format
+      Improved template: Better description for Two Options
+      Improved template: Added default values for Two Options
+      Improved template: Added red star when metadata is mandatory
+      Improved template: Better description on how to add lines in the template
+      Improved template: Added description to explain the use of {prefix} tag
+      Improved template: Display name formula now uses the {prefix} tag
+      Improved template: Length for single/multi line of text is dynamic based on the type
     </releaseNotes>
     <tags>XrmToolBox Attributes Factory Metadata</tags>
     <dependencies>
