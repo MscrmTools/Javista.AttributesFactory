@@ -1,5 +1,6 @@
 ﻿using Javista.AttributesFactory.AppCode;
 using Javista.AttributesFactory.Forms;
+using Javista.AttributesFactory.UserControls;
 using McTools.Xrm.Connection;
 using Microsoft.Xrm.Sdk;
 using OfficeOpenXml;
@@ -64,84 +65,28 @@ namespace Javista.AttributesFactory
                 ThrottleInSeconds = Convert.ToInt32(nudDelay.Value)
             };
 
-            lvLogs.Items.Clear();
-            SetWorkingState(true);
-
             var manager = new MetadataUpsertManager(settings, Service, ConnectionDetail.OrganizationMajorVersion);
             var entities = MetadataManager.GetNotExistingEntities(manager.GetEntities(), Service);
             if (entities.Count > 0)
             {
-                using (var ecd = new EntityCreationDialog(entities.Select(e => new NewEntityInfo { SchemaName = e }).ToArray(), settings, Service))
+                var ctrl = new EntityCreationControl(entities.Select(e => new NewEntityInfo { SchemaName = e }).ToArray(), settings, Service);
+                ctrl.OnCancel += (sender, e) => { Controls.Remove(ctrl); ctrl.Dispose(); toolStripMenu.Enabled = true; };
+                ctrl.OnCompleted += (sender, e) =>
                 {
-                    if (ecd.ShowDialog(this) == DialogResult.Cancel)
-                    {
-                        SetWorkingState(false);
-                        return;
-                    }
-                }
+                    Controls.Remove(ctrl);
+                    ctrl.Dispose();
+                    toolStripMenu.Enabled = true;
+                    DoProcessAttributes(manager, settings);
+                };
+                Controls.Add(ctrl);
+                ctrl.BringToFront();
+
+                toolStripMenu.Enabled = false;
             }
-
-            WorkAsync(new WorkAsyncInfo
+            else
             {
-                Message = string.Empty,
-                AsyncArgument = settings,
-                Work = (w, e) =>
-                {
-                    manager.Process(w, ConnectionDetail);
-                },
-                ProgressChanged = e =>
-                {
-                    var info = (ProcessResult)e.UserState;
-                    SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs(e.ProgressPercentage, "Processing..."));
-
-                    var item = lvLogs.Items.Cast<ListViewItem>().FirstOrDefault(i => i.Tag == info);
-                    if (item != null)
-                    {
-                        if (info.Success)
-                        {
-                            item.ImageIndex = 1;
-                            item.SubItems[3].Text = info.Attribute;
-                            item.SubItems[5].Text = info.IsDelete ? "Deleted" : info.IsCreate ? @"Created" : @"Updated";
-                            item.SubItems[6].Text = "";
-                        }
-                        else
-                        {
-                            item.ImageIndex = 2;
-                            item.SubItems[3].Text = info.Attribute;
-                            item.SubItems[5].Text = $@"{(info.IsDelete ? "Delete" : info.IsCreate ? "Create" : "Update")} Error";
-                            item.SubItems[6].Text = info.Message;
-                        }
-                    }
-                    else
-                    {
-                        item = new ListViewItem
-                        {
-                            Tag = info,
-                            ImageIndex = info.Processing ? 0 : info.Success ? 1 : 2,
-                            Text = string.Empty
-                        };
-                        item.SubItems.Add(info.DisplayName);
-                        item.SubItems.Add(info.Type);
-                        item.SubItems.Add(info.Attribute);
-                        item.SubItems.Add(info.Entity);
-                        item.SubItems.Add(info.Processing ? "Processing..." : info.Success ? info.IsDelete ? "Deleted" : info.IsCreate ? "Created" : "Updated" : info.IsDelete ? "Delete Error" : info.IsCreate ? "Create Error" : "Update Error");
-                        item.SubItems.Add(info.IsDelete ? $"Deleting {(info.Type == "Many to many" ? "relationship" : "column")}" : "");
-
-                        lvLogs.Items.Add(item);
-                    }
-                },
-                PostWorkCallBack = e =>
-                {
-                    SetWorkingState(false);
-
-                    SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs(null, null));
-                    if (e.Error != null)
-                    {
-                        MessageBox.Show(this, e.Error.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                },
-                IsCancelable = true
-            });
+                DoProcessAttributes(manager, settings);
+            }
         }
 
         /// <summary>
@@ -229,6 +174,74 @@ namespace Javista.AttributesFactory
             {
                 e.Graphics.DrawString($"OptionSet Prefix: {solution.OptionSetPrefix}", e.Font, sb, r3);
             }
+        }
+
+        private void DoProcessAttributes(MetadataUpsertManager manager, CreateSettings settings)
+        {
+            lvLogs.Items.Clear();
+            SetWorkingState(true);
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = string.Empty,
+                AsyncArgument = settings,
+                Work = (w, e) =>
+                {
+                    manager.Process(w, ConnectionDetail);
+                },
+                ProgressChanged = e =>
+                {
+                    var info = (ProcessResult)e.UserState;
+                    SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs(e.ProgressPercentage, "Processing..."));
+
+                    var item = lvLogs.Items.Cast<ListViewItem>().FirstOrDefault(i => i.Tag == info);
+                    if (item != null)
+                    {
+                        if (info.Success)
+                        {
+                            item.ImageIndex = 1;
+                            item.SubItems[3].Text = info.Attribute;
+                            item.SubItems[5].Text = info.IsDelete ? "Deleted" : info.IsCreate ? @"Created" : @"Updated";
+                            item.SubItems[6].Text = "";
+                        }
+                        else
+                        {
+                            item.ImageIndex = 2;
+                            item.SubItems[3].Text = info.Attribute;
+                            item.SubItems[5].Text = $@"{(info.IsDelete ? "Delete" : info.IsCreate ? "Create" : "Update")} Error";
+                            item.SubItems[6].Text = info.Message;
+                        }
+                    }
+                    else
+                    {
+                        item = new ListViewItem
+                        {
+                            Tag = info,
+                            ImageIndex = info.Processing ? 0 : info.Success ? 1 : 2,
+                            Text = string.Empty
+                        };
+                        item.SubItems.Add(info.DisplayName);
+                        item.SubItems.Add(info.Type);
+                        item.SubItems.Add(info.Attribute);
+                        item.SubItems.Add(info.Entity);
+                        item.SubItems.Add(info.Processing ? "Processing..." : info.Success ? info.IsDelete ? "Deleted" : info.IsCreate ? "Created" : "Updated" : info.IsDelete ? "Delete Error" : info.IsCreate ? "Create Error" : "Update Error");
+                        item.SubItems.Add(info.IsDelete ? $"Deleting {(info.Type == "Many to many" ? "relationship" : "column")}" : "");
+
+                        lvLogs.Items.Add(item);
+                    }
+                },
+                PostWorkCallBack = e =>
+                {
+                    SetWorkingState(false);
+
+                    SendMessageToStatusBar?.Invoke(this, new StatusBarMessageEventArgs(null, null));
+                    if (e.Error != null)
+                    {
+                        MessageBox.Show(this, e.Error.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                },
+                IsCancelable = true
+            });
         }
 
         private void exportLogsToolStripMenuItem_Click(object sender, EventArgs e)

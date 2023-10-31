@@ -11,16 +11,18 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Javista.AttributesFactory.Forms
+namespace Javista.AttributesFactory.UserControls
 {
-    public partial class EntityCreationDialog : Form
+    public partial class EntityCreationControl : UserControl
     {
         private IOrganizationService _service;
         private CreateSettings _settings;
         private BackgroundWorker bw;
 
-        public EntityCreationDialog(NewEntityInfo[] entities, CreateSettings settings, IOrganizationService service)
+        public EntityCreationControl(NewEntityInfo[] entities, CreateSettings settings, IOrganizationService service)
         {
+            InitializeComponent();
+
             _service = service;
             _settings = settings;
 
@@ -32,8 +34,6 @@ namespace Javista.AttributesFactory.Forms
                 entity.PrimaryFieldLength = 100;
                 entity.OwnershipType = "User owned";
             }
-
-            InitializeComponent();
 
             dgvTables.AutoGenerateColumns = false;
             dgvTables.DataSource = entities;
@@ -54,6 +54,10 @@ namespace Javista.AttributesFactory.Forms
             LoadApps();
         }
 
+        public event EventHandler OnCancel;
+
+        public event EventHandler OnCompleted;
+
         private void btnCancel_Click(object sender, EventArgs e)
         {
             if (bw != null && bw.IsBusy)
@@ -63,8 +67,7 @@ namespace Javista.AttributesFactory.Forms
             }
             else
             {
-                DialogResult = DialogResult.Cancel;
-                Close();
+                OnCancel?.Invoke(this, new EventArgs());
             }
         }
 
@@ -175,7 +178,10 @@ namespace Javista.AttributesFactory.Forms
                             {
                                 ComponentType = 1,
                                 ComponentId = result.EntityId,
-                                SolutionUniqueName = _settings.Solution.UniqueName
+                                SolutionUniqueName = _settings.Solution.UniqueName,
+                                AddRequiredComponents = false,
+                                DoNotIncludeSubcomponents = false,
+                                IncludedComponentSettingsValues = null
                             });
                         }
                         catch
@@ -221,8 +227,7 @@ namespace Javista.AttributesFactory.Forms
 
                 if (evt.Cancelled)
                 {
-                    DialogResult = DialogResult.Cancel;
-                    Close();
+                    OnCancel?.Invoke(this, new EventArgs());
                     return;
                 }
 
@@ -237,8 +242,7 @@ namespace Javista.AttributesFactory.Forms
                         MessageBox.Show(this, $"The following action did not succeed:\n{evt.Result}", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
 
-                    DialogResult = DialogResult.OK;
-                    Close();
+                    OnCompleted?.Invoke(this, new EventArgs());
                 }
             };
             bw.ProgressChanged += (worker, evt) =>
@@ -246,6 +250,25 @@ namespace Javista.AttributesFactory.Forms
                 toolStripStatusLabel1.Text = evt.UserState.ToString();
             };
             bw.RunWorkerAsync();
+        }
+
+        private void btnMaximize_Click(object sender, EventArgs e)
+        {
+            if (btnMaximize.Text == "Maximize")
+            {
+                btnMaximize.Text = "Reduce";
+                Width = Parent.Width;
+                Height = Parent.Height;
+                Location = new System.Drawing.Point(0, 0);
+               
+            }
+            else
+            {
+                btnMaximize.Text = "Maximize";
+                Width = Convert.ToInt32(Parent.Width * 0.7);
+                Height = Convert.ToInt32(Parent.Height * 0.7);
+                Location = new System.Drawing.Point(Parent.Width / 2 - Width / 2, Parent.Height / 2 - Height / 2);
+            }
         }
 
         private void dgvTables_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -268,6 +291,13 @@ namespace Javista.AttributesFactory.Forms
                     dgvTables.CellValueChanged += dgvTables_CellValueChanged;
                 }
             }
+        }
+
+        private void EntityCreationControl_Load(object sender, EventArgs e)
+        {
+            Width = Convert.ToInt32(Parent.Width * 0.7);
+            Height = Convert.ToInt32(Parent.Height * 0.7);
+            Location = new System.Drawing.Point(Parent.Width / 2 - Width / 2, Parent.Height / 2 - Height / 2);
         }
 
         private void LoadApps()
