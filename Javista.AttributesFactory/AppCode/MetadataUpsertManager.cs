@@ -215,6 +215,13 @@ namespace Javista.AttributesFactory.AppCode
                                 amd = CreateStringAttribute(workSheet, i, PropertiesFirstCellIndex);
                                 break;
 
+                            case "BigInt":
+                                amd = new BigIntAttributeMetadata
+                                {
+                                };
+
+                                break;
+
                             case "Choice":
                             case "OptionSet":
                                 amd = CreateOptionsetAttribute(workSheet, i, PropertiesFirstCellIndex + 4, false, info.DisplayName, info.Attribute, info.Entity, fakeAmd.Description?.LocalizedLabels[0]?.Label, (existingAttribute as PicklistAttributeMetadata)?.OptionSet, existingAttribute != null);
