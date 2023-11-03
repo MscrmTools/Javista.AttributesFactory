@@ -516,7 +516,7 @@ namespace Javista.AttributesFactory.AppCode
             {
                 sheet.Cells[line, 4].Value = "Multiple lines of text";
                 sheet.Cells[line, 12].Value = memoAmd.MaxLength;
-                sheet.Cells[line, 13].Value = memoAmd.FormatName.Value == "RichText" ? "Rich Text" : "Text";
+                sheet.Cells[line, 13].Value = memoAmd.FormatName?.Value == "RichText" ? "Rich Text" : "Text";
                 sheet.Cells[line, 14].Value = memoAmd.AutoNumberFormat;
             }
             else if (amd is PicklistAttributeMetadata pamd)
