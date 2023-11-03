@@ -140,6 +140,9 @@ namespace Javista.AttributesFactory.UserControls
                 var sb = new StringBuilder();
                 evt.Result = sb;
 
+                var addToSolutionRequests = new List<AddSolutionComponentRequest>();
+                var addToAppRequests = new List<AddAppComponentsRequest>();
+
                 foreach (var request in requests)
                 {
                     if (((BackgroundWorker)worker).CancellationPending)
@@ -163,6 +166,7 @@ namespace Javista.AttributesFactory.UserControls
                         ((BackgroundWorker)worker).ReportProgress(0, $"Creating table {request.Entity.DisplayName.LocalizedLabels[0].Label}. Please wait...");
 
                         var result = (CreateEntityResponse)_service.Execute(request);
+                        request.Entity.MetadataId = result.EntityId;
 
                         if (((BackgroundWorker)worker).CancellationPending)
                         {
@@ -170,47 +174,72 @@ namespace Javista.AttributesFactory.UserControls
                             return;
                         }
 
-                        try
+                        addToSolutionRequests.Add(new AddSolutionComponentRequest
                         {
-                            ((BackgroundWorker)worker).ReportProgress(0, $"Adding table {request.Entity.DisplayName.LocalizedLabels[0].Label} to solution. Please wait...");
+                            ComponentType = 1,
+                            ComponentId = result.EntityId,
+                            SolutionUniqueName = _settings.Solution.UniqueName,
+                            AddRequiredComponents = false,
+                            DoNotIncludeSubcomponents = false,
+                            IncludedComponentSettingsValues = null
+                        });
 
-                            _service.Execute(new AddSolutionComponentRequest
-                            {
-                                ComponentType = 1,
-                                ComponentId = result.EntityId,
-                                SolutionUniqueName = _settings.Solution.UniqueName,
-                                AddRequiredComponents = false,
-                                DoNotIncludeSubcomponents = false,
-                                IncludedComponentSettingsValues = null
-                            });
-                        }
-                        catch
-                        {
-                            // We don't want to fail if adding to application fails
-                            sb.AppendLine($"- Adding table {request.Entity.DisplayName.LocalizedLabels[0].Label} to solution");
-                        }
+                        ((BackgroundWorker)worker).ReportProgress(0, $"Adding table {request.Entity.DisplayName.LocalizedLabels[0].Label} to solution. Please wait...");
 
                         if (app != null)
                         {
-                            try
+                            addToAppRequests.Add(new AddAppComponentsRequest
                             {
-                                ((BackgroundWorker)worker).ReportProgress(0, $"Adding table {request.Entity.DisplayName.LocalizedLabels[0].Label} to application {app}. Please wait...");
-
-                                _service.Execute(new AddAppComponentsRequest
-                                {
-                                    AppId = app.Id,
-                                    Components = new EntityReferenceCollection
+                                AppId = app.Id,
+                                Components = new EntityReferenceCollection
                                     {
                                         new EntityReference(request.Entity.SchemaName.ToLower(), result.EntityId)
                                     }
-                                });
-                            }
-                            catch
-                            {
-                                // We don't want to fail if adding to solution fails
-                                sb.AppendLine($"- Adding table {request.Entity.DisplayName.LocalizedLabels[0].Label} to application {app}");
-                            }
+                            });
                         }
+                    }
+
+                    if (((BackgroundWorker)worker).CancellationPending)
+                    {
+                        evt.Cancel = true;
+                        return;
+                    }
+                }
+
+                foreach (var request in addToSolutionRequests)
+                {
+                    var tableName = requests.First(r => r.Entity.MetadataId.Value == request.ComponentId).Entity.DisplayName.LocalizedLabels[0].Label;
+
+                    try
+                    {
+                        ((BackgroundWorker)worker).ReportProgress(0, $"Adding table {tableName} to solution. Please wait...");
+                        _service.Execute(request);
+                    }
+                    catch
+                    {
+                        // We don't want to fail if adding to application fails
+                        sb.AppendLine($"- Adding table {tableName} to solution");
+                    }
+
+                    if (((BackgroundWorker)worker).CancellationPending)
+                    {
+                        evt.Cancel = true;
+                        return;
+                    }
+                }
+
+                foreach (var request in addToAppRequests)
+                {
+                    try
+                    {
+                        ((BackgroundWorker)worker).ReportProgress(0, $"Adding table {requests.First(r => r.Entity.MetadataId.Value == request.Components.First().Id).Entity.DisplayName.LocalizedLabels[0].Label} to application {app}. Please wait...");
+
+                        _service.Execute(request);
+                    }
+                    catch
+                    {
+                        // We don't want to fail if adding to solution fails
+                        sb.AppendLine($"- Adding table {requests.First(r => r.Entity.MetadataId.Value == request.Components.First().Id).Entity.DisplayName.LocalizedLabels[0].Label} to application {app}");
                     }
 
                     if (((BackgroundWorker)worker).CancellationPending)
@@ -260,7 +289,6 @@ namespace Javista.AttributesFactory.UserControls
                 Width = Parent.Width;
                 Height = Parent.Height;
                 Location = new System.Drawing.Point(0, 0);
-               
             }
             else
             {
