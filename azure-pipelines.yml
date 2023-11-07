@@ -2,7 +2,8 @@ jobs:
 - job: 'BuildSolution'
 
   pool:
-    vmImage: windows-latest
+    name: 'Mon PC TBS'
+    # vmImage: windows-latest
 
   variables:
     ToolName: 'Javista.AttributesFactory'
