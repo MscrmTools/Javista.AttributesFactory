@@ -49,8 +49,6 @@ namespace Javista.AttributesFactory.UserControls
 
             ((DataGridViewComboBoxColumn)dgvTables.Columns[1]).Items.AddRange("User owned", "Organization owned");
 
-            dgvTables.CellValueChanged += dgvTables_CellValueChanged;
-
             LoadApps();
         }
 
