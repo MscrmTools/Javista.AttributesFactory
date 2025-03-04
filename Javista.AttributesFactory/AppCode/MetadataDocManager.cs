@@ -525,6 +525,8 @@ namespace Javista.AttributesFactory.AppCode
                 sheet.Cells[line, 16].Value = GetOptionSets(pamd.OptionSet);
                 sheet.Cells[line, 17].Value = pamd.OptionSet.IsGlobal ?? false ? pamd.OptionSet.Name : "";
                 sheet.Cells[line, 18].Value = pamd.DefaultFormValue.HasValue ? pamd.DefaultFormValue.Value.ToString() : "";
+
+                sheet.Cells[line, 65].Value = pamd.FormulaDefinition;
             }
             else if (amd is StateAttributeMetadata stateAmd)
             {
@@ -546,6 +548,8 @@ namespace Javista.AttributesFactory.AppCode
                 sheet.Cells[line, 16].Value = GetOptionSets(msamd.OptionSet);
                 sheet.Cells[line, 17].Value = msamd.OptionSet.IsGlobal ?? false ? msamd.OptionSet.Name : "";
                 sheet.Cells[line, 18].Value = msamd.DefaultFormValue.HasValue ? msamd.DefaultFormValue.Value.ToString() : "";
+
+                sheet.Cells[line, 65].Value = msamd.FormulaDefinition;
             }
             else if (amd is BooleanAttributeMetadata bamd)
             {
@@ -585,6 +589,8 @@ namespace Javista.AttributesFactory.AppCode
                 sheet.Cells[line, 23].Value = format;
                 sheet.Cells[line, 24].Value = iamd.MinValue ?? -1;
                 sheet.Cells[line, 25].Value = iamd.MaxValue ?? -1;
+
+                sheet.Cells[line, 65].Value = iamd.FormulaDefinition;
             }
             else if (amd is DoubleAttributeMetadata damd)
             {
@@ -609,6 +615,8 @@ namespace Javista.AttributesFactory.AppCode
                 sheet.Cells[line, 36].Value = GetPrecisionSourceString(mamd.PrecisionSource ?? -1);
                 sheet.Cells[line, 37].Value = mamd.MinValue ?? -1;
                 sheet.Cells[line, 38].Value = mamd.MaxValue ?? -1;
+
+                sheet.Cells[line, 65].Value = mamd.FormulaDefinition;
             }
             else if (amd is DateTimeAttributeMetadata dtAmd)
             {

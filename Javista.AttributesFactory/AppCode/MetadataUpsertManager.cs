@@ -260,7 +260,7 @@ namespace Javista.AttributesFactory.AppCode
                                 break;
 
                             case "Multiple lines of text":
-                                amd = CreateMemoAttribute(workSheet, i, PropertiesFirstCellIndex);
+                                amd = CreateMemoAttribute(workSheet, i, PropertiesFirstCellIndex, detail);
                                 break;
 
                             case "Date and time":
@@ -1321,12 +1321,12 @@ namespace Javista.AttributesFactory.AppCode
             return lookup;
         }
 
-        private AttributeMetadata CreateMemoAttribute(ExcelWorksheet sheet, int rowIndex, int startCell)
+        private AttributeMetadata CreateMemoAttribute(ExcelWorksheet sheet, int rowIndex, int startCell, ConnectionDetail detail)
         {
             var mamd = new MemoAttributeMetadata
             {
                 MaxLength = sheet.GetValue<int>(rowIndex, startCell),
-                Format = sheet.GetValue<string>(rowIndex, "M") == "Rich Text" ? StringFormat.RichText : StringFormat.Text
+                Format = sheet.GetValue<string>(rowIndex, "M") == "Rich Text" ? (new Version(detail.OrganizationVersion) >= new Version("9.2.0.0") ? StringFormat.RichText : StringFormat.TextArea) : StringFormat.Text
             };
 
             return mamd;
@@ -1357,6 +1357,13 @@ namespace Javista.AttributesFactory.AppCode
                 MinValue = sheet.GetValue<double>(rowIndex, startCell + 2),
                 MaxValue = sheet.GetValue<double>(rowIndex, startCell + 3)
             };
+
+            var formula = sheet.GetValue<string>(rowIndex, "BM");
+            if (sheet.GetValue<string>(rowIndex, "K") == "Formula" && !string.IsNullOrEmpty(formula))
+            {
+                mamd.FormulaDefinition = formula;
+                mamd.SourceType = 3;
+            }
 
             return mamd;
         }
@@ -1390,6 +1397,13 @@ namespace Javista.AttributesFactory.AppCode
                 case "Locale":
                     namd.Format = IntegerFormat.Locale;
                     break;
+            }
+
+            var formula = sheet.GetValue<string>(rowIndex, "BM");
+            if (sheet.GetValue<string>(rowIndex, "K") == "Formula" && !string.IsNullOrEmpty(formula))
+            {
+                namd.FormulaDefinition = formula;
+                namd.SourceType = 3;
             }
 
             return namd;
@@ -1586,6 +1600,15 @@ namespace Javista.AttributesFactory.AppCode
                     amd.DefaultFormValue = sheet.GetValue<int>(rowIndex, startCell + 2);
                 }
 
+
+                var formula = sheet.GetValue<string>(rowIndex, "BM");
+                if (sheet.GetValue<string>(rowIndex, "K") == "Formula" && !string.IsNullOrEmpty(formula))
+                {
+                    amd.FormulaDefinition = formula;
+                    amd.SourceType = 3;
+                }
+
+
                 return amd;
             }
             else
@@ -1633,6 +1656,15 @@ namespace Javista.AttributesFactory.AppCode
                         }
                     }
                 }
+
+
+                var formula = sheet.GetValue<string>(rowIndex, "BM");
+                if (sheet.GetValue<string>(rowIndex, "K") == "Formula" && !string.IsNullOrEmpty(formula))
+                {
+                    amd.FormulaDefinition = formula;
+                    amd.SourceType = 3;
+                }
+
 
                 return amd;
             }
