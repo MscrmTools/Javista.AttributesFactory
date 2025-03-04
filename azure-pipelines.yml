@@ -2,16 +2,17 @@ jobs:
 - job: 'BuildSolution'
 
   pool:
-    vmImage: windows-latest
+    name: 'Mon PC TBS'
+    # vmImage: windows-latest
 
   variables:
     ToolName: 'Javista.AttributesFactory'
 
   steps:
   - task: NuGetToolInstaller@0
-    displayName: 'Use NuGet 4.6.0'
+    displayName: 'Use NuGet 6.6.1'
     inputs:
-      versionSpec: 4.6.0
+      versionSpec: 6.6.1
       checkLatest: true
 
   - task: NuGetCommand@2
