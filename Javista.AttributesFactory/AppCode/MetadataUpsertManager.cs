@@ -949,6 +949,13 @@ namespace Javista.AttributesFactory.AppCode
                 MaxValue = sheet.GetValue<double>(rowIndex, startCell + 2)
             };
 
+            var formula = sheet.GetValue<string>(rowIndex, "BM");
+            if (sheet.GetValue<string>(rowIndex, "K") == "Formula" && !string.IsNullOrEmpty(formula))
+            {
+                famd.FormulaDefinition = formula;
+                famd.SourceType = 3;
+            }
+
             return famd;
         }
 
@@ -1600,14 +1607,12 @@ namespace Javista.AttributesFactory.AppCode
                     amd.DefaultFormValue = sheet.GetValue<int>(rowIndex, startCell + 2);
                 }
 
-
                 var formula = sheet.GetValue<string>(rowIndex, "BM");
                 if (sheet.GetValue<string>(rowIndex, "K") == "Formula" && !string.IsNullOrEmpty(formula))
                 {
                     amd.FormulaDefinition = formula;
                     amd.SourceType = 3;
                 }
-
 
                 return amd;
             }
@@ -1657,14 +1662,12 @@ namespace Javista.AttributesFactory.AppCode
                     }
                 }
 
-
                 var formula = sheet.GetValue<string>(rowIndex, "BM");
                 if (sheet.GetValue<string>(rowIndex, "K") == "Formula" && !string.IsNullOrEmpty(formula))
                 {
                     amd.FormulaDefinition = formula;
                     amd.SourceType = 3;
                 }
-
 
                 return amd;
             }

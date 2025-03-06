@@ -247,7 +247,9 @@
     </Compile>
     <Compile Include="AppCode\MdAInfo.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="PluginControl.cs" />
+    <Compile Include="PluginControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="PluginControl.designer.cs">
       <DependentUpon>PluginControl.cs</DependentUpon>
     </Compile>
