@@ -335,7 +335,7 @@ namespace Javista.AttributesFactory.AppCode
                             }
                             else
                             {
-                                amd.Description.LocalizedLabels.Add(new LocalizedLabel(fakeAmd.Description.LocalizedLabels[settings.LanguageCode].Label, settings.LanguageCode));
+                                amd.Description.LocalizedLabels.Add(fakeAmd.Description.LocalizedLabels.First(l => l.LanguageCode == settings.LanguageCode));
                             }
                         }
 
