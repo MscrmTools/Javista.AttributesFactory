@@ -60,7 +60,7 @@ namespace Javista.AttributesFactory.AppCode
                     {
                         var fullEmd = ((RetrieveEntityResponse)Service.Execute(new RetrieveEntityRequest
                         {
-                            EntityFilters = EntityFilters.Attributes | EntityFilters.Relationships,
+                            EntityFilters = EntityFilters.All,
                             LogicalName = emd.LogicalName
                         })).EntityMetadata;
 
@@ -85,6 +85,7 @@ namespace Javista.AttributesFactory.AppCode
 
                             AddLine(sheet, amd, line);
                             ProcessDetails(amd, fullEmd, sheet, ref line);
+                            ProcessKeys(amd, fullEmd, sheet, ref line);
 
                             line++;
                         }
@@ -741,6 +742,20 @@ namespace Javista.AttributesFactory.AppCode
                 sheet.Cells[line, 61].Value = imageAmd.MaxSizeInKB ?? -1;
                 sheet.Cells[line, 62].Value = imageAmd.CanStoreFullImage ?? false;
                 sheet.Cells[line, 63].Value = imageAmd.IsPrimaryImage ?? false;
+            }
+
+           
+        }
+
+        private void ProcessKeys(AttributeMetadata amd, EntityMetadata emd, ExcelWorksheet sheet, ref int line)
+        {
+            sheet.Cells[1, 68].Value = sheet.Cells[1, 68].Value?.ToString().Replace(" *", "");
+            var keys = emd.Keys.Where(k => k.KeyAttributes.Contains(amd.LogicalName));
+            var keysValue = string.Join("\n", keys.Select(k => $"{k.DisplayName.UserLocalizedLabel?.Label}:{k.SchemaName}"));
+            sheet.Cells[line, 67].Value = keysValue;
+            if (!string.IsNullOrEmpty(keysValue) && (!sheet.Cells[1, 68].Value?.ToString()?.EndsWith(" *") ?? true))
+            {
+                sheet.Cells[1, 68].Value = sheet.Cells[1, 68].Value?.ToString() + " *";
             }
         }
     }

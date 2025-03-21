@@ -13,13 +13,14 @@ namespace Javista.AttributesFactory.AppCode
         public EntityInfo(string name, IOrganizationService service)
         {
             Name = name;
-            Attributes = GetAttributes(name, service);
+            GetMetadata(name, service);
         }
 
-        public List<AttributeMetadata> Attributes { get; }
+        public List<AttributeMetadata> Attributes { get; private set; }
+        public List<EntityKeyMetadata> Keys { get; private set; }
         public string Name { get; }
 
-        private List<AttributeMetadata> GetAttributes(string name, IOrganizationService service)
+        private void GetMetadata(string name, IOrganizationService service)
         {
             EntityQueryExpression entityQueryExpression = new EntityQueryExpression
             {
@@ -35,7 +36,7 @@ namespace Javista.AttributesFactory.AppCode
                 Properties = new MetadataPropertiesExpression
                 {
                     AllProperties = false,
-                    PropertyNames = { "Attributes" }
+                    PropertyNames = { "Attributes", "Keys" }
                 },
                 AttributeQuery = new AttributeQueryExpression
                 {
@@ -62,7 +63,8 @@ namespace Javista.AttributesFactory.AppCode
                 throw new Exception($"Entity with logical name {name} does not exist");
             }
 
-            return emd.Attributes.ToList();
+            Attributes = emd.Attributes.ToList();
+            Keys = emd.Keys.ToList();
         }
     }
 }
