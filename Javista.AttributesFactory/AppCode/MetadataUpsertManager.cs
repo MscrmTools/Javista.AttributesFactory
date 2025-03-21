@@ -1469,6 +1469,12 @@ namespace Javista.AttributesFactory.AppCode
             }
 
             string optionsString = sheet.GetValue<string>(rowIndex, startCell);
+
+            if (isGlobal && sheet.GetValue<string>(rowIndex, "K") == "Formula" && globalOptionSetName == null)
+            {
+                throw new Exception("Please define the name of the OptionSet to use in Choice properties column");
+            }
+
             if (!isGlobal && optionsString.Length == 0)
             {
                 throw new Exception("OptionSet values cannot be null");
@@ -1536,18 +1542,13 @@ namespace Javista.AttributesFactory.AppCode
                 globalOmc.AddRange(((OptionSetMetadata)response.OptionSetMetadata).Options);
             }
 
-            if (settings.AddOptionSetSuffix && !omd.Name.ToLower().EndsWith("code"))
-            {
-                omd.Name = $"{omd.Name}Code";
-            }
-
             if (isGlobal)
             {
                 if (existingAttribute)
                 {
                     omd.Name = eomd.Name;
                 }
-                else
+                else if(omc.Count > 0)
                 {
                     omd.Name = omd.Name.ToLower();
                     if (settings.AddOptionSetSuffix && !omd.Name.EndsWith("code"))
@@ -1590,6 +1591,14 @@ namespace Javista.AttributesFactory.AppCode
             }
             else
             {
+                if (!existingAttribute)
+                {
+                    if (settings.AddOptionSetSuffix && !omd.Name.ToLower().EndsWith("code"))
+                    {
+                        omd.Name = $"{omd.Name}Code";
+                    }
+                }
+
                 omd.Options.Clear();
                 omd.Options.AddRange(omc);
                 ApplyOptionsUpdate(eomd, omd, entity, schemaName);
