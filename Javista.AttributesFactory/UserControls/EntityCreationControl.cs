@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Javista.AttributesFactory.UserControls
@@ -170,6 +171,22 @@ namespace Javista.AttributesFactory.UserControls
                         {
                             evt.Cancel = true;
                             return;
+                        }
+
+                        bool formsFound = false, viewsFound = false;
+                        while (!formsFound && !viewsFound)
+                        {
+                            if (((BackgroundWorker)worker).CancellationPending)
+                            {
+                                evt.Cancel = true;
+                                return;
+                            }
+
+                            ((BackgroundWorker)worker).ReportProgress(0, $"Waiting for {request.Entity.DisplayName.LocalizedLabels[0].Label} forms and views creation...");
+                            Thread.Sleep(1000);
+
+                            formsFound = _service.RetrieveMultiple(new QueryExpression("systemform") { Criteria = new FilterExpression { Conditions = { new ConditionExpression("objecttypecode", ConditionOperator.EndsWith, request.Entity.SchemaName.ToLower()) } } }).Entities.Count > 0;
+                            viewsFound = _service.RetrieveMultiple(new QueryExpression("savedquery") { Criteria = new FilterExpression { Conditions = { new ConditionExpression("returnedtypecode", ConditionOperator.EndsWith, request.Entity.SchemaName.ToLower()) } } }).Entities.Count > 0;
                         }
 
                         addToSolutionRequests.Add(new AddSolutionComponentRequest
