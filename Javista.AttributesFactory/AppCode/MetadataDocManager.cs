@@ -58,6 +58,8 @@ namespace Javista.AttributesFactory.AppCode
 
                     foreach (var emd in emds)
                     {
+                        worker.ReportProgress(0, $"Exporting table {emd.DisplayName?.UserLocalizedLabel?.Label ?? emd.LogicalName}...");
+
                         var fullEmd = ((RetrieveEntityResponse)Service.Execute(new RetrieveEntityRequest
                         {
                             EntityFilters = EntityFilters.All,
@@ -743,8 +745,6 @@ namespace Javista.AttributesFactory.AppCode
                 sheet.Cells[line, 62].Value = imageAmd.CanStoreFullImage ?? false;
                 sheet.Cells[line, 63].Value = imageAmd.IsPrimaryImage ?? false;
             }
-
-           
         }
 
         private void ProcessKeys(AttributeMetadata amd, EntityMetadata emd, ExcelWorksheet sheet, ref int line)
