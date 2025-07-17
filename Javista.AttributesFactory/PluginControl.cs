@@ -3,6 +3,7 @@ using Javista.AttributesFactory.Forms;
 using Javista.AttributesFactory.UserControls;
 using McTools.Xrm.Connection;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -66,27 +67,61 @@ namespace Javista.AttributesFactory
             };
 
             var manager = new MetadataUpsertManager(settings, Service, ConnectionDetail.OrganizationMajorVersion);
-            var entities = MetadataManager.GetNotExistingEntities(manager.GetEntities(), Service);
-            if (entities.Count > 0)
-            {
-                var ctrl = new EntityCreationControl(entities.Select(e => new NewEntityInfo { SchemaName = e }).ToArray(), settings, Service);
-                ctrl.OnCancel += (sender, e) => { Controls.Remove(ctrl); ctrl.Dispose(); toolStripMenu.Enabled = true; };
-                ctrl.OnCompleted += (sender, e) =>
-                {
-                    Controls.Remove(ctrl);
-                    ctrl.Dispose();
-                    toolStripMenu.Enabled = true;
-                    DoProcessAttributes(manager, settings);
-                };
-                Controls.Add(ctrl);
-                ctrl.BringToFront();
 
-                toolStripMenu.Enabled = false;
-            }
-            else
+            var keysToDelete = manager.CheckKeysDependencies();
+            if (keysToDelete.Count > 0)
             {
-                DoProcessAttributes(manager, settings);
+                if (DialogResult.No == MessageBox.Show(this, "The following keys will be deleted in order to delete attributes :\n- " + string.Join("\n- ", keysToDelete.Select(e => e.DisplayName.LocalizedLabels[0].Label)) + "\n\nDo you want to continue?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+                {
+                    return;
+                }
+
+                settings.KeysToDelete = keysToDelete;
             }
+
+            SetWorkingState(true);
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = "Checking for missing tables...",
+                Work = (bw, e) =>
+                {
+                    e.Result = MetadataManager.GetNotExistingEntities(manager.GetEntities(), Service);
+                },
+                PostWorkCallBack = evt =>
+                {
+                    SetWorkingState(false);
+
+                    if (evt.Error != null)
+                    {
+                        MessageBox.Show(this, "An error occured when checking tables: " + evt.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    var entities = (List<string>)evt.Result;
+
+                    if (entities.Count > 0)
+                    {
+                        var ctrl = new EntityCreationControl(entities.Select(e => new NewEntityInfo { SchemaName = e }).ToArray(), settings, Service);
+                        ctrl.OnCancel += (sender, e) => { Controls.Remove(ctrl); ctrl.Dispose(); toolStripMenu.Enabled = true; };
+                        ctrl.OnCompleted += (sender, e) =>
+                        {
+                            Controls.Remove(ctrl);
+                            ctrl.Dispose();
+                            toolStripMenu.Enabled = true;
+                            DoProcessAttributes(manager, settings);
+                        };
+                        Controls.Add(ctrl);
+                        ctrl.BringToFront();
+
+                        toolStripMenu.Enabled = false;
+                    }
+                    else
+                    {
+                        DoProcessAttributes(manager, settings);
+                    }
+                }
+            });
         }
 
         /// <summary>
@@ -138,6 +173,51 @@ namespace Javista.AttributesFactory
             lvLogs.Items.Clear();
         }
 
+        private void cmsLogs_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (e.ClickedItem == deleteAlternateKeyTsmi)
+            {
+                if (DialogResult.No == MessageBox.Show(this, "Are you sure you want to delete this alternate key?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+                {
+                    return;
+                }
+
+                if (lvLogs.SelectedItems.Count == 0)
+                {
+                    MessageBox.Show(this, "Please select an alternate key to delete", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var item = lvLogs.SelectedItems[0];
+                var data = (ProcessResult)item.Tag;
+
+                SetWorkingState(true);
+
+                WorkAsync(new WorkAsyncInfo
+                {
+                    Message = "Deleting alternate key...",
+                    Work = (bw, evt) =>
+                    {
+                        Service.Execute(new DeleteEntityKeyRequest
+                        {
+                            EntityLogicalName = data.Entity,
+                            Name = data.Attribute
+                        });
+                    },
+                    PostWorkCallBack = evt =>
+                    {
+                        SetWorkingState(false);
+
+                        if (evt.Error != null)
+                        {
+                            MessageBox.Show(this, $"An error occured when deleting the alternate key: {evt.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                });
+            }
+        }
+
         private void combobox_DrawItem(object sender, DrawItemEventArgs e)
         {
             e.DrawBackground();
@@ -187,7 +267,7 @@ namespace Javista.AttributesFactory
                 AsyncArgument = settings,
                 Work = (w, e) =>
                 {
-                    manager.Process(w, ConnectionDetail);
+                    manager.Process(w, ConnectionDetail, settings.KeysToDelete);
                 },
                 ProgressChanged = e =>
                 {
@@ -225,7 +305,7 @@ namespace Javista.AttributesFactory
                         item.SubItems.Add(info.Attribute);
                         item.SubItems.Add(info.Entity);
                         item.SubItems.Add(info.Processing ? "Processing..." : info.Success ? info.IsDelete ? "Deleted" : info.IsCreate ? "Created" : "Updated" : info.IsDelete ? "Delete Error" : info.IsCreate ? "Create Error" : "Update Error");
-                        item.SubItems.Add(info.IsDelete ? $"Deleting {(info.Type == "Many to many" ? "relationship" : "column")}" : "");
+                        item.SubItems.Add(info.IsDelete ? $"Deleting {(info.Type == "Many to many" ? "relationship" : info.Type == "Alternate key" ? "Alternate key" : "column")}" : "");
 
                         lvLogs.Items.Add(item);
                     }
@@ -269,6 +349,18 @@ namespace Javista.AttributesFactory
             });
         }
 
+        private void LvLogs_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var item = lvLogs.GetItemAt(e.X, e.Y);
+                if (item != null && item.Tag is ProcessResult pr && pr.IsCreate == false && pr.IsDelete == false && pr.Type == "Alternate key")
+                {
+                    cmsLogs.Show(lvLogs, e.Location);
+                }
+            }
+        }
+
         private void RetrieveBaseLanguage()
         {
             WorkAsync(new WorkAsyncInfo
@@ -285,6 +377,8 @@ namespace Javista.AttributesFactory
             tsbCancel.Visible = working;
             gbOptions.Enabled = !working;
             pnlOptions.Enabled = !working;
+
+            tsbExportEntities.Visible = !working;
 
             tsbCancel.Text = @"Cancel";
             tsbCancel.Enabled = true;
@@ -316,23 +410,33 @@ namespace Javista.AttributesFactory
                     {
                         if (sfd.ShowDialog(this) == DialogResult.OK)
                         {
+                            var startDate = DateTime.Now;
+
                             WorkAsync(new WorkAsyncInfo
                             {
                                 Message = "Exporting tables...",
                                 Work = (bw, evt) =>
                                 {
                                     var mdg = new MetadataDocManager(Service, this);
-                                    mdg.GenerateDocumentation(dialog.Entities, sfd.FileName, dialog.LoadAllAttributes, dialog.LoadDerivedAttributes, null);
+                                    mdg.GenerateDocumentation(dialog.Entities, sfd.FileName, dialog.LoadAllAttributes, dialog.LoadDerivedAttributes, bw);
+                                },
+                                ProgressChanged = evt =>
+                                {
+                                    SetWorkingMessage(evt.UserState.ToString());
                                 },
                                 PostWorkCallBack = evt =>
                                 {
+                                    var duration = DateTime.Now.Subtract(startDate);
+
                                     if (evt.Error != null)
                                     {
                                         MessageBox.Show(this, $"An error occured when generating the document: {evt.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                         return;
                                     }
 
-                                    if (MessageBox.Show(this, @"Do you want to open the document now?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                                    if (MessageBox.Show(this, $@"{dialog.Entities.Count} tables exported in {duration:hh\:mm\:ss}.
+
+Do you want to open the document now?", @"Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                                     {
                                         Process.Start(sfd.FileName);
                                     }

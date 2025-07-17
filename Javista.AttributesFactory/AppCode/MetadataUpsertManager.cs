@@ -37,6 +37,48 @@ namespace Javista.AttributesFactory.AppCode
             this.majorVersion = majorVersion;
         }
 
+        public List<EntityKeyMetadata> CheckKeysDependencies()
+        {
+            var keysToDelete = new List<EntityKeyMetadata>();
+
+            using (var file = new FileStream(settings.FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+                for (int i = 3; i <= workSheet.Dimension.End.Row; i++)
+                {
+                    if (string.IsNullOrEmpty(workSheet.GetValue<string>(i, TypeCellIndex))
+                    || workSheet.GetValue<string>(i, 1) != "Delete")
+                    {
+                        continue;
+                    }
+
+                    var keysData = workSheet.GetValue<string>(i, 67);
+                    if (!string.IsNullOrEmpty(keysData))
+                    {
+                        var keyDataList = keysData.Split('\n');
+                        foreach (var keyData in keyDataList)
+                        {
+                            var parts = keyData.Split(':');
+                            if (parts.Length != 2)
+                            {
+                                throw new Exception("Alternate key definition is not formatted correctly. Please follow column description");
+                            }
+
+                            keysToDelete.Add(new EntityKeyMetadata
+                            {
+                                DisplayName = new Label(parts[0], settings.LanguageCode),
+                                SchemaName = parts[1],
+                                LogicalName = workSheet.GetValue<string>(i, EntityCellIndex).ToLower().Replace("{prefix}", settings.Solution.Prefix)
+                            });
+                        }
+                    }
+                }
+            }
+
+            return keysToDelete;
+        }
+
         public List<string> GetEntities()
         {
             var entities = new List<string>();
@@ -94,17 +136,62 @@ namespace Javista.AttributesFactory.AppCode
             return entities;
         }
 
-        public void Process(BackgroundWorker worker, ConnectionDetail detail)
+        public void Process(BackgroundWorker worker, ConnectionDetail detail, List<EntityKeyMetadata> keysToDelete)
         {
             var eiCache = new List<EntityInfo>();
             var keys = new List<EntityKeyMetadata>();
+
+            int percent = 0;
+            int index = 0;
+
+            if (keysToDelete != null)
+            {
+                foreach (var keyToDelete in keysToDelete)
+                {
+                    index++;
+
+                    var info = new ProcessResult
+                    {
+                        DisplayName = keyToDelete.DisplayName?.LocalizedLabels.FirstOrDefault()?.Label,
+                        Attribute = keyToDelete.SchemaName,
+                        Type = "Alternate key",
+                        Entity = keyToDelete.LogicalName,
+                        Processing = true,
+                        IsCreate = false,
+                        IsDelete = true
+                    };
+
+                    worker.ReportProgress(percent, info);
+                    percent = index * 100 / keysToDelete.Count;
+
+                    try
+                    {
+                        service.Execute(new DeleteEntityKeyRequest
+                        {
+                            EntityLogicalName = keyToDelete.LogicalName,
+                            Name = keyToDelete.SchemaName
+                        });
+
+                        info.Success = true;
+                        info.Processing = false;
+                    }
+                    catch (Exception error)
+                    {
+                        info.Success = false;
+                        info.Processing = false;
+                        info.Message = error.Message;
+                    }
+
+                    worker.ReportProgress(percent, info);
+                }
+            }
 
             using (var file = new FileStream(settings.FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (ExcelPackage package = new ExcelPackage(file))
             {
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-                int percent = 0;
-                int index = 0;
+                percent = 0;
+                index = 0;
 
                 for (int i = 3; i <= workSheet.Dimension.End.Row; i++)
                 {
@@ -296,14 +383,20 @@ namespace Javista.AttributesFactory.AppCode
                             foreach (var keyValue in keysValues)
                             {
                                 var parts = keyValue.Split(':');
-                                var key = keys.FirstOrDefault(k => k.SchemaName == parts[1]);
+
+                                if (parts.Length != 2)
+                                {
+                                    throw new Exception("Alternate key definition is not formatted correctly. Please follow column description");
+                                }
+
+                                var key = keys.FirstOrDefault(k => k.SchemaName == parts[1].Trim() && k.LogicalName == ei.Name);
                                 if (key == null)
                                 {
                                     key = new EntityKeyMetadata
                                     {
                                         LogicalName = ei.Name,
-                                        DisplayName = new Label(parts[0], settings.LanguageCode),
-                                        SchemaName = parts[1],
+                                        DisplayName = new Label(parts[0].Trim(), settings.LanguageCode),
+                                        SchemaName = parts[1].Trim(),
                                         KeyAttributes = new string[0]
                                     };
                                     keys.Add(key);
@@ -504,7 +597,7 @@ namespace Javista.AttributesFactory.AppCode
                         info.Success = false;
                         info.Processing = false;
                         info.IsCreate = false;
-                        info.Message = "Updating an alternate key is not supported. If you made any change, please delete the key to recreate first.";
+                        info.Message = "Updating an alternate key is not supported. If you need any change, please delete the key first in order to recreate it. You can right click on this row to delete the key";
                     }
 
                     worker.ReportProgress(percent, info);

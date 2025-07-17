@@ -1,4 +1,7 @@
-﻿namespace Javista.AttributesFactory.AppCode
+﻿using Microsoft.Xrm.Sdk.Metadata;
+using System.Collections.Generic;
+
+namespace Javista.AttributesFactory.AppCode
 {
     public class CreateSettings
     {
@@ -8,5 +11,6 @@
         public int LanguageCode { get; set; }
         public SolutionInfo Solution { get; set; }
         public int ThrottleInSeconds { get; internal set; }
+        public List<EntityKeyMetadata> KeysToDelete { get; internal set; }
     }
 }
