@@ -85,7 +85,7 @@ namespace Javista.AttributesFactory.AppCode
                                 continue;
                             }
 
-                            AddLine(sheet, amd, line);
+                            AddLine(sheet, amd, emd, line);
                             ProcessDetails(amd, fullEmd, sheet, ref line);
                             ProcessKeys(amd, fullEmd, sheet, ref line);
 
@@ -225,7 +225,7 @@ namespace Javista.AttributesFactory.AppCode
             sheet.Cells[line, 13].Value = rmd.Entity2AssociatedMenuConfiguration.Order;
         }
 
-        private void AddLine(ExcelWorksheet sheet, AttributeMetadata amd, int line)
+        private void AddLine(ExcelWorksheet sheet, AttributeMetadata amd, EntityMetadata emd, int line)
         {
             sheet.InsertRow(line, 1);
             sheet.Cells[line + 1, 1, line + 1, 65].Copy(sheet.Cells[line, 1]);
@@ -252,7 +252,7 @@ namespace Javista.AttributesFactory.AppCode
             sheet.Cells[line, 2].Value = amd.DisplayName?.UserLocalizedLabel?.Label ?? "N/A";
             sheet.Cells[line, 3].Value = amd.SchemaName;
             sheet.Cells[line, 4].Value = amd.AttributeTypeName?.Value ?? amd.AttributeType.ToString();
-            sheet.Cells[line, 5].Value = amd.EntityLogicalName;
+            sheet.Cells[line, 5].Value = emd.SchemaName;
             sheet.Cells[line, 6].Value = amd.Description?.UserLocalizedLabel?.Label;
             sheet.Cells[line, 7].Value = GetRequiredLevelString(amd.RequiredLevel.Value);
             sheet.Cells[line, 8].Value = amd.IsValidForAdvancedFind.Value ? "Yes" : "No";
@@ -654,7 +654,7 @@ namespace Javista.AttributesFactory.AppCode
                     if (i != 0)
                     {
                         line++;
-                        AddLine(sheet, amd, line);
+                        AddLine(sheet, amd, emd, line);
                     }
 
                     var attr = lamd.LogicalName == "ownerid" ? (targetEntity == "systemuser" ? "owninguser" : "owningteam") : lamd.LogicalName;
