@@ -185,8 +185,15 @@ namespace Javista.AttributesFactory.UserControls
                             ((BackgroundWorker)worker).ReportProgress(0, $"Waiting for {request.Entity.DisplayName.LocalizedLabels[0].Label} forms and views creation...");
                             Thread.Sleep(1000);
 
-                            formsFound = _service.RetrieveMultiple(new QueryExpression("systemform") { Criteria = new FilterExpression { Conditions = { new ConditionExpression("objecttypecode", ConditionOperator.EndsWith, request.Entity.SchemaName.ToLower()) } } }).Entities.Count > 0;
-                            viewsFound = _service.RetrieveMultiple(new QueryExpression("savedquery") { Criteria = new FilterExpression { Conditions = { new ConditionExpression("returnedtypecode", ConditionOperator.EndsWith, request.Entity.SchemaName.ToLower()) } } }).Entities.Count > 0;
+                            try
+                            {
+                                formsFound = _service.RetrieveMultiple(new QueryExpression("systemform") { Criteria = new FilterExpression { Conditions = { new ConditionExpression("objecttypecode", ConditionOperator.EndsWith, request.Entity.SchemaName.ToLower()) } } }).Entities.Count > 0;
+                                viewsFound = _service.RetrieveMultiple(new QueryExpression("savedquery") { Criteria = new FilterExpression { Conditions = { new ConditionExpression("returnedtypecode", ConditionOperator.EndsWith, request.Entity.SchemaName.ToLower()) } } }).Entities.Count > 0;
+                            }
+                            catch
+                            {
+                                // It's possible the table is not created yet, so we will retry
+                            }
                         }
 
                         addToSolutionRequests.Add(new AddSolutionComponentRequest
