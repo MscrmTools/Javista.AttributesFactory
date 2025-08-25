@@ -56,7 +56,7 @@ namespace Javista.AttributesFactory.AppCode
 
                     var rels = new List<string>();
 
-                    foreach (var emd in emds)
+                    foreach (var emd in emds.OrderBy(e => e.SchemaName))
                     {
                         worker.ReportProgress(0, $"Exporting table {emd.DisplayName?.UserLocalizedLabel?.Label ?? emd.LogicalName}...");
 
