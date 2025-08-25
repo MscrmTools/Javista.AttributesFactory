@@ -42,7 +42,7 @@ namespace Javista.AttributesFactory.AppCode
                 Properties = new MetadataPropertiesExpression
                 {
                     AllProperties = false,
-                    PropertyNames = { "DisplayName", "LogicalName" }
+                    PropertyNames = { "DisplayName", "LogicalName", "SchemaName" }
                 }
             };
 
