@@ -374,6 +374,9 @@ namespace Javista.AttributesFactory.AppCode
                             case "Image":
                                 amd = CreateImageAttribute(workSheet, i, PropertiesFirstCellIndex + (templatePreNovember2022 ? 47 : templatePreJanuary2023 ? 48 : 49));
                                 break;
+
+                            default:
+                                throw new Exception("The provided type is invalid. Please fix your input worksheet. There is an hidden sheet named VD with all valid values.");
                         }
 
                         var keysCellValue = workSheet.GetValue<string>(i, 67);
