@@ -1301,6 +1301,13 @@ namespace Javista.AttributesFactory.AppCode
                     SolutionUniqueName = settings.Solution.UniqueName
                 });
 
+                service.Execute(new UpdateAttributeRequest
+                {
+                    Attribute = lookup,
+                    EntityName = sheet.GetValue<string>(rowIndex, EntityCellIndex).ToLower(),
+                    SolutionUniqueName = settings.Solution.UniqueName
+                });
+
                 info.IsCreate = true;
 
                 return null;
@@ -1469,6 +1476,13 @@ namespace Javista.AttributesFactory.AppCode
                 };
 
                 var response = service.Execute(request);
+
+                service.Execute(new UpdateAttributeRequest
+                {
+                    Attribute = lookup,
+                    EntityName = sheet.GetValue<string>(rowIndex, EntityCellIndex).ToLower(),
+                    SolutionUniqueName = settings.Solution.UniqueName
+                });
 
                 info.IsCreate = true;
 
